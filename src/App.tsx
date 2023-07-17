@@ -50,6 +50,9 @@ function App() {
         {/* I hope to contribute to a greater understanding and appreciation of the interconnectedness between humans and the natural world, as exemplified by the Lenape people’s relationship with the land. */}
       </p>
 
+      <h1>Discord</h1>
+      <a href="https://discord.gg/FEwKgrDV92">Join the Discord</a>
+
       <header className="App-header">
         {/* <img src={logo} className="App-logo" alt="logo" /> */}
         <p>
