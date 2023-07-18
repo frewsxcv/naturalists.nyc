@@ -42,36 +42,25 @@ const youTubeVideoUrlPrefix = "https://www.youtube.com/watch?v=";
 function App() {
   return (
     <div className="App">
-      {/* Land acknoledgement */}
-      <h1>Land Acknowledgement</h1>
-      <p>
-        {/* Before exploring my study findings of this New York City park, it is essential to acknowledge the ancestral and traditional lands of the Lenape people, upon which the city and its parks now reside. We must all recognize the Lenape as the original stewards of these lands and waters, and honor their enduring connection to this place, dating back thousands of years. */}
-        {/* As I detail the park’s ecology, history, and development in this study, it’s crucial to remember and pay respect to the Lenape community, both their past and present elders, as well as future generations. Additionally, we need to acknowledge the ongoing struggles of Indigenous peoples in the face of colonization, endeavor to learn from their wisdom and cultural practices, as well as supporting their rights and sovereignty. */}
-        {/* I hope to contribute to a greater understanding and appreciation of the interconnectedness between humans and the natural world, as exemplified by the Lenape people’s relationship with the land. */}
-      </p>
-
+      <LandAcknowlegement />
       <a href="https://discord.gg/FEwKgrDV92">Join the Discord</a>
 
-      <header className="App-header">
-        {/* <img src={logo} className="App-logo" alt="logo" /> */}
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
       <YouTube videoId={randomYouTubeVideoId()}></YouTube>
     </div>
   );
 }
 
-export default App;
+const LandAcknowlegement = () => (
+  <section>
+    {/* Land acknoledgement */}
+    <h1>Land Acknowledgement</h1>
+    <p>
+      {/* Before exploring my study findings of this New York City park, it is essential to acknowledge the ancestral and traditional lands of the Lenape people, upon which the city and its parks now reside. We must all recognize the Lenape as the original stewards of these lands and waters, and honor their enduring connection to this place, dating back thousands of years. */}
+      {/* As I detail the park’s ecology, history, and development in this study, it’s crucial to remember and pay respect to the Lenape community, both their past and present elders, as well as future generations. Additionally, we need to acknowledge the ongoing struggles of Indigenous peoples in the face of colonization, endeavor to learn from their wisdom and cultural practices, as well as supporting their rights and sovereignty. */}
+      {/* I hope to contribute to a greater understanding and appreciation of the interconnectedness between humans and the natural world, as exemplified by the Lenape people’s relationship with the land. */}
+    </p>
+  </section>
+);
 
 const randomYouTubeVideoUrl = () => chooseRandom(youTubeVideoUrls);
 
@@ -83,3 +72,5 @@ const chooseRandom = <T extends unknown>(arr: T[]) =>
 
 const chooseRandomIndex = <T extends unknown>(arr: T[]): number =>
   Math.floor(Math.random() * arr.length);
+
+export default App;
