@@ -43,8 +43,30 @@ function App() {
   return (
     <div className="App">
       <LandAcknowlegement />
+
+      <h1>Connect</h1>
       <a href="https://discord.gg/FEwKgrDV92">Join the Discord</a>
 
+      <h1>Papers</h1>
+      <ul>
+        <li>
+          <a href="https://www.ser.org/news/305433/Seeing-the-Forest-and-the-Trees-Outcomes-of-Forest-Restoration-in-The-Bronx-.htm">
+            Seeing the Forest and the Trees: Outcomes of Forest Restoration in
+            The Bronx
+          </a>
+        </li>
+      </ul>
+
+      <h1>Guides</h1>
+      <ul>
+        <li>
+          <a href="https://www.amnh.org/content/download/35179/518842/file/ASeasonalGuidetoNewYorkCitysInvertebrates.pdf">
+            A Seasonal Guide to New York City's Invertebrates
+          </a>
+        </li>
+      </ul>
+
+      <h1>TV</h1>
       <YouTube videoId={randomYouTubeVideoId()}></YouTube>
     </div>
   );
