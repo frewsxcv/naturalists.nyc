@@ -3,6 +3,7 @@ import YouTube from "react-youtube";
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import Card from 'react-bootstrap/Card';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const youTubeVideoUrls = [
@@ -45,35 +46,33 @@ function App() {
   return (
     <Container>
       <Row>
-        <Col xs={12} md={8}>
-          <div className="App">
-            <LandAcknowlegement />
+        <Col xs={12} md={{span: 8, offset: 2}}>
+          <LandAcknowlegement />
 
-            <h1>Connect</h1>
-            <a href="https://discord.gg/FEwKgrDV92">Join the Discord</a>
+          <h1>Connect</h1>
+          <a href="https://discord.gg/FEwKgrDV92">Join the Discord</a>
 
-            <h1>Papers</h1>
-            <ul>
-              <li>
-                <a href="https://www.ser.org/news/305433/Seeing-the-Forest-and-the-Trees-Outcomes-of-Forest-Restoration-in-The-Bronx-.htm">
-                  Seeing the Forest and the Trees: Outcomes of Forest Restoration in
-                  The Bronx
-                </a>
-              </li>
-            </ul>
+          <h1>Papers</h1>
+          <ul>
+            <li>
+              <a href="https://www.ser.org/news/305433/Seeing-the-Forest-and-the-Trees-Outcomes-of-Forest-Restoration-in-The-Bronx-.htm">
+                Seeing the Forest and the Trees: Outcomes of Forest Restoration in
+                The Bronx
+              </a>
+            </li>
+          </ul>
 
-            <h1>Guides</h1>
-            <ul>
-              <li>
-                <a href="https://www.amnh.org/content/download/35179/518842/file/ASeasonalGuidetoNewYorkCitysInvertebrates.pdf">
-                  A Seasonal Guide to New York City's Invertebrates
-                </a>
-              </li>
-            </ul>
+          <h1>Guides</h1>
+          <ul>
+            <li>
+              <a href="https://www.amnh.org/content/download/35179/518842/file/ASeasonalGuidetoNewYorkCitysInvertebrates.pdf">
+                A Seasonal Guide to New York City's Invertebrates
+              </a>
+            </li>
+          </ul>
 
-            <h1>TV</h1>
-            <YouTube videoId={randomYouTubeVideoId()}></YouTube>
-          </div>
+          <h1>TV</h1>
+          <YouTube videoId={randomYouTubeVideoId()}></YouTube>
         </Col>
       </Row>
     </Container>
@@ -81,15 +80,11 @@ function App() {
 }
 
 const LandAcknowlegement = () => (
-  <section>
-    {/* Land acknoledgement */}
-    <h1>Land Acknowledgement</h1>
-    <p>
-      {/* Before exploring my study findings of this New York City park, it is essential to acknowledge the ancestral and traditional lands of the Lenape people, upon which the city and its parks now reside. We must all recognize the Lenape as the original stewards of these lands and waters, and honor their enduring connection to this place, dating back thousands of years. */}
-      {/* As I detail the park’s ecology, history, and development in this study, it’s crucial to remember and pay respect to the Lenape community, both their past and present elders, as well as future generations. Additionally, we need to acknowledge the ongoing struggles of Indigenous peoples in the face of colonization, endeavor to learn from their wisdom and cultural practices, as well as supporting their rights and sovereignty. */}
-      {/* I hope to contribute to a greater understanding and appreciation of the interconnectedness between humans and the natural world, as exemplified by the Lenape people’s relationship with the land. */}
-    </p>
-  </section>
+  <Card>
+    <Card.Body>
+        It is essential to acknowledge the ancestral and traditional lands of the Lenape people, upon which New York City now resides. We must all recognize the Lenape as the original stewards of these lands and waters, and honor their enduring connection to this place, dating back thousands of years. It’s crucial to remember and pay respect to the Lenape community, both their past and present elders, as well as future generations. Additionally, we need to acknowledge the ongoing struggles of Indigenous peoples in the face of colonization, endeavor to learn from their wisdom and cultural practices, as well as supporting their rights and sovereignty. As naturalists, we hope to contribute to a greater understanding and appreciation of the interconnectedness between humans and the natural world, as exemplified by the Lenape people’s relationship with the land.
+    </Card.Body>
+  </Card>
 );
 
 const randomYouTubeVideoUrl = () => chooseRandom(youTubeVideoUrls);
