@@ -1,7 +1,9 @@
 // import logo from './logo.svg';
-import "./App.css";
-import React from "react";
 import YouTube from "react-youtube";
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const youTubeVideoUrls = [
   "https://www.youtube.com/watch?v=1KY6TleGIdk",
@@ -41,34 +43,40 @@ const youTubeVideoUrlPrefix = "https://www.youtube.com/watch?v=";
 
 function App() {
   return (
-    <div className="App">
-      <LandAcknowlegement />
+    <Container>
+      <Row>
+        <Col xs={12} md={8}>
+          <div className="App">
+            <LandAcknowlegement />
 
-      <h1>Connect</h1>
-      <a href="https://discord.gg/FEwKgrDV92">Join the Discord</a>
+            <h1>Connect</h1>
+            <a href="https://discord.gg/FEwKgrDV92">Join the Discord</a>
 
-      <h1>Papers</h1>
-      <ul>
-        <li>
-          <a href="https://www.ser.org/news/305433/Seeing-the-Forest-and-the-Trees-Outcomes-of-Forest-Restoration-in-The-Bronx-.htm">
-            Seeing the Forest and the Trees: Outcomes of Forest Restoration in
-            The Bronx
-          </a>
-        </li>
-      </ul>
+            <h1>Papers</h1>
+            <ul>
+              <li>
+                <a href="https://www.ser.org/news/305433/Seeing-the-Forest-and-the-Trees-Outcomes-of-Forest-Restoration-in-The-Bronx-.htm">
+                  Seeing the Forest and the Trees: Outcomes of Forest Restoration in
+                  The Bronx
+                </a>
+              </li>
+            </ul>
 
-      <h1>Guides</h1>
-      <ul>
-        <li>
-          <a href="https://www.amnh.org/content/download/35179/518842/file/ASeasonalGuidetoNewYorkCitysInvertebrates.pdf">
-            A Seasonal Guide to New York City's Invertebrates
-          </a>
-        </li>
-      </ul>
+            <h1>Guides</h1>
+            <ul>
+              <li>
+                <a href="https://www.amnh.org/content/download/35179/518842/file/ASeasonalGuidetoNewYorkCitysInvertebrates.pdf">
+                  A Seasonal Guide to New York City's Invertebrates
+                </a>
+              </li>
+            </ul>
 
-      <h1>TV</h1>
-      <YouTube videoId={randomYouTubeVideoId()}></YouTube>
-    </div>
+            <h1>TV</h1>
+            <YouTube videoId={randomYouTubeVideoId()}></YouTube>
+          </div>
+        </Col>
+      </Row>
+    </Container>
   );
 }
 
