@@ -90,7 +90,9 @@ interface HistogramResponse {
 }
 
 const nycPlaceId = 674;
-fetchINaturalistHistogram(324726, nycPlaceId);
+fetchINaturalistHistogram(324726, nycPlaceId).then((response) => {
+  console.log(response);  
+});
 
 const youTubeVideoUrlPrefix = "https://www.youtube.com/watch?v=";
 
