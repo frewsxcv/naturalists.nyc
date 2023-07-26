@@ -1,10 +1,10 @@
 // import logo from './logo.svg';
 import YouTube from "react-youtube";
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Card from 'react-bootstrap/Card';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import Container from "react-bootstrap/Container";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import Card from "react-bootstrap/Card";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 const youTubeVideoUrls = [
   "https://www.youtube.com/watch?v=1KY6TleGIdk",
@@ -40,13 +40,65 @@ const youTubeVideoUrls = [
   "https://www.youtube.com/watch?v=wZg3rTNpHPw",
 ];
 
+const buildUrl = (url: string, params: Record<string, string>) => {
+  const urlObj = new URL(url);
+  Object.entries(params).forEach(([key, value]) => {
+    urlObj.searchParams.set(key, value);
+  });
+  return urlObj;
+};
+
+const fetchINaturalistHistogram = (
+  taxonId: number,
+  placeId: number
+): Promise<HistogramResponse> => {
+  const url = buildUrl(
+    "https://api.inaturalist.org/v1/observations/histogram",
+    {
+      verifiable: "true",
+      taxon_id: taxonId.toString(),
+      place_id: placeId.toString(),
+      preferred_place_id: placeId.toString(),
+      locale: "en",
+      date_field: "observed",
+      interval: "month_of_year", // or "week_of_year"
+    }
+  );
+  return fetch(url).then((response) => response.json());
+};
+
+interface HistogramResponse {
+  total_results: number;
+  page: number;
+  per_page: number;
+  results: {
+    month_of_year: {
+      1: number;
+      2: number;
+      3: number;
+      4: number;
+      5: number;
+      6: number;
+      7: number;
+      8: number;
+      9: number;
+      10: number;
+      11: number;
+      12: number;
+    };
+  };
+}
+
+const nycPlaceId = 674;
+fetchINaturalistHistogram(324726, nycPlaceId);
+
 const youTubeVideoUrlPrefix = "https://www.youtube.com/watch?v=";
 
 function App() {
   return (
     <Container>
       <Row>
-        <Col xs={12} md={{span: 8, offset: 2}}>
+        <Col xs={12} md={{ span: 8, offset: 2 }}>
           <LandAcknowlegement />
 
           <h1>Naturalists.NYC</h1>
@@ -58,8 +110,8 @@ function App() {
           <ul>
             <li>
               <a href="https://www.ser.org/news/305433/Seeing-the-Forest-and-the-Trees-Outcomes-of-Forest-Restoration-in-The-Bronx-.htm">
-                Seeing the Forest and the Trees: Outcomes of Forest Restoration in
-                The Bronx
+                Seeing the Forest and the Trees: Outcomes of Forest Restoration
+                in The Bronx
               </a>
             </li>
           </ul>
@@ -84,7 +136,19 @@ function App() {
 const LandAcknowlegement = () => (
   <Card>
     <Card.Body>
-        It is essential to acknowledge the ancestral and traditional lands of the Lenape people, upon which New York City now resides. We must all recognize the Lenape as the original stewards of these lands and waters, and honor their enduring connection to this place, dating back thousands of years. It’s crucial to remember and pay respect to the Lenape community, both their past and present elders, as well as future generations. Additionally, we need to acknowledge the ongoing struggles of Indigenous peoples in the face of colonization, endeavor to learn from their wisdom and cultural practices, as well as supporting their rights and sovereignty. As naturalists, we hope to contribute to a greater understanding and appreciation of the interconnectedness between humans and the natural world, as exemplified by the Lenape people’s relationship with the land.
+      It is essential to acknowledge the ancestral and traditional lands of the
+      Lenape people, upon which New York City now resides. We must all recognize
+      the Lenape as the original stewards of these lands and waters, and honor
+      their enduring connection to this place, dating back thousands of years.
+      It’s crucial to remember and pay respect to the Lenape community, both
+      their past and present elders, as well as future generations.
+      Additionally, we need to acknowledge the ongoing struggles of Indigenous
+      peoples in the face of colonization, endeavor to learn from their wisdom
+      and cultural practices, as well as supporting their rights and
+      sovereignty. As naturalists, we hope to contribute to a greater
+      understanding and appreciation of the interconnectedness between humans
+      and the natural world, as exemplified by the Lenape people’s relationship
+      with the land.
     </Card.Body>
   </Card>
 );
