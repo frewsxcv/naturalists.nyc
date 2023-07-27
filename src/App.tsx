@@ -7,7 +7,12 @@ import Card from "react-bootstrap/Card";
 import * as d3 from "d3";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useEffect, useRef, useState } from "react";
-import { HistogramResponse, Taxon, fetchINaturalistHistogram, fetchINaturalistSpeciesCounts } from "./inaturalist";
+import {
+  HistogramResponse,
+  Taxon,
+  fetchINaturalistHistogram,
+  fetchINaturalistSpeciesCounts,
+} from "./inaturalist";
 
 const nycPlaceId = 674;
 
@@ -178,6 +183,10 @@ const Charts = () => {
     return (
       <div>
         <h3>
+          <img
+            src={taxon.taxon.default_photo.square_url}
+            alt={taxon.taxon.name}
+          />
           {taxon.taxon.preferred_common_name} (<em>{taxon.taxon.name}</em>)
         </h3>
         <BarChart taxonId={taxon.taxon.id} />
