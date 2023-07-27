@@ -227,6 +227,9 @@ function App() {
           <h3>Gray catbird</h3>
           <BarChart taxonId={14995} />
 
+          <h3>White-throated sparrow</h3>
+          <BarChart taxonId={9184} />
+
           <h2>TV</h2>
           <YouTube videoId={randomYouTubeVideoId()}></YouTube>
         </Col>
