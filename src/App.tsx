@@ -115,8 +115,8 @@ const BarChart = () => {
       return;
     }
     const margin = { top: 20, right: 20, bottom: 30, left: 40 };
-    const width = 960 - margin.left - margin.right;
-    const height = 200 - margin.top - margin.bottom;
+    const width = 660 - margin.left - margin.right;
+    const height = 100 - margin.top - margin.bottom;
     const maxCount = Math.max(...data.map((d) => d.count));
 
     const x = d3
@@ -148,7 +148,7 @@ const BarChart = () => {
         return innerX;
       })
       .attr("width", x.bandwidth())
-      .attr("y", (d) => y(d.count))
+      .attr("y", (d) => y(d.count) / 2)
       .attr("height", (d) => height - y(d.count));
 
     svg
