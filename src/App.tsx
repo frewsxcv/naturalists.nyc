@@ -4,7 +4,11 @@ import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Card from "react-bootstrap/Card";
+import * as d3 from "d3";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { useEffect, useRef, useState } from "react";
+
+const nycPlaceId = 674;
 
 const youTubeVideoUrls = [
   "https://www.youtube.com/watch?v=1KY6TleGIdk",
@@ -61,7 +65,7 @@ const fetchINaturalistHistogram = (
       preferred_place_id: placeId.toString(),
       locale: "en",
       date_field: "observed",
-      interval: "month_of_year", // or "week_of_year"
+      interval: "week_of_year",
     }
   );
   return fetch(url).then((response) => response.json());
@@ -72,27 +76,99 @@ interface HistogramResponse {
   page: number;
   per_page: number;
   results: {
-    month_of_year: {
-      1: number;
-      2: number;
-      3: number;
-      4: number;
-      5: number;
-      6: number;
-      7: number;
-      8: number;
-      9: number;
-      10: number;
-      11: number;
-      12: number;
-    };
+    week_of_year: Record<string, number>,
   };
 }
 
-const nycPlaceId = 674;
-fetchINaturalistHistogram(324726, nycPlaceId).then((response) => {
-  console.log(response);  
-});
+const histogramResponseToHistogramData = (
+  histogramResponse: HistogramResponse
+) => {
+  return Object.entries(histogramResponse.results.week_of_year).map(
+    ([month, count]) => {
+      return { month, count };
+    }
+  );
+};
+
+type HistogramData = { month: string; count: number }[];
+
+// Uses d3.js to render a histogram of the number of observations of a taxon
+// over the course of a year.
+const BarChart = () => {
+  const svgRef = useRef(null);
+  const [isFetching, setIsFetching] = useState(true);
+  const [data, setData] = useState<HistogramData | null>(null);
+
+  useEffect(() => {
+    fetchINaturalistHistogram(324726, nycPlaceId)
+      .then((response) => {
+        const data = histogramResponseToHistogramData(response);
+        setData(data);
+      })
+      .finally(() => {
+        setIsFetching(false);
+      });
+  }, []);
+
+  useEffect(() => {
+    if (!data) {
+      return;
+    }
+    const margin = { top: 20, right: 20, bottom: 30, left: 40 };
+    const width = 960 - margin.left - margin.right;
+    const height = 500 - margin.top - margin.bottom;
+    const maxCount = Math.max(...data.map((d) => d.count));
+
+    const x = d3
+      .scaleBand()
+      .range([0, width])
+      .domain(data.map((d) => d.month))
+      .padding(0.1);
+    const y = d3
+      .scaleLinear()
+      .range([height, 0])
+      .domain([0, maxCount]);
+
+    const svg = d3
+      .select(svgRef.current)
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom);
+
+    svg
+      .selectAll(".bar")
+      .data(data)
+      .enter()
+      .append("rect")
+      .attr("class", "bar")
+      .attr("x", (d) => {
+        const innerX = x(d.month);
+        if (!innerX) {
+          throw new Error("FIXME");
+        }
+        return innerX;
+      })
+      .attr("width", x.bandwidth())
+      .attr("y", (d) => y(d.count))
+      .attr("height", (d) => height - y(d.count));
+
+    svg
+      .append("g")
+      .attr("transform", "translate(0," + height + ")")
+      .call(d3.axisBottom(x));
+
+    svg.append("g").call(d3.axisLeft(y));
+  }, [data]);
+
+  if (isFetching) {
+    return <div>Loading...</div>;
+  }
+
+  if (!data) {
+    return <div>Error: Could not fetch data</div>;
+  }
+
+  return <svg ref={svgRef}></svg>;
+};
 
 const youTubeVideoUrlPrefix = "https://www.youtube.com/watch?v=";
 
@@ -126,6 +202,9 @@ function App() {
               </a>
             </li>
           </ul>
+
+          <h2>Charts</h2>
+          <BarChart />
 
           <h2>TV</h2>
           <YouTube videoId={randomYouTubeVideoId()}></YouTube>
