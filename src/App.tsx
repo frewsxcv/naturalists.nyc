@@ -76,7 +76,7 @@ interface HistogramResponse {
   page: number;
   per_page: number;
   results: {
-    week_of_year: Record<string, number>,
+    week_of_year: Record<string, number>;
   };
 }
 
@@ -94,13 +94,13 @@ type HistogramData = { month: string; count: number }[];
 
 // Uses d3.js to render a histogram of the number of observations of a taxon
 // over the course of a year.
-const BarChart = () => {
+const BarChart = ({ taxonId }: { taxonId: number }) => {
   const svgRef = useRef(null);
   const [isFetching, setIsFetching] = useState(true);
   const [data, setData] = useState<HistogramData | null>(null);
 
   useEffect(() => {
-    fetchINaturalistHistogram(324726, nycPlaceId)
+    fetchINaturalistHistogram(taxonId, nycPlaceId)
       .then((response) => {
         const data = histogramResponseToHistogramData(response);
         setData(data);
@@ -124,10 +124,7 @@ const BarChart = () => {
       .range([0, width])
       .domain(data.map((d) => d.month))
       .padding(0.1);
-    const y = d3
-      .scaleLinear()
-      .range([height, 0])
-      .domain([0, maxCount]);
+    const y = d3.scaleLinear().range([height, 0]).domain([0, maxCount]);
 
     const svg = d3
       .select(svgRef.current)
@@ -146,14 +143,14 @@ const BarChart = () => {
       .attr("height", (d) => height - y(d.count));
 
     // Add red line for current week
-    svg.append("line")
+    svg
+      .append("line")
       .attr("x1", unwrap(x(getCurrentWeekOfYear().toString())))
       .attr("y1", 0)
       .attr("x2", unwrap(x(getCurrentWeekOfYear().toString())))
       .attr("y2", height)
       .attr("stroke-width", 2)
       .attr("stroke", "red");
-
   }, [data]);
 
   if (isFetching) {
@@ -173,7 +170,7 @@ const getCurrentWeekOfYear = (): number => {
 
 const youTubeVideoUrlPrefix = "https://www.youtube.com/watch?v=";
 
-const unwrap = <T extends unknown>(t: T|null|undefined): T => {
+const unwrap = <T extends unknown>(t: T | null | undefined): T => {
   if (t === undefined) {
     throw new Error("Encountered unexpected undefined value");
   }
@@ -215,7 +212,15 @@ function App() {
           </ul>
 
           <h2>Charts</h2>
-          <BarChart />
+
+          <h3>Spotted lanternfly</h3>
+          <BarChart taxonId={324726} />
+
+          <h3>Cabbage white</h3>
+          <BarChart taxonId={55626} />
+
+          <h3>Gray catbird</h3>
+          <BarChart taxonId={14995} />
 
           <h2>TV</h2>
           <YouTube videoId={randomYouTubeVideoId()}></YouTube>
