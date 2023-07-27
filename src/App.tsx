@@ -124,7 +124,12 @@ const BarChart = ({ taxonId }: { taxonId: number }) => {
       .range([0, width])
       .domain(data.map((d) => d.month))
       .padding(0.1);
-    const y = d3.scaleLinear().range([height, 0]).domain([0, maxCount]);
+    const y = d3
+      .scalePow()
+      // Exponent < 1 reduces the high counts and increases the low counts slightly
+      .exponent(0.4)
+      .range([height, 0])
+      .domain([0, maxCount]);
 
     const svg = d3
       .select(svgRef.current)
