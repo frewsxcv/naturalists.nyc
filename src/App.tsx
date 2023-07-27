@@ -53,7 +53,7 @@ const buildUrl = (url: string, params: Record<string, string>) => {
 };
 
 const buildINaturalistApiUrl = (path: string, params: Record<string, string>) =>
-  buildUrl(`https://api.inaturalist.org/v1/${path}`, params);
+  buildUrl(`https://api.inaturalist.org/v1${path}`, params);
 
 const fetchINaturalistApi = async <T extends unknown>(
   path: string,
@@ -79,14 +79,14 @@ const fetchINaturalistHistogram = (
   });
 
 const fetchINaturalistSpeciesCounts = (
-  taxonId: number,
   placeId: number,
-  month: number,
+  month: number
 ): Promise<SpeciesCountsResponse> =>
   fetchINaturalistApi("/observations/species_counts", {
-    taxon_id: taxonId.toString(),
     place_id: placeId.toString(),
+    preferred_place_id: placeId.toString(),
     month: month.toString(),
+    captive: "false",
   });
 
 interface HistogramResponse {
@@ -132,9 +132,10 @@ const BarChart = ({ taxonId }: { taxonId: number }) => {
     if (!data) {
       return;
     }
-    const margin = { top: 20, right: 20, bottom: 30, left: 40 };
+    const margin = { top: 0, right: 0, bottom: 0, left: 0 };
+    // const margin = { top: 20, right: 20, bottom: 30, left: 40 };
     const width = 500 - margin.left - margin.right;
-    const height = 100 - margin.top - margin.bottom;
+    const height = 50 - margin.top - margin.bottom;
     const maxCount = Math.max(...data.map((d) => d.count));
 
     const x = d3
@@ -184,12 +185,20 @@ const BarChart = ({ taxonId }: { taxonId: number }) => {
     return <div>Error: Could not fetch data</div>;
   }
 
-  return <svg ref={svgRef}></svg>;
+  return <svg style={{ border: "1px solid black" }} ref={svgRef}></svg>;
 };
 
+/** Is 1-indexed */
 const getCurrentWeekOfYear = (): number => {
-  return d3.timeWeek.count(d3.timeYear(new Date()), new Date());
+  return d3.timeWeek.count(d3.timeYear(new Date()), new Date()) + 1;
 };
+
+/** Is 1-indexed */
+const getCurrentMonthOfYear = (): number => {
+  return d3.timeMonth.count(d3.timeYear(new Date()), new Date()) + 1;
+};
+
+console.log("month", getCurrentMonthOfYear());
 
 const youTubeVideoUrlPrefix = "https://www.youtube.com/watch?v=";
 
@@ -204,21 +213,32 @@ const unwrap = <T extends unknown>(t: T | null | undefined): T => {
 };
 
 const Charts = () => {
-  return (
-    <>
-      <h3>Spotted lanternfly</h3>
-      <BarChart taxonId={324726} />
+  const [taxa, setTaxa] = useState<Taxon[]>([]);
 
-      <h3>Cabbage white</h3>
-      <BarChart taxonId={55626} />
+  useEffect(() => {
+    fetchINaturalistSpeciesCounts(nycPlaceId, getCurrentMonthOfYear()).then(
+      (response) => {
+        setTaxa(response.results.slice(0, 10));
+      }
+    );
+  }, []);
 
-      <h3>Gray catbird</h3>
-      <BarChart taxonId={14995} />
+  if (!taxa) {
+    return <div>Loading...</div>;
+  }
 
-      <h3>White-throated sparrow</h3>
-      <BarChart taxonId={9184} />
-    </>
-  );
+  const taxaSections = taxa.map((taxon) => {
+    return (
+      <div>
+        <h3>
+          {taxon.taxon.preferred_common_name} (<em>{taxon.taxon.name}</em>)
+        </h3>
+        <BarChart taxonId={taxon.taxon.id} />
+      </div>
+    );
+  });
+
+  return <>{taxaSections}</>;
 };
 
 function App() {
