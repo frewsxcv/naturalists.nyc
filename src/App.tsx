@@ -52,24 +52,41 @@ const buildUrl = (url: string, params: Record<string, string>) => {
   return urlObj;
 };
 
+const buildINaturalistApiUrl = (path: string, params: Record<string, string>) =>
+  buildUrl(`https://api.inaturalist.org/v1/${path}`, params);
+
+const fetchINaturalistApi = <T extends unknown>(
+  path: string,
+  params: Record<string, string>
+): Promise<T> => {
+  const url = buildINaturalistApiUrl(path, params);
+  return fetch(url).then((response) => response.json());
+};
+
 const fetchINaturalistHistogram = (
   taxonId: number,
   placeId: number
-): Promise<HistogramResponse> => {
-  const url = buildUrl(
-    "https://api.inaturalist.org/v1/observations/histogram",
-    {
-      verifiable: "true",
-      taxon_id: taxonId.toString(),
-      place_id: placeId.toString(),
-      preferred_place_id: placeId.toString(),
-      locale: "en",
-      date_field: "observed",
-      interval: "week_of_year",
-    }
-  );
-  return fetch(url).then((response) => response.json());
-};
+): Promise<HistogramResponse> =>
+  fetchINaturalistApi("/observations/histogram", {
+    verifiable: "true",
+    taxon_id: taxonId.toString(),
+    place_id: placeId.toString(),
+    preferred_place_id: placeId.toString(),
+    locale: "en",
+    date_field: "observed",
+    interval: "week_of_year",
+  });
+
+const fetchINaturalistSpeciesCounts = (
+  taxonId: number,
+  placeId: number,
+  month: number,
+): Promise<SpeciesCountsResponse> =>
+  fetchINaturalistApi("/observations/species_counts", {
+    taxon_id: taxonId.toString(),
+    place_id: placeId.toString(),
+    month: month.toString(),
+  });
 
 interface HistogramResponse {
   total_results: number;
@@ -268,5 +285,65 @@ const chooseRandom = <T extends unknown>(arr: T[]) =>
 
 const chooseRandomIndex = <T extends unknown>(arr: T[]): number =>
   Math.floor(Math.random() * arr.length);
+
+interface Taxon {
+  count: number;
+  taxon: {
+    observations_count: number;
+    taxon_schemes_count: number;
+    is_active: boolean;
+    ancestry: string;
+    flag_counts: {
+      resolved: number;
+      unresolved: number;
+    };
+    wikipedia_url: string;
+    current_synonymous_taxon_ids: null | any[];
+    iconic_taxon_id: number;
+    rank_level: number;
+    taxon_changes_count: number;
+    atlas_id: null | any;
+    complete_species_count: null | any;
+    parent_id: number;
+    name: string;
+    rank: string;
+    extinct: boolean;
+    id: number;
+    default_photo: {
+      id: number;
+      license_code: string;
+      attribution: string;
+      url: string;
+      original_dimensions: {
+        height: number;
+        width: number;
+      };
+      flags: any[];
+      square_url: string;
+      medium_url: string;
+    };
+    ancestor_ids: number[];
+    iconic_taxon_name: string;
+    preferred_common_name: string;
+    establishment_means: {
+      establishment_means: string;
+      id: number;
+      place: {
+        id: number;
+        name: string;
+        display_name: string;
+        ancestry: string;
+      };
+    };
+    preferred_establishment_means: string;
+  };
+}
+
+interface SpeciesCountsResponse {
+  total_results: number;
+  page: number;
+  per_page: number;
+  results: Taxon[];
+}
 
 export default App;
