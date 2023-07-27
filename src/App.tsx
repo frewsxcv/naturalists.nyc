@@ -218,7 +218,7 @@ const Charts = () => {
   useEffect(() => {
     fetchINaturalistSpeciesCounts(nycPlaceId, getCurrentMonthOfYear()).then(
       (response) => {
-        setTaxa(response.results.slice(0, 10));
+        setTaxa(response.results);
       }
     );
   }, []);
