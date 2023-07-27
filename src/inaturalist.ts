@@ -1,4 +1,4 @@
-
+const lastRequestTime = new Date();
 
 const buildUrl = (url: string, params: Record<string, string>) => {
   const urlObj = new URL(url);
@@ -15,6 +15,15 @@ const fetchINaturalistApi = async <T extends unknown>(
   path: string,
   params: Record<string, string>
 ): Promise<T> => {
+  // Throttle requests to no more than 1 request every 2 seconds
+  if (new Date().getTime() - lastRequestTime.getTime() < 2000) {
+    return new Promise((resolve) =>
+      setTimeout(() => {
+        resolve(fetchINaturalistApi(path, params));
+      }, 2000)
+    );
+  }
+  lastRequestTime.setTime(new Date().getTime());
   const url = buildINaturalistApiUrl(path, params);
   const response = await fetch(url);
   return await response.json();
