@@ -73,7 +73,7 @@ const BarChart = ({ taxonId }: { taxonId: number }) => {
       .finally(() => {
         setIsFetching(false);
       });
-  }, []);
+  }, [taxonId]);
 
   useEffect(() => {
     if (!data) {
