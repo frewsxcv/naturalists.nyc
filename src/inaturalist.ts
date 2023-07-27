@@ -52,6 +52,7 @@ export const fetchINaturalistSpeciesCounts = (
     preferred_place_id: placeId.toString(),
     month: month.toString(),
     captive: "false",
+    per_page: "30",
   });
 
 export interface HistogramResponse {
