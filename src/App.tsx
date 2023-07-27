@@ -181,16 +181,18 @@ const Charts = () => {
 
   const taxaSections = taxa.map((taxon) => {
     return (
-      <div>
-        <h3>
-          <img
-            src={taxon.taxon.default_photo.square_url}
-            alt={taxon.taxon.name}
-          />
-          {taxon.taxon.preferred_common_name} (<em>{taxon.taxon.name}</em>)
-        </h3>
+      <Card>
+        <Card.Body>
+          <h3>
+            <img
+              src={taxon.taxon.default_photo.square_url}
+              alt={taxon.taxon.name}
+            />
+            {taxon.taxon.preferred_common_name} (<em>{taxon.taxon.name}</em>)
+          </h3>
         <BarChart taxonId={taxon.taxon.id} />
-      </div>
+        </Card.Body>
+      </Card>
     );
   });
 
