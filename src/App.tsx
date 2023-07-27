@@ -55,12 +55,13 @@ const buildUrl = (url: string, params: Record<string, string>) => {
 const buildINaturalistApiUrl = (path: string, params: Record<string, string>) =>
   buildUrl(`https://api.inaturalist.org/v1/${path}`, params);
 
-const fetchINaturalistApi = <T extends unknown>(
+const fetchINaturalistApi = async <T extends unknown>(
   path: string,
   params: Record<string, string>
 ): Promise<T> => {
   const url = buildINaturalistApiUrl(path, params);
-  return fetch(url).then((response) => response.json());
+  const response = await fetch(url);
+  return await response.json();
 };
 
 const fetchINaturalistHistogram = (
