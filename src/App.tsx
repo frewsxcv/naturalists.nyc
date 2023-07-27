@@ -203,6 +203,24 @@ const unwrap = <T extends unknown>(t: T | null | undefined): T => {
   return t;
 };
 
+const Charts = () => {
+  return (
+    <>
+      <h3>Spotted lanternfly</h3>
+      <BarChart taxonId={324726} />
+
+      <h3>Cabbage white</h3>
+      <BarChart taxonId={55626} />
+
+      <h3>Gray catbird</h3>
+      <BarChart taxonId={14995} />
+
+      <h3>White-throated sparrow</h3>
+      <BarChart taxonId={9184} />
+    </>
+  );
+};
+
 function App() {
   return (
     <Container>
@@ -235,18 +253,7 @@ function App() {
           </ul>
 
           <h2>Charts</h2>
-
-          <h3>Spotted lanternfly</h3>
-          <BarChart taxonId={324726} />
-
-          <h3>Cabbage white</h3>
-          <BarChart taxonId={55626} />
-
-          <h3>Gray catbird</h3>
-          <BarChart taxonId={14995} />
-
-          <h3>White-throated sparrow</h3>
-          <BarChart taxonId={9184} />
+          <Charts />
 
           <h2>TV</h2>
           <YouTube videoId={randomYouTubeVideoId()}></YouTube>
