@@ -140,23 +140,16 @@ const BarChart = () => {
       .enter()
       .append("rect")
       .attr("class", "bar")
-      .attr("x", (d) => {
-        const innerX = x(d.month);
-        if (!innerX) {
-          throw new Error("FIXME");
-        }
-        return innerX;
-      })
+      .attr("x", (d) => unwrap(x(d.month)))
       .attr("width", x.bandwidth())
       .attr("y", (d) => y(d.count) / 2)
       .attr("height", (d) => height - y(d.count));
 
-    svg
-      .append("g")
-      .attr("transform", "translate(0," + height + ")")
-      .call(d3.axisBottom(x));
+    // svg
+      // .append("g")
+      // .attr("transform", "translate(1," + height + ")");
+      // .call(d3.axisBottom(x));
 
-    svg.append("g").call(d3.axisLeft(y));
   }, [data]);
 
   if (isFetching) {
@@ -171,6 +164,16 @@ const BarChart = () => {
 };
 
 const youTubeVideoUrlPrefix = "https://www.youtube.com/watch?v=";
+
+const unwrap = <T extends unknown>(t: T|null|undefined): T => {
+  if (t === undefined) {
+    throw new Error("Encountered unexpected undefined value");
+  }
+  if (t === null) {
+    throw new Error("Encountered unexpected undefined value");
+  }
+  return t;
+};
 
 function App() {
   return (
