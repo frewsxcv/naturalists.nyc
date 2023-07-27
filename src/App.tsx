@@ -145,10 +145,14 @@ const BarChart = () => {
       .attr("y", (d) => y(d.count) / 2)
       .attr("height", (d) => height - y(d.count));
 
-    // svg
-      // .append("g")
-      // .attr("transform", "translate(1," + height + ")");
-      // .call(d3.axisBottom(x));
+    // Add red line for current week
+    svg.append("line")
+      .attr("x1", unwrap(x(getCurrentWeekOfYear().toString())))
+      .attr("y1", 0)
+      .attr("x2", unwrap(x(getCurrentWeekOfYear().toString())))
+      .attr("y2", height)
+      .attr("stroke-width", 2)
+      .attr("stroke", "red");
 
   }, [data]);
 
@@ -161,6 +165,10 @@ const BarChart = () => {
   }
 
   return <svg ref={svgRef}></svg>;
+};
+
+const getCurrentWeekOfYear = (): number => {
+  return d3.timeWeek.count(d3.timeYear(new Date()), new Date());
 };
 
 const youTubeVideoUrlPrefix = "https://www.youtube.com/watch?v=";
