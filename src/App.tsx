@@ -175,7 +175,7 @@ const Charts = () => {
     );
   }, []);
 
-  if (!taxa) {
+  if (!taxa.length) {
     return <div>Loading...</div>;
   }
 
