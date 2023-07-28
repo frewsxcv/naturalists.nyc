@@ -151,8 +151,6 @@ const getCurrentMonthOfYear = (): number => {
   return d3.timeMonth.count(d3.timeYear(new Date()), new Date()) + 1;
 };
 
-console.log("month", getCurrentMonthOfYear());
-
 const youTubeVideoUrlPrefix = "https://www.youtube.com/watch?v=";
 
 const unwrap = <T extends unknown>(t: T | null | undefined): T => {
