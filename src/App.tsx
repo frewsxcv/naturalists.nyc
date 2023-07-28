@@ -195,18 +195,14 @@ const Charts = () => {
     );
   });
 
-  return <>{taxaSections}</>;
+  return <div className="d-flex flex-column row-gap-2">{taxaSections}</div>;
 };
 
 function App() {
   return (
     <Container>
       <Row>
-        <Col
-          xs={12}
-          md={{ span: 8, offset: 2 }}
-          className="bg-body-secondary"
-        >
+        <Col xs={12} md={{ span: 8, offset: 2 }} className="bg-body-secondary">
           <LandAcknowlegement />
 
           <h1>Naturalists.NYC</h1>
