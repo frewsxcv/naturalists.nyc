@@ -189,7 +189,7 @@ const Charts = () => {
             />
             {taxon.taxon.preferred_common_name} (<em>{taxon.taxon.name}</em>)
           </h3>
-        <BarChart taxonId={taxon.taxon.id} />
+          <BarChart taxonId={taxon.taxon.id} />
         </Card.Body>
       </Card>
     );
