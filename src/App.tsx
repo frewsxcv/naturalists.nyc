@@ -180,15 +180,15 @@ const Charts = () => {
 
   const taxaSections = taxa.map((taxon) => {
     return (
-      <Card>
+      <Card className="bg-body-tertiary">
+        <Card.Header>
+          {taxon.taxon.preferred_common_name} (<em>{taxon.taxon.name}</em>)
+        </Card.Header>
         <Card.Body>
-          <h3>
-            <img
-              src={taxon.taxon.default_photo.square_url}
-              alt={taxon.taxon.name}
-            />
-            {taxon.taxon.preferred_common_name} (<em>{taxon.taxon.name}</em>)
-          </h3>
+          <img
+            src={taxon.taxon.default_photo.square_url}
+            alt={taxon.taxon.name}
+          />
           <BarChart taxonId={taxon.taxon.id} />
         </Card.Body>
       </Card>
@@ -202,7 +202,11 @@ function App() {
   return (
     <Container>
       <Row>
-        <Col xs={12} md={{ span: 8, offset: 2 }}>
+        <Col
+          xs={12}
+          md={{ span: 8, offset: 2 }}
+          className="bg-body-secondary"
+        >
           <LandAcknowlegement />
 
           <h1>Naturalists.NYC</h1>
