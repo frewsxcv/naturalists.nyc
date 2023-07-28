@@ -13,6 +13,7 @@ import {
   fetchINaturalistHistogram,
   fetchINaturalistSpeciesCounts,
 } from "./inaturalist";
+import { Spinner } from "react-bootstrap";
 
 const nycPlaceId = 674;
 
@@ -130,7 +131,7 @@ const BarChart = ({ taxonId }: { taxonId: number }) => {
   }, [data]);
 
   if (isFetching) {
-    return <div>Loading...</div>;
+    return <Spinner animation="border" />;
   }
 
   if (!data) {
@@ -176,7 +177,7 @@ const Charts = () => {
   }, []);
 
   if (!taxa.length) {
-    return <div>Loading...</div>;
+    return <Spinner animation="border" />;
   }
 
   const taxaSections = taxa.map((taxon) => {
