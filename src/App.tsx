@@ -3,6 +3,7 @@ import YouTube from "react-youtube";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
+import { default as BootstrapNavbar } from "react-bootstrap/Navbar";
 import Card from "react-bootstrap/Card";
 import * as d3 from "d3";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -13,7 +14,7 @@ import {
   fetchINaturalistHistogram,
   fetchINaturalistSpeciesCounts,
 } from "./inaturalist";
-import { Spinner } from "react-bootstrap";
+import { Nav, NavDropdown, Spinner } from "react-bootstrap";
 
 const nycPlaceId = 674;
 
@@ -163,6 +164,27 @@ const unwrap = <T extends unknown>(t: T | null | undefined): T => {
   return t;
 };
 
+const Navbar = () => {
+  return (
+    <BootstrapNavbar expand="lg" className="bg-body-secondary">
+      <Container>
+        <BootstrapNavbar.Brand href=".">naturalists.nyc</BootstrapNavbar.Brand>
+        <BootstrapNavbar.Toggle aria-controls="basic-navbar-nav" />
+        <BootstrapNavbar.Collapse id="basic-navbar-nav">
+          <Nav className="me-auto">
+            <Nav.Link href="/">Home</Nav.Link>
+            <NavDropdown title="About" id="basic-nav-dropdown">
+              <NavDropdown.Item href="https://github.com/frewsxcv/naturalists.nyc">
+                Source
+              </NavDropdown.Item>
+            </NavDropdown>
+          </Nav>
+        </BootstrapNavbar.Collapse>
+      </Container>
+    </BootstrapNavbar>
+  );
+};
+
 const Charts = () => {
   const [taxa, setTaxa] = useState<Taxon[]>([]);
 
@@ -202,10 +224,11 @@ function App() {
   return (
     <Container>
       <Row>
+        <Navbar />
+      </Row>
+      <Row>
         <Col xs={12} md={{ span: 8, offset: 2 }} className="bg-body-secondary">
           <LandAcknowlegement />
-
-          <h1>Naturalists.NYC</h1>
 
           <h2>
             <Icon icon="chat" />
