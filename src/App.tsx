@@ -207,10 +207,16 @@ function App() {
 
           <h1>Naturalists.NYC</h1>
 
-          <h2>Connect</h2>
+          <h2>
+            <Icon icon="chat" />
+            &nbsp;Connect
+          </h2>
           <a href="https://discord.gg/FEwKgrDV92">Join the Discord</a>
 
-          <h2>Papers</h2>
+          <h2>
+            <Icon icon="news" />
+            &nbsp;Papers
+          </h2>
           <ul>
             <li>
               <a href="https://www.ser.org/news/305433/Seeing-the-Forest-and-the-Trees-Outcomes-of-Forest-Restoration-in-The-Bronx-.htm">
@@ -220,7 +226,10 @@ function App() {
             </li>
           </ul>
 
-          <h2>Guides</h2>
+          <h2>
+            <Icon icon="quick_reference_all" />
+            &nbsp;Guides
+          </h2>
           <ul>
             <li>
               <a href="https://www.amnh.org/content/download/35179/518842/file/ASeasonalGuidetoNewYorkCitysInvertebrates.pdf">
@@ -258,6 +267,10 @@ const LandAcknowlegement = () => (
       with the land.
     </Card.Body>
   </Card>
+);
+
+const Icon = ({ icon }: { icon: string }) => (
+  <span className="material-symbols-outlined">{icon}</span>
 );
 
 const randomYouTubeVideoUrl = () => chooseRandom(youTubeVideoUrls);
