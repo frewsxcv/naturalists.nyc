@@ -47,6 +47,8 @@ export const fetchINaturalistHistogram = (
     interval: "week_of_year",
   });
 
+// TODO: Rather than doing this one month at a time, do a couple weeks before
+//       and after the current date, which might require two requests.
 export const fetchINaturalistSpeciesCounts = (
   placeId: number,
   month: number
