@@ -178,9 +178,9 @@ const Charts = () => {
     return <Spinner animation="border" />;
   }
 
-  const taxaSections = taxa.map((taxon) => {
+  const taxaSections = taxa.map((taxon, i) => {
     return (
-      <Card className="bg-body-tertiary">
+      <Card className="bg-body-tertiary" key={i}>
         <Card.Header>
           {taxon.taxon.preferred_common_name} (<em>{taxon.taxon.name}</em>)
         </Card.Header>
