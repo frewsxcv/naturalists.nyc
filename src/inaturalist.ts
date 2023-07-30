@@ -1,5 +1,3 @@
-const lastRequestTime = new Date();
-
 const buildUrl = (url: string, params: Record<string, string | number>) => {
   const urlObj = new URL(url);
   Object.entries(params).forEach(([key, value]) => {
@@ -17,22 +15,42 @@ const buildINaturalistApiUrl = (
 //
 // const fetchHeaders = { "User-Agent": "naturalists.nyc" };
 
+type RequestStatus =
+  | { status: "running" }
+  | { status: "idle"; completionTime: Date };
+let requestStatus: RequestStatus = {
+  status: "idle",
+  completionTime: new Date(1970, 0, 1),
+};
+
+const iNaturalistRateLimitMilliseconds = 2000;
+
+// Throttle requests to no more than 1 request every 2 seconds
+const shouldPostponeRequest = (): boolean => {
+  return (
+    requestStatus.status === "running" ||
+    new Date().getTime() - requestStatus.completionTime.getTime() <
+      iNaturalistRateLimitMilliseconds
+  );
+};
+
 const fetchINaturalistApi = async <T extends unknown>(
   path: string,
   params: Record<string, string | number>
 ): Promise<T> => {
-  // Throttle requests to no more than 1 request every 2 seconds
-  if (new Date().getTime() - lastRequestTime.getTime() < 2000) {
+  if (shouldPostponeRequest()) {
     return new Promise((resolve) =>
       setTimeout(() => {
         resolve(fetchINaturalistApi(path, params));
-      }, 2000)
+      }, iNaturalistRateLimitMilliseconds)
     );
   }
-  lastRequestTime.setTime(new Date().getTime());
+  requestStatus = { status: "running" };
   const url = buildINaturalistApiUrl(path, params);
   const response = await fetch(url, {
     // headers: fetchHeaders,
+  }).finally(() => {
+    requestStatus = { status: "idle", completionTime: new Date() };
   });
   return await response.json();
 };
