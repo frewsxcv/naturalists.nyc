@@ -13,7 +13,9 @@ const buildINaturalistApiUrl = (
   params: Record<string, string | number>
 ) => buildUrl(`https://api.inaturalist.org/v1${path}`, params);
 
-const fetchHeaders = { "User-Agent": "naturalists.nyc" };
+// https://github.com/inaturalist/iNaturalistAPI/issues/391
+//
+// const fetchHeaders = { "User-Agent": "naturalists.nyc" };
 
 const fetchINaturalistApi = async <T extends unknown>(
   path: string,
@@ -30,7 +32,7 @@ const fetchINaturalistApi = async <T extends unknown>(
   lastRequestTime.setTime(new Date().getTime());
   const url = buildINaturalistApiUrl(path, params);
   const response = await fetch(url, {
-    headers: fetchHeaders,
+    // headers: fetchHeaders,
   });
   return await response.json();
 };
