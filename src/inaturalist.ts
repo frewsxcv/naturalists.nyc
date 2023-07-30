@@ -1,21 +1,23 @@
 const lastRequestTime = new Date();
 
-const buildUrl = (url: string, params: Record<string, string>) => {
+const buildUrl = (url: string, params: Record<string, string | number>) => {
   const urlObj = new URL(url);
   Object.entries(params).forEach(([key, value]) => {
-    urlObj.searchParams.set(key, value);
+    urlObj.searchParams.set(key, value.toString());
   });
   return urlObj;
 };
 
-const buildINaturalistApiUrl = (path: string, params: Record<string, string>) =>
-  buildUrl(`https://api.inaturalist.org/v1${path}`, params);
+const buildINaturalistApiUrl = (
+  path: string,
+  params: Record<string, string | number>
+) => buildUrl(`https://api.inaturalist.org/v1${path}`, params);
 
 const fetchHeaders = { "User-Agent": "naturalists.nyc" };
 
 const fetchINaturalistApi = async <T extends unknown>(
   path: string,
-  params: Record<string, string>
+  params: Record<string, string | number>
 ): Promise<T> => {
   // Throttle requests to no more than 1 request every 2 seconds
   if (new Date().getTime() - lastRequestTime.getTime() < 2000) {
@@ -33,15 +35,80 @@ const fetchINaturalistApi = async <T extends unknown>(
   return await response.json();
 };
 
+// Get date one month ago
+const getIsoDateOneMonthAgo = (): string => {
+  // Get a date object for the current time
+  const date = new Date();
+
+  // Set it to one month ago
+  date.setMonth(date.getMonth() - 1);
+
+  // Format the date as YYYY-MM-DD
+  const dateString = date.toISOString().split("T");
+
+  if (!dateString[0]) {
+    throw new Error("Could not generate date string");
+  }
+
+  return dateString[0];
+};
+
+interface INaturalistObserver {
+  user_id: number;
+  observation_count: number;
+  species_count: number;
+  user: {
+    id: number;
+    login: string;
+    spam: boolean;
+    suspended: boolean;
+    created_at: string;
+    login_autocomplete: string;
+    login_exact: string;
+    name: string;
+    name_autocomplete: string;
+    orcid: null;
+    icon: null;
+    observations_count: number;
+    identifications_count: number;
+    journal_posts_count: number;
+    activity_count: number;
+    species_count: number;
+    universal_search_rank: number;
+    roles: any[];
+    site_id: number;
+    icon_url: null;
+  };
+}
+
+export interface INaturalistObserverResponse {
+  total_results: number;
+  page: number;
+  per_page: number;
+  results: INaturalistObserver[];
+}
+
+export const fetchTopINaturalistObservers = (
+  placeId: number,
+  date: string = getIsoDateOneMonthAgo(),
+  perPage = 10
+): Promise<INaturalistObserverResponse> => {
+  return fetchINaturalistApi("/observations/observers", {
+    place_id: placeId,
+    d1: date,
+    per_page: perPage,
+  });
+};
+
 export const fetchINaturalistHistogram = (
   taxonId: number,
   placeId: number
 ): Promise<HistogramResponse> =>
   fetchINaturalistApi("/observations/histogram", {
     verifiable: "true",
-    taxon_id: taxonId.toString(),
-    place_id: placeId.toString(),
-    preferred_place_id: placeId.toString(),
+    taxon_id: taxonId,
+    place_id: placeId,
+    preferred_place_id: placeId,
     locale: "en",
     date_field: "observed",
     interval: "week_of_year",
@@ -51,14 +118,15 @@ export const fetchINaturalistHistogram = (
 //       and after the current date, which might require two requests.
 export const fetchINaturalistSpeciesCounts = (
   placeId: number,
-  month: number
+  month: number,
+  perPage = 10
 ): Promise<SpeciesCountsResponse> =>
   fetchINaturalistApi("/observations/species_counts", {
-    place_id: placeId.toString(),
-    preferred_place_id: placeId.toString(),
-    month: month.toString(),
+    place_id: placeId,
+    preferred_place_id: placeId,
+    month,
     captive: "false",
-    per_page: "30",
+    per_page: perPage,
   });
 
 export interface HistogramResponse {

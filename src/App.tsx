@@ -10,9 +10,11 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { useEffect, useRef, useState } from "react";
 import {
   HistogramResponse,
+  INaturalistObserverResponse,
   Taxon,
   fetchINaturalistHistogram,
   fetchINaturalistSpeciesCounts,
+  fetchTopINaturalistObservers,
 } from "./inaturalist";
 import { Nav, NavDropdown, Spinner } from "react-bootstrap";
 
@@ -262,6 +264,9 @@ function App() {
           </ul>
 
           <h2>Charts</h2>
+          <h3>Top Observers</h3>
+          <p>Observers with most unique species in the past month</p>
+          <TopObservers />
           <Charts />
 
           <h2>TV</h2>
@@ -271,6 +276,28 @@ function App() {
     </Container>
   );
 }
+
+const TopObservers = () => {
+  const [data, setData] = useState<INaturalistObserverResponse | null>(null);
+  useEffect(() => {
+    fetchTopINaturalistObservers(nycPlaceId).then((response) => {
+      setData(response);
+    });
+  });
+  if (!data) {
+    return <Spinner animation="border" />;
+  }
+  const topObservers = data.results.map((observer, i) => {
+    const profileUrl = `https://www.inaturalist.org/people/${observer.user.id}`;
+    return (
+      <li key={i}>
+        <a href={profileUrl}>{observer.user.name || observer.user.login}</a> (
+        {observer.species_count})
+      </li>
+    );
+  });
+  return <ol>{topObservers}</ol>;
+};
 
 const LandAcknowlegement = () => (
   <Card>
