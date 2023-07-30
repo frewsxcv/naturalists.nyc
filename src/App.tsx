@@ -120,7 +120,8 @@ const BarChart = ({ taxonId }: { taxonId: number }) => {
       .attr("x", (d) => unwrap(x(d.month)))
       .attr("width", x.bandwidth())
       .attr("y", (d) => y(d.count) / 2)
-      .attr("height", (d) => height - y(d.count));
+      .attr("height", (d) => height - y(d.count))
+      .attr("fill", "var(--bs-body-color)");
 
     // Add red line for current week
     svg
@@ -130,7 +131,7 @@ const BarChart = ({ taxonId }: { taxonId: number }) => {
       .attr("x2", unwrap(x(getCurrentWeekOfYear().toString())))
       .attr("y2", height)
       .attr("stroke-width", 2)
-      .attr("stroke", "red");
+      .attr("stroke", "var(--bs-danger)");
   }, [data]);
 
   if (isFetching) {
