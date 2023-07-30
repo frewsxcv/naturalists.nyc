@@ -262,16 +262,20 @@ function App() {
               </a>
             </li>
           </ul>
+
+          <h2>Watch</h2>
+          <YouTube
+            videoId={randomYouTubeVideoId()}
+            iframeClassName="w-100"
+          ></YouTube>
         </Col>
         <Col xs={12} md={6} className="bg-body-secondary">
-          <h2>Charts</h2>
-          <h3>Top Observers</h3>
+          <h2>Top Observers</h2>
           <p>Observers with most unique species in the past month</p>
           <TopObservers />
-          <Charts />
 
-          <h2>TV</h2>
-          <YouTube videoId={randomYouTubeVideoId()}></YouTube>
+          <h2>Active specie</h2>
+          <Charts />
         </Col>
       </Row>
     </Container>
