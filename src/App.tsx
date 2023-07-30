@@ -225,57 +225,72 @@ const Charts = () => {
 function App() {
   return (
     <Container>
-      <Row>
-        <Navbar />
-      </Row>
-      <Row>
-        <Col xs={12} md={6} className="bg-body-secondary">
-          <LandAcknowlegement />
-
-          <h2>
-            <Icon icon="chat" />
-            &nbsp;Connect
-          </h2>
-          <a href="https://discord.gg/FEwKgrDV92">Join the Discord</a>
-
-          <h2>
-            <Icon icon="news" />
-            &nbsp;Papers
-          </h2>
-          <ul>
-            <li>
-              <a href="https://www.ser.org/news/305433/Seeing-the-Forest-and-the-Trees-Outcomes-of-Forest-Restoration-in-The-Bronx-.htm">
-                Seeing the Forest and the Trees: Outcomes of Forest Restoration
-                in The Bronx
-              </a>
-            </li>
-          </ul>
-
-          <h2>
-            <Icon icon="quick_reference_all" />
-            &nbsp;Guides
-          </h2>
-          <ul>
-            <li>
-              <a href="https://www.amnh.org/content/download/35179/518842/file/ASeasonalGuidetoNewYorkCitysInvertebrates.pdf">
-                A Seasonal Guide to New York City's Invertebrates
-              </a>
-            </li>
-          </ul>
-
-          <h2>Watch</h2>
-          <YouTube
-            videoId={randomYouTubeVideoId()}
-            iframeClassName="w-100"
-          ></YouTube>
+      <Row className="mb-3">
+        <Col>
+          <Navbar />
         </Col>
-        <Col xs={12} md={6} className="bg-body-secondary">
-          <h2>Top Observers</h2>
-          <p>Observers with most unique species in the past month</p>
-          <TopObservers />
-
-          <h2>Active specie</h2>
-          <Charts />
+      </Row>
+      <Row className="gx-3">
+        <Col xs={12} md={6}>
+          <div className="d-flex flex-column gap-3">
+            <div className="bg-body-secondary">
+              <LandAcknowlegement />
+            </div>
+            <div className="bg-body-secondary">
+              <h2>
+                <Icon icon="chat" />
+                &nbsp;Connect
+              </h2>
+              <a href="https://discord.gg/FEwKgrDV92">Join the Discord</a>
+            </div>
+            <div className="bg-body-secondary">
+              <h2>
+                <Icon icon="news" />
+                &nbsp;Papers
+              </h2>
+              <ul>
+                <li>
+                  <a href="https://www.ser.org/news/305433/Seeing-the-Forest-and-the-Trees-Outcomes-of-Forest-Restoration-in-The-Bronx-.htm">
+                    Seeing the Forest and the Trees: Outcomes of Forest
+                    Restoration in The Bronx
+                  </a>
+                </li>
+              </ul>
+            </div>
+            <div className="bg-body-secondary">
+              <h2>
+                <Icon icon="quick_reference_all" />
+                &nbsp;Guides
+              </h2>
+              <ul>
+                <li>
+                  <a href="https://www.amnh.org/content/download/35179/518842/file/ASeasonalGuidetoNewYorkCitysInvertebrates.pdf">
+                    A Seasonal Guide to New York City's Invertebrates
+                  </a>
+                </li>
+              </ul>
+            </div>
+            <div className="bg-body-secondary">
+              <h2>Watch</h2>
+              <YouTube
+                videoId={randomYouTubeVideoId()}
+                iframeClassName="w-100"
+              ></YouTube>
+            </div>
+          </div>
+        </Col>
+        <Col xs={12} md={6}>
+          <div className="d-flex flex-column gap-3">
+            <div className="bg-body-secondary">
+              <h2>Top Observers</h2>
+              <p>Observers with most unique species in the past month</p>
+              <TopObservers />
+            </div>
+            <div className="bg-body-secondary">
+              <h2>Active specie</h2>
+              <Charts />
+            </div>
+          </div>
         </Col>
       </Row>
     </Container>
