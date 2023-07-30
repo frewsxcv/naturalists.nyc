@@ -317,7 +317,7 @@ const TopObservers = () => {
     fetchTopINaturalistObservers(nycPlaceId).then((response) => {
       setData(response);
     });
-  });
+  }, []);
   if (!data) {
     return <Spinner animation="border" />;
   }
