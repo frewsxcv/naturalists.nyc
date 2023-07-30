@@ -333,22 +333,48 @@ const TopObservers = () => {
   return <ol>{topObservers}</ol>;
 };
 
-const LandAcknowlegement = () => (
-  <Alert variant="primary" dismissible>
-    It is essential to acknowledge the ancestral and traditional lands of the
-    Lenape people, upon which New York City now resides. We must all recognize
-    the Lenape as the original stewards of these lands and waters, and honor
-    their enduring connection to this place, dating back thousands of years.
-    It’s crucial to remember and pay respect to the Lenape community, both their
-    past and present elders, as well as future generations. Additionally, we
-    need to acknowledge the ongoing struggles of Indigenous peoples in the face
-    of colonization, endeavor to learn from their wisdom and cultural practices,
-    as well as supporting their rights and sovereignty. As naturalists, we hope
-    to contribute to a greater understanding and appreciation of the
-    interconnectedness between humans and the natural world, as exemplified by
-    the Lenape people’s relationship with the land.
-  </Alert>
-);
+const landAcknowlegementLocalStorageKey = "land-acknowledgement-dismissed";
+const landAcknowlegementLocalStorageValue = "true";
+
+const fetchLandAcknowledgementDismissed = (): boolean => {
+  return (
+    localStorage.getItem(landAcknowlegementLocalStorageKey) ===
+    landAcknowlegementLocalStorageValue
+  );
+};
+
+const storeLandAcknowledgementDismissed = (): void => {
+  localStorage.setItem(
+    landAcknowlegementLocalStorageKey,
+    landAcknowlegementLocalStorageValue
+  );
+};
+
+const LandAcknowlegement = () => {
+  const [isDismissed, setIsDismissed] = useState(
+    fetchLandAcknowledgementDismissed()
+  );
+
+  if (isDismissed) {
+    return null;
+  }
+
+  const onClose = () => {
+    setIsDismissed(true);
+    storeLandAcknowledgementDismissed();
+  };
+
+  return (
+    <Alert variant="primary" dismissible onClose={onClose}>
+      It is essential to acknowledge the Lenape, who were the original
+      inhabitants of New York City and the surrounding territory for thousands
+      of years before the arrival of Europeans. As naturalists, we hope to
+      contribute to a greater understanding and appreciation of the
+      interconnectedness between humans and the natural world, as exemplified by
+      the Lenape people’s relationship with the land.
+    </Alert>
+  );
+};
 
 const Icon = ({ icon }: { icon: string }) => (
   <span className="material-symbols-outlined">{icon}</span>
