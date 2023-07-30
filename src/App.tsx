@@ -229,7 +229,7 @@ function App() {
         <Navbar />
       </Row>
       <Row>
-        <Col xs={12} md={{ span: 8, offset: 2 }} className="bg-body-secondary">
+        <Col xs={12} md={6} className="bg-body-secondary">
           <LandAcknowlegement />
 
           <h2>
@@ -262,7 +262,8 @@ function App() {
               </a>
             </li>
           </ul>
-
+        </Col>
+        <Col xs={12} md={6} className="bg-body-secondary">
           <h2>Charts</h2>
           <h3>Top Observers</h3>
           <p>Observers with most unique species in the past month</p>
