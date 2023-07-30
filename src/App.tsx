@@ -235,7 +235,7 @@ function App() {
           <LandAcknowlegement />
         </Col>
       </Row>
-      <Row className="gx-3">
+      <Row className="gx-3 row-gap-3">
         <Col xs={12} md={6}>
           <div className="d-flex flex-column gap-3">
             <Card className="bg-body-secondary">
