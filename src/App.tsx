@@ -16,7 +16,7 @@ import {
   fetchINaturalistSpeciesCounts,
   fetchTopINaturalistObservers,
 } from "./inaturalist";
-import { Nav, NavDropdown, Spinner } from "react-bootstrap";
+import { Alert, Nav, NavDropdown, Spinner } from "react-bootstrap";
 
 const nycPlaceId = 674;
 
@@ -230,12 +230,14 @@ function App() {
           <Navbar />
         </Col>
       </Row>
+      <Row>
+        <Col>
+          <LandAcknowlegement />
+        </Col>
+      </Row>
       <Row className="gx-3">
         <Col xs={12} md={6}>
           <div className="d-flex flex-column gap-3">
-            <div className="bg-body-secondary">
-              <LandAcknowlegement />
-            </div>
             <Card className="bg-body-secondary">
               <Card.Body>
                 <h2>
@@ -332,23 +334,20 @@ const TopObservers = () => {
 };
 
 const LandAcknowlegement = () => (
-  <Card>
-    <Card.Body>
-      It is essential to acknowledge the ancestral and traditional lands of the
-      Lenape people, upon which New York City now resides. We must all recognize
-      the Lenape as the original stewards of these lands and waters, and honor
-      their enduring connection to this place, dating back thousands of years.
-      It’s crucial to remember and pay respect to the Lenape community, both
-      their past and present elders, as well as future generations.
-      Additionally, we need to acknowledge the ongoing struggles of Indigenous
-      peoples in the face of colonization, endeavor to learn from their wisdom
-      and cultural practices, as well as supporting their rights and
-      sovereignty. As naturalists, we hope to contribute to a greater
-      understanding and appreciation of the interconnectedness between humans
-      and the natural world, as exemplified by the Lenape people’s relationship
-      with the land.
-    </Card.Body>
-  </Card>
+  <Alert variant="primary" dismissible>
+    It is essential to acknowledge the ancestral and traditional lands of the
+    Lenape people, upon which New York City now resides. We must all recognize
+    the Lenape as the original stewards of these lands and waters, and honor
+    their enduring connection to this place, dating back thousands of years.
+    It’s crucial to remember and pay respect to the Lenape community, both their
+    past and present elders, as well as future generations. Additionally, we
+    need to acknowledge the ongoing struggles of Indigenous peoples in the face
+    of colonization, endeavor to learn from their wisdom and cultural practices,
+    as well as supporting their rights and sovereignty. As naturalists, we hope
+    to contribute to a greater understanding and appreciation of the
+    interconnectedness between humans and the natural world, as exemplified by
+    the Lenape people’s relationship with the land.
+  </Alert>
 );
 
 const Icon = ({ icon }: { icon: string }) => (
