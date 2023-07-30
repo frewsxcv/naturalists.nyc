@@ -236,60 +236,72 @@ function App() {
             <div className="bg-body-secondary">
               <LandAcknowlegement />
             </div>
-            <div className="bg-body-secondary">
-              <h2>
-                <Icon icon="chat" />
-                &nbsp;Connect
-              </h2>
-              <a href="https://discord.gg/FEwKgrDV92">Join the Discord</a>
-            </div>
-            <div className="bg-body-secondary">
-              <h2>
-                <Icon icon="news" />
-                &nbsp;Papers
-              </h2>
-              <ul>
-                <li>
-                  <a href="https://www.ser.org/news/305433/Seeing-the-Forest-and-the-Trees-Outcomes-of-Forest-Restoration-in-The-Bronx-.htm">
-                    Seeing the Forest and the Trees: Outcomes of Forest
-                    Restoration in The Bronx
-                  </a>
-                </li>
-              </ul>
-            </div>
-            <div className="bg-body-secondary">
-              <h2>
-                <Icon icon="quick_reference_all" />
-                &nbsp;Guides
-              </h2>
-              <ul>
-                <li>
-                  <a href="https://www.amnh.org/content/download/35179/518842/file/ASeasonalGuidetoNewYorkCitysInvertebrates.pdf">
-                    A Seasonal Guide to New York City's Invertebrates
-                  </a>
-                </li>
-              </ul>
-            </div>
-            <div className="bg-body-secondary">
-              <h2>Watch</h2>
-              <YouTube
-                videoId={randomYouTubeVideoId()}
-                iframeClassName="w-100"
-              ></YouTube>
-            </div>
+            <Card className="bg-body-secondary">
+              <Card.Body>
+                <h2>
+                  <Icon icon="chat" />
+                  &nbsp;Connect
+                </h2>
+                <a href="https://discord.gg/FEwKgrDV92">Join the Discord</a>
+              </Card.Body>
+            </Card>
+            <Card className="bg-body-secondary">
+              <Card.Body>
+                <h2>
+                  <Icon icon="news" />
+                  &nbsp;Papers
+                </h2>
+                <ul>
+                  <li>
+                    <a href="https://www.ser.org/news/305433/Seeing-the-Forest-and-the-Trees-Outcomes-of-Forest-Restoration-in-The-Bronx-.htm">
+                      Seeing the Forest and the Trees: Outcomes of Forest
+                      Restoration in The Bronx
+                    </a>
+                  </li>
+                </ul>
+              </Card.Body>
+            </Card>
+            <Card className="bg-body-secondary">
+              <Card.Body>
+                <h2>
+                  <Icon icon="quick_reference_all" />
+                  &nbsp;Guides
+                </h2>
+                <ul>
+                  <li>
+                    <a href="https://www.amnh.org/content/download/35179/518842/file/ASeasonalGuidetoNewYorkCitysInvertebrates.pdf">
+                      A Seasonal Guide to New York City's Invertebrates
+                    </a>
+                  </li>
+                </ul>
+              </Card.Body>
+            </Card>
+            <Card className="bg-body-secondary">
+              <Card.Body>
+                <h2>Watch</h2>
+                <YouTube
+                  videoId={randomYouTubeVideoId()}
+                  iframeClassName="w-100"
+                ></YouTube>
+              </Card.Body>
+            </Card>
           </div>
         </Col>
         <Col xs={12} md={6}>
           <div className="d-flex flex-column gap-3">
-            <div className="bg-body-secondary">
-              <h2>Top Observers</h2>
-              <p>Observers with most unique species in the past month</p>
-              <TopObservers />
-            </div>
-            <div className="bg-body-secondary">
-              <h2>Active specie</h2>
-              <Charts />
-            </div>
+            <Card className="bg-body-secondary">
+              <Card.Body>
+                <h2>Top Observers</h2>
+                <p>Observers with most unique species in the past month</p>
+                <TopObservers />
+              </Card.Body>
+            </Card>
+            <Card className="bg-body-secondary">
+              <Card.Body>
+                <h2>Active species</h2>
+                <Charts />
+              </Card.Body>
+            </Card>
           </div>
         </Col>
       </Row>
