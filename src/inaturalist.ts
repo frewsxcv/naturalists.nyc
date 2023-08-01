@@ -110,6 +110,7 @@ export interface INaturalistObserverResponse {
 
 export const fetchTopINaturalistObservers = (
   placeId: number,
+  orderBy: "observation_count" | "species_count",
   date: string = getIsoDateOneMonthAgo(),
   perPage = 10
 ): Promise<INaturalistObserverResponse> => {
@@ -117,6 +118,7 @@ export const fetchTopINaturalistObservers = (
     place_id: placeId,
     d1: date,
     per_page: perPage,
+    order_by: orderBy
   });
 };
 

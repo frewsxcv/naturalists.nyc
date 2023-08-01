@@ -295,8 +295,17 @@ function App() {
             <Card className="bg-body-secondary">
               <Card.Body>
                 <h2>Top Observers</h2>
-                <p>Observers with most unique species in the past month</p>
-                <TopObservers />
+
+                <p>
+                  Observers with most unique species observed in NYC in the past
+                  month:
+                </p>
+                <TopObservers orderBy="species_count" />
+
+                <p>
+                  Observers with most observations in NYC in the past month:
+                </p>
+                <TopObservers orderBy="observation_count" />
               </Card.Body>
             </Card>
             <Card className="bg-body-secondary">
@@ -312,13 +321,17 @@ function App() {
   );
 }
 
-const TopObservers = () => {
+const TopObservers = ({
+  orderBy,
+}: {
+  orderBy: "observation_count" | "species_count";
+}) => {
   const [data, setData] = useState<INaturalistObserverResponse | null>(null);
   useEffect(() => {
-    fetchTopINaturalistObservers(nycPlaceId).then((response) => {
+    fetchTopINaturalistObservers(nycPlaceId, orderBy).then((response) => {
       setData(response);
     });
-  }, []);
+  }, [orderBy]);
   if (!data) {
     return <Spinner animation="border" />;
   }
@@ -327,7 +340,7 @@ const TopObservers = () => {
     return (
       <li key={i}>
         <a href={profileUrl}>{observer.user.name || observer.user.login}</a> (
-        {observer.species_count})
+        {observer[orderBy]})
       </li>
     );
   });
