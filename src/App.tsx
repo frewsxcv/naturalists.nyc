@@ -15,6 +15,7 @@ import {
   fetchINaturalistHistogram,
   fetchINaturalistSpeciesCounts,
   fetchTopINaturalistObservers,
+  getIsoDateOneMonthAgo,
 } from "./inaturalist";
 import { Alert, Nav, NavDropdown, Spinner } from "react-bootstrap";
 
@@ -327,25 +328,51 @@ const TopObservers = ({
   orderBy: "observation_count" | "species_count";
 }) => {
   const [data, setData] = useState<INaturalistObserverResponse | null>(null);
+  const date = getIsoDateOneMonthAgo();
   useEffect(() => {
-    fetchTopINaturalistObservers(nycPlaceId, orderBy).then((response) => {
+    fetchTopINaturalistObservers(nycPlaceId, orderBy, date).then((response) => {
       setData(response);
     });
-  }, [orderBy]);
+  }, [orderBy, date]);
   if (!data) {
     return <Spinner animation="border" />;
   }
   const topObservers = data.results.map((observer, i) => {
     const profileUrl = `https://www.inaturalist.org/people/${observer.user.id}`;
+    // https://www.inaturalist.org/observations?d1=2023-07-04&place_id=674&user_id=sus_scrofa&verifiable=any&view=species
+    let observationsLink: string;
+    let plural: string;
+    switch (orderBy) {
+      case "species_count":
+        observationsLink = `https://www.inaturalist.org/observations?d1=${date}&place_id=${nycPlaceId}&user_id=${observer.user.login}&hrank=species&view=species`;
+        plural = "species";
+        break;
+      case "observation_count":
+        observationsLink = `https://www.inaturalist.org/observations?d1=${date}&place_id=${nycPlaceId}&user_id=${observer.user.login}`;
+        plural = "observations";
+        break;
+      default:
+        assertUnreachable(orderBy);
+    }
     return (
       <li key={i}>
-        <a href={profileUrl}>{observer.user.name || observer.user.login}</a> (
-        {observer[orderBy]})
+        <a target="_blank" rel="noreferrer" href={profileUrl}>
+          {observer.user.name || observer.user.login}
+        </a>
+        &nbsp;(
+        <a href={observationsLink}>
+          {observer[orderBy]} {plural}
+        </a>
+        )
       </li>
     );
   });
   return <ol>{topObservers}</ol>;
 };
+
+function assertUnreachable(_: never): never {
+  throw new Error("Encountered unreachable code");
+}
 
 const landAcknowlegementLocalStorageKey = "land-acknowledgement-dismissed";
 const landAcknowlegementLocalStorageValue = "true";

@@ -56,7 +56,7 @@ const fetchINaturalistApi = async <T extends unknown>(
 };
 
 // Get date one month ago
-const getIsoDateOneMonthAgo = (): string => {
+export const getIsoDateOneMonthAgo = (): string => {
   // Get a date object for the current time
   const date = new Date();
 
@@ -111,10 +111,11 @@ export interface INaturalistObserverResponse {
 export const fetchTopINaturalistObservers = (
   placeId: number,
   orderBy: "observation_count" | "species_count",
-  date: string = getIsoDateOneMonthAgo(),
+  date: string,
   perPage = 10
 ): Promise<INaturalistObserverResponse> => {
   return fetchINaturalistApi("/observations/observers", {
+    verifiable: "true",
     place_id: placeId,
     d1: date,
     per_page: perPage,
