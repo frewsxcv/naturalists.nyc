@@ -339,7 +339,6 @@ const TopObservers = ({
   }
   const topObservers = data.results.map((observer, i) => {
     const profileUrl = `https://www.inaturalist.org/people/${observer.user.id}`;
-    // https://www.inaturalist.org/observations?d1=2023-07-04&place_id=674&user_id=sus_scrofa&verifiable=any&view=species
     let observationsLink: string;
     let plural: string;
     switch (orderBy) {
@@ -354,20 +353,46 @@ const TopObservers = ({
       default:
         assertUnreachable(orderBy);
     }
+    const imageSize = "30px";
+    const profileImage = observer.user.icon_url ? (
+      <img
+        src={observer.user.icon_url}
+        alt={`${observer.user.name} avatar`}
+        style={{
+          objectFit: "cover",
+          width: imageSize,
+          height: imageSize,
+        }}
+      />
+    ) : (
+      <div
+        style={{
+          verticalAlign: "middle",
+          display: "inline-block",
+          backgroundColor: "var(--bs-body-color)",
+          objectFit: "cover",
+          width: imageSize,
+          height: imageSize,
+        }}
+      ></div>
+    );
     return (
       <li key={i}>
-        <a target="_blank" rel="noreferrer" href={profileUrl}>
-          {observer.user.name || observer.user.login}
-        </a>
-        &nbsp;(
-        <a href={observationsLink}>
-          {observer[orderBy]} {plural}
-        </a>
+        <div className="border">
+          <a target="_blank" rel="noreferrer" href={profileUrl}>
+            {profileImage}
+            <span className="ms-2">{observer.user.name || observer.user.login}</span>
+          </a>
+          &nbsp;(
+          <a href={observationsLink}>
+            {observer[orderBy]} {plural}
+          </a>
         )
+        </div>
       </li>
     );
   });
-  return <ol>{topObservers}</ol>;
+  return <ol className="d-flex flex-column gap-1">{topObservers}</ol>;
 };
 
 function assertUnreachable(_: never): never {
