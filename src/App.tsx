@@ -203,22 +203,24 @@ const Charts = () => {
 
   const taxaSections = taxa.map((taxon, i) => {
     return (
-      <Card className="bg-body-tertiary" key={i}>
-        <Card.Header>
-          {taxon.taxon.preferred_common_name} (<em>{taxon.taxon.name}</em>)
-        </Card.Header>
-        <Card.Body>
-          <img
-            src={taxon.taxon.default_photo.square_url}
-            alt={taxon.taxon.name}
-          />
-          <BarChart taxonId={taxon.taxon.id} />
-        </Card.Body>
-      </Card>
+      <Col xs={12} md={6}>
+        <Card className="bg-body-tertiary" key={i}>
+          <Card.Header>
+            {taxon.taxon.preferred_common_name} (<em>{taxon.taxon.name}</em>)
+          </Card.Header>
+          <Card.Body>
+            <img
+              src={taxon.taxon.default_photo.square_url}
+              alt={taxon.taxon.name}
+            />
+            <BarChart taxonId={taxon.taxon.id} />
+          </Card.Body>
+        </Card>
+      </Col>
     );
   });
 
-  return <div className="d-flex flex-column row-gap-2">{taxaSections}</div>;
+  return <Row className="row-gap-3">{taxaSections}</Row>;
 };
 
 function App() {
@@ -235,7 +237,7 @@ function App() {
         </Col>
       </Row>
       <Row className="gx-3 row-gap-3">
-        <Col xs={12} md={6}>
+        <Col xs={12} md={6} xl={4}>
           <div className="d-flex flex-column gap-3">
             <Card className="bg-body-secondary">
               <Card.Body>
@@ -288,7 +290,7 @@ function App() {
             </Card>
           </div>
         </Col>
-        <Col xs={12} md={6}>
+        <Col xs={12} md={6} xl={4}>
           <div className="d-flex flex-column gap-3">
             <Card className="bg-body-secondary">
               <Card.Body>
@@ -306,13 +308,15 @@ function App() {
                 <TopObservers orderBy="observation_count" />
               </Card.Body>
             </Card>
-            <Card className="bg-body-secondary">
-              <Card.Body>
-                <h2>Active species</h2>
-                <Charts />
-              </Card.Body>
-            </Card>
           </div>
+        </Col>
+        <Col xs={12} xl={4}>
+          <Card className="bg-body-secondary">
+            <Card.Body>
+              <h2>Active species</h2>
+              <Charts />
+            </Card.Body>
+          </Card>
         </Col>
       </Row>
     </Container>
