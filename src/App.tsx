@@ -89,10 +89,8 @@ const BarChart = ({ taxonId }: { taxonId: number }) => {
     if (!data) {
       return;
     }
-    const margin = { top: 0, right: 0, bottom: 0, left: 0 };
-    // const margin = { top: 20, right: 20, bottom: 30, left: 40 };
-    const width = 500 - margin.left - margin.right;
-    const height = 50 - margin.top - margin.bottom;
+    const width = 500;
+    const height = 50;
     const maxCount = Math.max(...data.map((d) => d.count));
 
     const x = d3
@@ -109,8 +107,7 @@ const BarChart = ({ taxonId }: { taxonId: number }) => {
 
     const svg = d3
       .select(svgRef.current)
-      .attr("width", width + margin.left + margin.right)
-      .attr("height", height + margin.top + margin.bottom);
+      .attr("viewBox", `0 0 ${width} ${height}`);
 
     svg
       .selectAll(".bar")
