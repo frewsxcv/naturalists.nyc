@@ -203,7 +203,7 @@ const Charts = () => {
 
   const taxaSections = taxa.map((taxon, i) => {
     return (
-      <Col xs={12} md={6}>
+      <Col xs={12} md={6} lg={12}>
         <Card className="bg-body-tertiary" key={i}>
           <Card.Header>
             {taxon.taxon.preferred_common_name} (<em>{taxon.taxon.name}</em>)
