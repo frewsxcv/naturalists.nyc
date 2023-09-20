@@ -142,7 +142,7 @@ export const fetchINaturalistHistogram = (
 export const fetchINaturalistSpeciesCounts = (
   placeId: number,
   month: number,
-  perPage = 10
+  perPage = 200
 ): Promise<SpeciesCountsResponse> =>
   fetchINaturalistApi("/observations/species_counts", {
     place_id: placeId,
