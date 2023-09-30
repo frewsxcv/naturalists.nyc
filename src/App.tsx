@@ -266,17 +266,7 @@ function App() {
             </Card>
             <Card className="bg-body-secondary">
               <Card.Body>
-                <h2>
-                  <Icon icon="quick_reference_all" />
-                  &nbsp;Guides
-                </h2>
-                <ul>
-                  <li>
-                    <a href="https://www.amnh.org/content/download/35179/518842/file/ASeasonalGuidetoNewYorkCitysInvertebrates.pdf">
-                      A Seasonal Guide to New York City's Invertebrates
-                    </a>
-                  </li>
-                </ul>
+                <Guides />
               </Card.Body>
             </Card>
             <Card className="bg-body-secondary">
@@ -322,6 +312,28 @@ function App() {
     </Container>
   );
 }
+
+const Papers = () => {
+
+};
+
+const Guides = () => {
+  return (
+    <>
+      <h2>
+        <Icon icon="quick_reference_all" />
+        &nbsp;Guides
+      </h2>
+      <ul>
+        <li>
+          <a href="https://www.amnh.org/content/download/35179/518842/file/ASeasonalGuidetoNewYorkCitysInvertebrates.pdf">
+            A Seasonal Guide to New York City's Invertebrates
+          </a>
+        </li>
+      </ul>
+    </>
+  );
+};
 
 const TopObservers = ({
   orderBy,
@@ -382,13 +394,15 @@ const TopObservers = ({
         <div className="border">
           <a target="_blank" rel="noreferrer" href={profileUrl}>
             {profileImage}
-            <span className="ms-2">{observer.user.name || observer.user.login}</span>
+            <span className="ms-2">
+              {observer.user.name || observer.user.login}
+            </span>
           </a>
           &nbsp;(
           <a href={observationsLink}>
             {observer[orderBy]} {plural}
           </a>
-        )
+          )
         </div>
       </li>
     );

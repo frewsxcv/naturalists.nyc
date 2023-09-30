@@ -1,3 +1,5 @@
+import {Mutex, MutexInterface, Semaphore, SemaphoreInterface, withTimeout} from 'async-mutex';
+
 const buildUrl = (url: string, params: Record<string, string | number>) => {
   const urlObj = new URL(url);
   Object.entries(params).forEach(([key, value]) => {
@@ -9,50 +11,26 @@ const buildUrl = (url: string, params: Record<string, string | number>) => {
 const buildINaturalistApiUrl = (
   path: string,
   params: Record<string, string | number>
-) => buildUrl(`https://api.inaturalist.org/v1${path}`, params);
+) => buildUrl(`https://naturalists-nyc.uc.r.appspot.com${path}`, params);
+// ) => buildUrl(`http://localhost:8080${path}`, params);
 
 // https://github.com/inaturalist/iNaturalistAPI/issues/391
 //
 // const fetchHeaders = { "User-Agent": "naturalists.nyc" };
 
-type RequestStatus =
-  | { status: "running" }
-  | { status: "idle"; completionTime: Date };
-let requestStatus: RequestStatus = {
-  status: "idle",
-  completionTime: new Date(1970, 0, 1),
-};
-
-const iNaturalistRateLimitMilliseconds = 2000;
-
-// Throttle requests to no more than 1 request every 2 seconds
-const shouldPostponeRequest = (): boolean => {
-  return (
-    requestStatus.status === "running" ||
-    new Date().getTime() - requestStatus.completionTime.getTime() <
-      iNaturalistRateLimitMilliseconds
-  );
-};
+const mutex = new Mutex();
 
 const fetchINaturalistApi = async <T extends unknown>(
   path: string,
   params: Record<string, string | number>
 ): Promise<T> => {
-  if (shouldPostponeRequest()) {
-    return new Promise((resolve) =>
-      setTimeout(() => {
-        resolve(fetchINaturalistApi(path, params));
-      }, iNaturalistRateLimitMilliseconds)
-    );
-  }
-  requestStatus = { status: "running" };
-  const url = buildINaturalistApiUrl(path, params);
-  const response = await fetch(url, {
-    // headers: fetchHeaders,
-  }).finally(() => {
-    requestStatus = { status: "idle", completionTime: new Date() };
-  });
-  return await response.json();
+  return mutex.runExclusive(async () => {
+    const url = buildINaturalistApiUrl(path, params);
+    const response = await fetch(url, {
+      // headers: fetchHeaders,
+    });
+    return await response.json();
+  })
 };
 
 // Get date one month ago
