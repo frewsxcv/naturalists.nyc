@@ -1,4 +1,4 @@
-import {Mutex, MutexInterface, Semaphore, SemaphoreInterface, withTimeout} from 'async-mutex';
+import { Mutex } from "async-mutex";
 
 const buildUrl = (url: string, params: Record<string, string | number>) => {
   const urlObj = new URL(url);
@@ -30,7 +30,7 @@ const fetchINaturalistApi = async <T extends unknown>(
       // headers: fetchHeaders,
     });
     return await response.json();
-  })
+  });
 };
 
 // Get date one month ago
@@ -97,7 +97,7 @@ export const fetchTopINaturalistObservers = (
     place_id: placeId,
     d1: date,
     per_page: perPage,
-    order_by: orderBy
+    order_by: orderBy,
   });
 };
 

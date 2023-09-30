@@ -313,10 +313,6 @@ function App() {
   );
 }
 
-const Papers = () => {
-
-};
-
 const Guides = () => {
   return (
     <>
