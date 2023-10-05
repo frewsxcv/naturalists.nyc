@@ -18,20 +18,22 @@ const buildINaturalistApiUrl = (
 //
 // const fetchHeaders = { "User-Agent": "naturalists.nyc" };
 
-const mutex = new Mutex();
+const fetchINaturalistApi = (() => {
+  const mutex = new Mutex();
 
-const fetchINaturalistApi = async <T extends unknown>(
-  path: string,
-  params: Record<string, string | number>
-): Promise<T> => {
-  return mutex.runExclusive(async () => {
-    const url = buildINaturalistApiUrl(path, params);
-    const response = await fetch(url, {
-      // headers: fetchHeaders,
+  return async <T extends unknown>(
+    path: string,
+    params: Record<string, string | number>
+  ): Promise<T> => {
+    return mutex.runExclusive(async () => {
+      const url = buildINaturalistApiUrl(path, params);
+      const response = await fetch(url, {
+        // headers: fetchHeaders,
+      });
+      return await response.json();
     });
-    return await response.json();
-  });
-};
+  };
+})();
 
 // Get date one month ago
 export const getIsoDateOneMonthAgo = (): string => {
