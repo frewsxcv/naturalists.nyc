@@ -18,12 +18,53 @@ const buildINaturalistApiUrl = (
 //
 // const fetchHeaders = { "User-Agent": "naturalists.nyc" };
 
+const requestParams = {
+  "/observations/species_counts": (params: {
+    placeId: number;
+    month: number;
+    perPage: number;
+  }) => {
+    return {
+      place_id: params.placeId,
+      preferred_place_id: params.placeId,
+      month: params.month,
+      captive: "false",
+      per_page: params.perPage,
+    };
+  },
+  "/observations/histogram": (params: { taxonId: number; placeId: number }) => {
+    return {
+      verifiable: "true",
+      taxon_id: params.taxonId,
+      place_id: params.placeId,
+      preferred_place_id: params.placeId,
+      locale: "en",
+      date_field: "observed",
+      interval: "week_of_year",
+    };
+  },
+  "/observations/observers": (params: {
+    placeId: number;
+    date: string;
+    perPage: number;
+    orderBy: string;
+  }) => {
+    return {
+      verifiable: "true",
+      place_id: params.placeId,
+      d1: params.date,
+      per_page: params.perPage,
+      order_by: params.orderBy,
+    };
+  },
+};
+
 const fetchINaturalistApi = (() => {
   const mutex = new Mutex();
 
-  return async <T extends unknown>(
-    path: string,
-    params: Record<string, string | number>
+  return async <T extends unknown, Path extends keyof typeof requestParams>(
+    path: Path,
+    params: Parameters<(typeof requestParams)[Path]>[0]
   ): Promise<T> => {
     return mutex.runExclusive(async () => {
       const url = buildINaturalistApiUrl(path, params);
@@ -92,18 +133,19 @@ export interface INaturalistObserverResponse {
   results: INaturalistObserver[];
 }
 
+type OrderBy = "observation_count" | "species_count";
+
 export const fetchTopINaturalistObservers = (
   placeId: number,
-  orderBy: "observation_count" | "species_count",
+  orderBy: OrderBy,
   date: string,
   perPage = 10
 ): Promise<INaturalistObserverResponse> => {
   return fetchINaturalistApi("/observations/observers", {
-    verifiable: "true",
-    place_id: placeId,
-    d1: date,
-    per_page: perPage,
-    order_by: orderBy,
+    placeId,
+    date,
+    perPage,
+    orderBy,
   });
 };
 
@@ -112,13 +154,8 @@ export const fetchINaturalistHistogram = (
   placeId: number
 ): Promise<HistogramResponse> =>
   fetchINaturalistApi("/observations/histogram", {
-    verifiable: "true",
-    taxon_id: taxonId,
-    place_id: placeId,
-    preferred_place_id: placeId,
-    locale: "en",
-    date_field: "observed",
-    interval: "week_of_year",
+    taxonId,
+    placeId,
   });
 
 // TODO: Rather than doing this one month at a time, do a couple weeks before
@@ -129,11 +166,9 @@ export const fetchINaturalistSpeciesCounts = (
   perPage = 200
 ): Promise<SpeciesCountsResponse> =>
   fetchINaturalistApi("/observations/species_counts", {
-    place_id: placeId,
-    preferred_place_id: placeId,
+    placeId,
     month,
-    captive: "false",
-    per_page: perPage,
+    perPage,
   });
 
 export interface HistogramResponse {
