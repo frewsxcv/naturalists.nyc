@@ -53,6 +53,7 @@ const youTubeVideoUrls = [
   "https://www.youtube.com/watch?v=omunvp1W0Ro",
   "https://www.youtube.com/watch?v=rd77pXGJE3s",
   "https://www.youtube.com/watch?v=wZg3rTNpHPw",
+  "https://www.youtube.com/watch?v=Kb7OVCBXVBo", // NYBG: Urban Effects on Tree Growth in the Vicinity of New York City - Dr. Jillian Gregg - NYC EcoFlora
   "https://www.youtube.com/watch?v=AVPkBv-QQ6U", // Crime Pays But Botany Doesn't: A Cactus Grows in Brooklyn
   "https://www.youtube.com/watch?v=6wIdCTn2lZY", // Crime Pays But Botany Doesn't: Botany by Boat in New York City
 ];
