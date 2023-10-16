@@ -18,7 +18,34 @@ const buildINaturalistApiUrl = (
 //
 // const fetchHeaders = { "User-Agent": "naturalists.nyc" };
 
-const requestParams = {
+type Path =
+  | "/observations/species_counts"
+  | "/observations/histogram"
+  | "/observations/observers";
+
+type Params = {
+  "/observations/species_counts": {
+    placeId: number;
+    month: number;
+    perPage: number;
+  };
+  "/observations/histogram": {
+    taxonId: number;
+    placeId: number;
+  };
+  "/observations/observers": {
+    placeId: number;
+    date: string;
+    perPage: number;
+    orderBy: string;
+  };
+};
+
+type RequestParams = {
+  [P in Path]: (params: Params[P]) => object;
+};
+
+const requestParams: RequestParams = {
   "/observations/species_counts": (params: {
     placeId: number;
     month: number;
