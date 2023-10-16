@@ -46,11 +46,7 @@ type RequestParams = {
 };
 
 const requestParams: RequestParams = {
-  "/observations/species_counts": (params: {
-    placeId: number;
-    month: number;
-    perPage: number;
-  }) => {
+  "/observations/species_counts": (params) => {
     return {
       place_id: params.placeId,
       preferred_place_id: params.placeId,
@@ -59,7 +55,7 @@ const requestParams: RequestParams = {
       per_page: params.perPage,
     };
   },
-  "/observations/histogram": (params: { taxonId: number; placeId: number }) => {
+  "/observations/histogram": (params) => {
     return {
       verifiable: "true",
       taxon_id: params.taxonId,
@@ -70,12 +66,7 @@ const requestParams: RequestParams = {
       interval: "week_of_year",
     };
   },
-  "/observations/observers": (params: {
-    placeId: number;
-    date: string;
-    perPage: number;
-    orderBy: string;
-  }) => {
+  "/observations/observers": (params) => {
     return {
       verifiable: "true",
       place_id: params.placeId,
