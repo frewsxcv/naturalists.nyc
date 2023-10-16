@@ -19,8 +19,11 @@ const buildINaturalistApiUrl = (
 // const fetchHeaders = { "User-Agent": "naturalists.nyc" };
 
 type Path =
+  /** Top species in an area */
   | "/observations/species_counts"
+  /** Histogram per species */
   | "/observations/histogram"
+  /** Top observers */
   | "/observations/observers";
 
 type Params = {
@@ -39,6 +42,15 @@ type Params = {
     perPage: number;
     orderBy: string;
   };
+};
+
+/** Calculate days in seconds */
+const daysToSeconds = (days: number): string => "" + days * 24 * 60 * 60;
+
+const cacheTtl: Record<Path, string> = {
+  "/observations/species_counts": daysToSeconds(1),
+  "/observations/histogram": daysToSeconds(30),
+  "/observations/observers": daysToSeconds(1),
 };
 
 type RequestParams = {
@@ -87,7 +99,9 @@ const fetchINaturalistApi = (() => {
     return mutex.runExclusive(async () => {
       const url = buildINaturalistApiUrl(path, requestParams[path](params));
       const response = await fetch(url, {
-        // headers: fetchHeaders,
+        headers: {
+          "X-CACHE-TTL": cacheTtl[path]
+        },
       });
       return await response.json();
     });
