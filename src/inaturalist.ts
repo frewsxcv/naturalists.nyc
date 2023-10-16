@@ -80,9 +80,9 @@ const requestParams: RequestParams = {
 const fetchINaturalistApi = (() => {
   const mutex = new Mutex();
 
-  return async <T extends unknown, Path extends keyof typeof requestParams>(
-    path: Path,
-    params: Parameters<(typeof requestParams)[Path]>[0]
+  return async <T extends unknown, P extends Path>(
+    path: P,
+    params: Parameters<RequestParams[P]>[0]
   ): Promise<T> => {
     return mutex.runExclusive(async () => {
       const url = buildINaturalistApiUrl(path, params);
