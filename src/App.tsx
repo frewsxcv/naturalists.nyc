@@ -12,9 +12,7 @@ import {
   HistogramResponse,
   INaturalistObserverResponse,
   Taxon,
-  fetchINaturalistHistogram,
-  fetchINaturalistSpeciesCounts,
-  fetchTopINaturalistObservers,
+  fetchINaturalistApi,
   getIsoDateOneMonthAgo,
 } from "./inaturalist";
 import { Alert, Nav, NavDropdown, Spinner } from "react-bootstrap";
@@ -77,7 +75,10 @@ const BarChart = ({ taxonId }: { taxonId: number }) => {
   const [data, setData] = useState<HistogramData | null>(null);
 
   useEffect(() => {
-    fetchINaturalistHistogram(taxonId, nycPlaceId)
+    fetchINaturalistApi("/observations/histogram", {
+      taxonId,
+      placeId: nycPlaceId,
+    })
       .then((response) => {
         const data = histogramResponseToHistogramData(response);
         setData(data);
@@ -192,7 +193,13 @@ const Charts = () => {
   const [taxa, setTaxa] = useState<Taxon[]>([]);
 
   useEffect(() => {
-    fetchINaturalistSpeciesCounts(nycPlaceId, getCurrentMonthOfYear()).then(
+    // TODO: Rather than doing this one month at a time, do a couple weeks before
+    //       and after the current date, which might require two requests.
+    fetchINaturalistApi("/observations/species_counts", {
+      month: getCurrentMonthOfYear(),
+      placeId: nycPlaceId,
+      perPage: 30,
+    }).then(
       (response) => {
         setTaxa(response.results);
       }
@@ -341,7 +348,12 @@ const TopObservers = ({
   const [data, setData] = useState<INaturalistObserverResponse | null>(null);
   const date = getIsoDateOneMonthAgo();
   useEffect(() => {
-    fetchTopINaturalistObservers(nycPlaceId, orderBy, date).then((response) => {
+    fetchINaturalistApi("/observations/observers", {
+      placeId: nycPlaceId,
+      date,
+      orderBy,
+      perPage: 10,
+    }).then((response) => {
       setData(response);
     });
   }, [orderBy, date]);

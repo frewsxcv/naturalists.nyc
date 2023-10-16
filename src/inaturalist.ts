@@ -40,8 +40,16 @@ type Params = {
     placeId: number;
     date: string;
     perPage: number;
-    orderBy: string;
+    orderBy: OrderBy;
   };
+};
+
+type OrderBy = "observation_count" | "species_count";
+
+type Responses = {
+  "/observations/observers": INaturalistObserverResponse;
+  "/observations/histogram": HistogramResponse;
+  "/observations/species_counts": SpeciesCountsResponse;
 };
 
 /** Calculate days in seconds */
@@ -89,18 +97,18 @@ const requestParams: RequestParams = {
   },
 };
 
-const fetchINaturalistApi = (() => {
+export const fetchINaturalistApi = (() => {
   const mutex = new Mutex();
 
-  return async <T extends unknown, P extends Path>(
+  return async <P extends Path>(
     path: P,
     params: Params[P]
-  ): Promise<T> => {
+  ): Promise<Responses[P]> => {
     return mutex.runExclusive(async () => {
       const url = buildINaturalistApiUrl(path, requestParams[path](params));
       const response = await fetch(url, {
         headers: {
-          "X-CACHE-TTL": cacheTtl[path]
+          "X-CACHE-TTL": cacheTtl[path],
         },
       });
       return await response.json();
@@ -164,44 +172,6 @@ export interface INaturalistObserverResponse {
   per_page: number;
   results: INaturalistObserver[];
 }
-
-type OrderBy = "observation_count" | "species_count";
-
-export const fetchTopINaturalistObservers = (
-  placeId: number,
-  orderBy: OrderBy,
-  date: string,
-  perPage = 10
-): Promise<INaturalistObserverResponse> => {
-  return fetchINaturalistApi("/observations/observers", {
-    placeId,
-    date,
-    perPage,
-    orderBy,
-  });
-};
-
-export const fetchINaturalistHistogram = (
-  taxonId: number,
-  placeId: number
-): Promise<HistogramResponse> =>
-  fetchINaturalistApi("/observations/histogram", {
-    taxonId,
-    placeId,
-  });
-
-// TODO: Rather than doing this one month at a time, do a couple weeks before
-//       and after the current date, which might require two requests.
-export const fetchINaturalistSpeciesCounts = (
-  placeId: number,
-  month: number,
-  perPage = 200
-): Promise<SpeciesCountsResponse> =>
-  fetchINaturalistApi("/observations/species_counts", {
-    placeId,
-    month,
-    perPage,
-  });
 
 export interface HistogramResponse {
   total_results: number;
