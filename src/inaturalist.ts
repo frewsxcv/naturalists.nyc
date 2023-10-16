@@ -42,7 +42,7 @@ type Params = {
 };
 
 type RequestParams = {
-  [P in Path]: (params: Params[P]) => object;
+  [P in Path]: (params: Params[P]) => Record<string, string | number>;
 };
 
 const requestParams: RequestParams = {
@@ -82,10 +82,10 @@ const fetchINaturalistApi = (() => {
 
   return async <T extends unknown, P extends Path>(
     path: P,
-    params: Parameters<RequestParams[P]>[0]
+    params: Params[P]
   ): Promise<T> => {
     return mutex.runExclusive(async () => {
-      const url = buildINaturalistApiUrl(path, params);
+      const url = buildINaturalistApiUrl(path, requestParams[path](params));
       const response = await fetch(url, {
         // headers: fetchHeaders,
       });
