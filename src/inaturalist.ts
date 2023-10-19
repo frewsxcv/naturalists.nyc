@@ -11,7 +11,7 @@ const buildUrl = (url: string, params: Record<string, string | number>) => {
 const buildINaturalistApiUrl = (
   path: string,
   params: Record<string, string | number>
-) => buildUrl(`https://naturalists-nyc.uc.r.appspot.com${path}`, params);
+) => buildUrl(`https://default-20231018t204727-v3pycdbs6a-uc.a.run.app${path}`, params);
 // ) => buildUrl(`http://localhost:8080${path}`, params);
 
 // https://github.com/inaturalist/iNaturalistAPI/issues/391
