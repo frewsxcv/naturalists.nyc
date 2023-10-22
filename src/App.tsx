@@ -54,6 +54,7 @@ const youTubeVideoUrls = [
   "https://www.youtube.com/watch?v=Kb7OVCBXVBo", // NYBG: Urban Effects on Tree Growth in the Vicinity of New York City - Dr. Jillian Gregg - NYC EcoFlora
   "https://www.youtube.com/watch?v=AVPkBv-QQ6U", // Crime Pays But Botany Doesn't: A Cactus Grows in Brooklyn
   "https://www.youtube.com/watch?v=6wIdCTn2lZY", // Crime Pays But Botany Doesn't: Botany by Boat in New York City
+  "https://www.youtube.com/watch?v=GszzRHZck3o", // NYC H2O: Urban Lichens a talk by James Lendemer Ph.D.
 ];
 
 const histogramResponseToHistogramData = (
