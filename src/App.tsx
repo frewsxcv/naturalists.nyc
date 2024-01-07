@@ -153,9 +153,12 @@ const getCurrentWeekOfYear = (): number => {
   return d3.timeWeek.count(d3.timeYear(new Date()), new Date()) + 1;
 };
 
+type Month = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
+
 /** Is 1-indexed */
-const getCurrentMonthOfYear = (): number => {
-  return d3.timeMonth.count(d3.timeYear(new Date()), new Date()) + 1;
+const getCurrentMonthOfYear = (): Month => {
+  // FIXME: remove casting
+  return (d3.timeMonth.count(d3.timeYear(new Date()), new Date()) + 1) as Month;
 };
 
 const youTubeVideoUrlPrefix = "https://www.youtube.com/watch?v=";

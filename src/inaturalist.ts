@@ -1,6 +1,6 @@
 import { Mutex } from "async-mutex";
 
-const buildUrl = (url: string, params: Record<string, string | number | undefined>) => {
+const buildUrl = (url: string, params: Record<string, string | number | boolean | undefined>) => {
   const urlObj = new URL(url);
   Object.entries(params).forEach(([key, value]) => {
     urlObj.searchParams.set(key, value === undefined ? "" : value.toString());
@@ -10,7 +10,7 @@ const buildUrl = (url: string, params: Record<string, string | number | undefine
 
 const buildINaturalistApiUrl = <P extends Endpoint>(
   path: P,
-  params: Record<string, string | number | undefined>
+  params: Record<string, string | number | boolean | undefined>
 ) => buildUrl(`https://default-20231018t204727-v3pycdbs6a-uc.a.run.app${path}`, params);
 // ) => buildUrl(`http://localhost:8080${path}`, params);
 
@@ -23,24 +23,28 @@ type Endpoint = keyof EndpointsAndParams;
 type EndpointsAndParams = {
   /** Top species in an area */
   "/observations/species_counts": {
-    placeId?: number;
-    month?: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11;
-    perPage?: number;
-    order?: "asc" | "desc";
     captive?: string;
+    d2?: string; // FIXME: should there be a date time?
+    hrank?: string;
+    month?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
+    order?: "asc" | "desc";
+    perPage?: number; // FIXME: integer should be less than 500
+    placeId?: number;
+    verifiable?: boolean;
+    year?: string; // FIXME: Should be string | string[]
   };
   /** Histogram per species */
   "/observations/histogram": {
-    taxonId: number;
-    placeId: number;
-    verifiable: string;
+    taxonId?: number;
+    placeId?: number;
+    verifiable?: string;
   };
   /** Top observers */
   "/observations/observers": {
-    placeId: number;
-    date: string;
-    perPage: number;
-    orderBy: OrderBy;
+    placeId?: number;
+    date?: string;
+    perPage?: number;
+    orderBy?: OrderBy;
   };
 };
 
@@ -62,20 +66,22 @@ const cacheTtl: Record<Endpoint, string> = {
 };
 
 type RequestParamsBuilder = {
-  [E in Endpoint]: (params: EndpointsAndParams[E]) => Record<string, string | number | undefined>;
+  [E in Endpoint]: (params: EndpointsAndParams[E]) => Record<string, string | number | boolean | undefined>;
 };
-
-type RequestParamsValue<P extends Endpoint> = EndpointsAndParams[P][keyof EndpointsAndParams[P]];
 
 const requestParams: RequestParamsBuilder = {
   "/observations/species_counts": (params) => {
     return {
-      place_id: params.placeId,
-      preferred_place_id: params.placeId,
-      month: params.month,
       captive: "false",
-      per_page: params.perPage,
+      d2: params.d2,
+      hrank: params.hrank,
+      month: params.month,
       order: params.order,
+      per_page: params.perPage,
+      place_id: params.placeId,
+      preferred_place_id: params.placeId, // TODO: what is this
+      verifiable: params.verifiable,
+      year: params.year,
     };
   },
   "/observations/histogram": (params) => {
