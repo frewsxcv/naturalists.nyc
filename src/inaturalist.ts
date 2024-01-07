@@ -1,16 +1,16 @@
 import { Mutex } from "async-mutex";
 
-const buildUrl = (url: string, params: Record<string, string | number>) => {
+const buildUrl = (url: string, params: Record<string, string | number | undefined>) => {
   const urlObj = new URL(url);
   Object.entries(params).forEach(([key, value]) => {
-    urlObj.searchParams.set(key, value.toString());
+    urlObj.searchParams.set(key, value === undefined ? "" : value.toString());
   });
   return urlObj;
 };
 
-const buildINaturalistApiUrl = (
-  path: string,
-  params: Record<string, string | number>
+const buildINaturalistApiUrl = <P extends Endpoint>(
+  path: P,
+  params: Record<string, string | number | undefined>
 ) => buildUrl(`https://default-20231018t204727-v3pycdbs6a-uc.a.run.app${path}`, params);
 // ) => buildUrl(`http://localhost:8080${path}`, params);
 
@@ -18,24 +18,24 @@ const buildINaturalistApiUrl = (
 //
 // const fetchHeaders = { "User-Agent": "naturalists.nyc" };
 
-type Path =
-  /** Top species in an area */
-  | "/observations/species_counts"
-  /** Histogram per species */
-  | "/observations/histogram"
-  /** Top observers */
-  | "/observations/observers";
+type Endpoint = keyof EndpointsAndParams;
 
-type Params = {
+type EndpointsAndParams = {
+  /** Top species in an area */
   "/observations/species_counts": {
-    placeId: number;
-    month: number;
-    perPage: number;
+    placeId?: number;
+    month?: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11;
+    perPage?: number;
+    order?: "asc" | "desc";
+    captive?: string;
   };
+  /** Histogram per species */
   "/observations/histogram": {
     taxonId: number;
     placeId: number;
+    verifiable: string;
   };
+  /** Top observers */
   "/observations/observers": {
     placeId: number;
     date: string;
@@ -55,17 +55,19 @@ type Responses = {
 /** Calculate days in seconds */
 const daysToSeconds = (days: number): string => "" + days * 24 * 60 * 60;
 
-const cacheTtl: Record<Path, string> = {
+const cacheTtl: Record<Endpoint, string> = {
   "/observations/species_counts": daysToSeconds(1),
   "/observations/histogram": daysToSeconds(30),
   "/observations/observers": daysToSeconds(1),
 };
 
-type RequestParams = {
-  [P in Path]: (params: Params[P]) => Record<string, string | number>;
+type RequestParamsBuilder = {
+  [E in Endpoint]: (params: EndpointsAndParams[E]) => Record<string, string | number | undefined>;
 };
 
-const requestParams: RequestParams = {
+type RequestParamsValue<P extends Endpoint> = EndpointsAndParams[P][keyof EndpointsAndParams[P]];
+
+const requestParams: RequestParamsBuilder = {
   "/observations/species_counts": (params) => {
     return {
       place_id: params.placeId,
@@ -73,6 +75,7 @@ const requestParams: RequestParams = {
       month: params.month,
       captive: "false",
       per_page: params.perPage,
+      order: params.order,
     };
   },
   "/observations/histogram": (params) => {
@@ -100,9 +103,9 @@ const requestParams: RequestParams = {
 export const fetchINaturalistApi = (() => {
   const mutex = new Mutex();
 
-  return async <P extends Path>(
+  return async <P extends Endpoint>(
     path: P,
-    params: Params[P]
+    params: EndpointsAndParams[P]
   ): Promise<Responses[P]> => {
     return mutex.runExclusive(async () => {
       const url = buildINaturalistApiUrl(path, requestParams[path](params));
