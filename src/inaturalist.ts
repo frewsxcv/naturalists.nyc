@@ -16,8 +16,8 @@ const buildINaturalistApiUrl = <P extends Endpoint>(
   params: Record<string, string | number | boolean | undefined>
 ) =>
   buildUrl(
-    `https://api.inaturalist.org/v1${path}`,
-    // `https://default-20231018t204727-v3pycdbs6a-uc.a.run.app${path}`,
+    // `https://api.inaturalist.org/v1${path}`,
+    `https://default-20231018t204727-v3pycdbs6a-uc.a.run.app${path}`,
     params
   );
 // ) => buildUrl(`http://localhost:8080${path}`, params);
