@@ -2,46 +2,41 @@ import * as inaturalist from "./src/inaturalist.ts";
 
 const nycPlaceId = 674;
 
-async function fetchSpeciesCountsUpThroughDate(date: Date, taxonIds: number[]) {
-  // TODO: paginate
+async function* fetchSpeciesCountsUpThroughDate(
+  date: Date,
+  taxonIds: number[]
+) {
   const oneYearAgoFromDate = new Date(date);
   dateSubtractYear(oneYearAgoFromDate);
-  const response = await inaturalist.fetchINaturalistApi(
-    "/observations/species_counts",
-    {
-      order: "asc",
-      placeId: nycPlaceId,
-      captive: false,
-      d1: formattedDate(oneYearAgoFromDate),
-      d2: formattedDate(date),
-      perPage: 500,
-      hrank: "genus",
-      taxonId: taxonIds.join(","),
-    }
-  );
-  return response.results;
+  yield* inaturalist.fetchPaginate("/observations/species_counts", {
+    order: "asc",
+    placeId: nycPlaceId,
+    captive: false,
+    d1: formattedDate(oneYearAgoFromDate),
+    d2: formattedDate(date),
+    perPage: 500,
+    hrank: "genus",
+    taxonId: taxonIds.join(","),
+  });
 }
 
-async function fetchSpeciesCountsOnDate(date: Date) {
-  // TODO: paginate
-  const response = await inaturalist.fetchINaturalistApi(
-    "/observations/species_counts",
-    {
-      order: "asc",
-      placeId: nycPlaceId,
-      verifiable: true,
-      d1: formattedDate(date),
-      d2: formattedDate(date),
-      perPage: 500,
-      hrank: "genus",
-    }
-  );
-  return response.results;
+async function* fetchSpeciesCountsOnDate(date: Date) {
+  yield* inaturalist.fetchPaginate("/observations/species_counts", {
+    order: "asc",
+    placeId: nycPlaceId,
+    verifiable: true,
+    d1: formattedDate(date),
+    d2: formattedDate(date),
+    perPage: 500,
+    hrank: "genus",
+  });
 }
 
-async function fetchTaxonIdsOnDate(date: Date) {
-  const speciesCounts = await fetchSpeciesCountsOnDate(date);
-  return speciesCounts.map((speciesCount) => speciesCount.taxon.id);
+async function* fetchTaxonIdsOnDate(date: Date) {
+  const speciesCounts = fetchSpeciesCountsOnDate(date);
+  for await (const speciesCount of speciesCounts) {
+    yield speciesCount.taxon.id;
+  }
 }
 
 const dateSubtractDay = (d: Date) => d.setDate(d.getDate() - 1);
@@ -54,9 +49,11 @@ const formattedDate = (d: Date) =>
 let date = new Date();
 while (true) {
   console.log(date);
-  const taxonIds = await fetchTaxonIdsOnDate(date);
+  const taxonIds = await arrayAsyncFrom(fetchTaxonIdsOnDate(date));
   dateSubtractDay(date);
-  const prevResults = await fetchSpeciesCountsUpThroughDate(date, taxonIds);
+  const prevResults = await arrayAsyncFrom(
+    fetchSpeciesCountsUpThroughDate(date, taxonIds)
+  );
   for (const taxonId of taxonIds) {
     if (!prevResultsContainsTaxonId(taxonId, prevResults)) {
       console.log(taxonId);
@@ -70,9 +67,21 @@ function prevResultsContainsTaxonId(
   prevResults: inaturalist.Taxon[]
 ) {
   for (const result of prevResults) {
-    if (result.taxon.id === taxonId || result.taxon.ancestor_ids.includes(taxonId)) {
+    if (
+      result.taxon.id === taxonId ||
+      result.taxon.ancestor_ids.includes(taxonId)
+    ) {
       return true;
     }
   }
   return false;
+}
+
+// https://stackoverflow.com/questions/58668361/how-can-i-convert-an-async-iterator-to-an-array
+async function arrayAsyncFrom<T>(gen: AsyncIterable<T>): Promise<T[]> {
+  const out: T[] = [];
+  for await (const x of gen) {
+    out.push(x);
+  }
+  return out;
 }
