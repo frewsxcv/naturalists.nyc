@@ -11,7 +11,7 @@ const buildUrl = (
   return urlObj;
 };
 
-const buildINaturalistApiUrl = <P extends Endpoint>(
+const buildINaturalistApiUrl = <P extends keyof AllEndpoints>(
   path: P,
   params: Record<string, string | number | boolean | undefined>
 ) =>
@@ -26,48 +26,12 @@ const buildINaturalistApiUrl = <P extends Endpoint>(
 //
 // const fetchHeaders = { "User-Agent": "naturalists.nyc" };
 
-type Endpoint = keyof EndpointsAndParams;
-
-type EndpointsAndParams = {
-  /** Top species in an area */
-  "/observations/species_counts": {
-    captive?: boolean;
-    d1?: string; // FIXME: should there be a date time?
-    d2?: string; // FIXME: should there be a date time?
-    hrank?: string;
-    month?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
-    order?: "asc" | "desc";
-    perPage?: number; // FIXME: integer should be less than 500
-    placeId?: number;
-    verifiable?: boolean;
-    taxonId?: string;
-    year?: string; // FIXME: Should be string | string[]
-  };
-  /** Histogram per species */
-  "/observations/histogram": {
-    taxonId?: number;
-    placeId?: number;
-    verifiable?: string;
-  };
-  /** Top observers */
-  "/observations/observers": {
-    placeId?: number;
-    date?: string;
-    perPage?: number;
-    orderBy?: OrderBy;
-  };
-};
-
 type OrderBy = "observation_count" | "species_count";
 
-type Responses = {
-  "/observations/observers": INaturalistResponse<Observer>;
-  "/observations/histogram": HistogramResponse;
-  "/observations/species_counts": INaturalistResponse<Taxon>;
-};
-
 type TypicalEndpoints = {
+  /** Top observers */
   "/observations/observers": {
+    response: INaturalistResponse<Observer>;
     result: Observer;
     params: {
       placeId?: number;
@@ -76,7 +40,9 @@ type TypicalEndpoints = {
       orderBy?: OrderBy;
     };
   };
+  /** Top species in an area */
   "/observations/species_counts": {
+    response: INaturalistResponse<Taxon>;
     result: Taxon;
     params: {
       captive?: boolean;
@@ -94,18 +60,30 @@ type TypicalEndpoints = {
   };
 };
 
+type AllEndpoints = TypicalEndpoints & {
+  /** Histogram per species */
+  "/observations/histogram": {
+    response: HistogramResponse;
+    params: {
+      taxonId?: number;
+      placeId?: number;
+      verifiable?: string;
+    };
+  };
+};
+
 /** Calculate days in seconds */
 const daysToSeconds = (days: number): string => "" + days * 24 * 60 * 60;
 
-const cacheTtl: Record<Endpoint, string> = {
+const cacheTtl: Record<keyof AllEndpoints, string> = {
   "/observations/species_counts": daysToSeconds(1),
   "/observations/histogram": daysToSeconds(30),
   "/observations/observers": daysToSeconds(1),
 };
 
 type RequestParamsBuilder = {
-  [E in Endpoint]: (
-    params: EndpointsAndParams[E]
+  [E in keyof AllEndpoints]: (
+    params: AllEndpoints[E]["params"]
   ) => Record<string, string | number | boolean | undefined>;
 };
 
@@ -151,10 +129,10 @@ const requestParams: RequestParamsBuilder = {
 export const fetchINaturalistApi = (() => {
   const mutex = new Mutex();
 
-  return async <P extends Endpoint>(
+  return async <P extends keyof AllEndpoints>(
     path: P,
-    params: EndpointsAndParams[P]
-  ): Promise<Responses[P]> => {
+    params: AllEndpoints[P]["params"]
+  ): Promise<AllEndpoints[P]["response"]> => {
     return mutex.runExclusive(async () => {
       const url = buildINaturalistApiUrl(path, requestParams[path](params));
       const response = await fetch(url, {
@@ -288,7 +266,7 @@ export interface Taxon {
 
 export async function* fetchPaginate<P extends keyof TypicalEndpoints>(
   path: P,
-  params: EndpointsAndParams[P]
+  params: TypicalEndpoints[P]["params"]
 ): AsyncGenerator<TypicalEndpoints[P]["result"]> {
   let response = await fetchINaturalistApi(path, params);
   for (const result of response.results) {
