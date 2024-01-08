@@ -10,7 +10,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { useEffect, useRef, useState } from "react";
 import {
   HistogramResponse,
-  INaturalistObserverResponse,
+  INaturalistResponse,
+  Observer,
   Taxon,
   fetchINaturalistApi,
   getIsoDateOneMonthAgo,
@@ -350,7 +351,7 @@ const TopObservers = ({
 }: {
   orderBy: "observation_count" | "species_count";
 }) => {
-  const [data, setData] = useState<INaturalistObserverResponse | null>(null);
+  const [data, setData] = useState<INaturalistResponse<Observer> | null>(null);
   const date = getIsoDateOneMonthAgo();
   useEffect(() => {
     fetchINaturalistApi("/observations/observers", {

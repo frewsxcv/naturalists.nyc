@@ -61,9 +61,37 @@ type EndpointsAndParams = {
 type OrderBy = "observation_count" | "species_count";
 
 type Responses = {
-  "/observations/observers": INaturalistObserverResponse;
+  "/observations/observers": INaturalistResponse<Observer>;
   "/observations/histogram": HistogramResponse;
-  "/observations/species_counts": SpeciesCountsResponse;
+  "/observations/species_counts": INaturalistResponse<Taxon>;
+};
+
+type TypicalEndpoints = {
+  "/observations/observers": {
+    result: Observer;
+    params: {
+      placeId?: number;
+      date?: string;
+      perPage?: number;
+      orderBy?: OrderBy;
+    };
+  };
+  "/observations/species_counts": {
+    result: Taxon;
+    params: {
+      captive?: boolean;
+      d1?: string; // FIXME: should there be a date time?
+      d2?: string; // FIXME: should there be a date time?
+      hrank?: string;
+      month?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
+      order?: "asc" | "desc";
+      perPage?: number; // FIXME: integer should be less than 500
+      placeId?: number;
+      verifiable?: boolean;
+      taxonId?: string;
+      year?: string; // FIXME: Should be string | string[]
+    };
+  };
 };
 
 /** Calculate days in seconds */
@@ -161,7 +189,7 @@ export const getIsoDateOneMonthAgo = (): string => {
   return dateString[0];
 };
 
-interface INaturalistObserver {
+export interface Observer {
   user_id: number;
   observation_count: number;
   species_count: number;
@@ -189,11 +217,11 @@ interface INaturalistObserver {
   };
 }
 
-export interface INaturalistObserverResponse {
+export interface INaturalistResponse<Result> {
   total_results: number;
   page: number;
   per_page: number;
-  results: INaturalistObserver[];
+  results: Result[];
 }
 
 export interface HistogramResponse {
@@ -258,9 +286,21 @@ export interface Taxon {
   };
 }
 
-interface SpeciesCountsResponse {
-  total_results: number;
-  page: number;
-  per_page: number;
-  results: Taxon[];
+export async function* fetchPaginate<P extends keyof TypicalEndpoints>(
+  path: P,
+  params: EndpointsAndParams[P]
+): AsyncGenerator<TypicalEndpoints[P]["result"]> {
+  let response = await fetchINaturalistApi(path, params);
+  for (const result of response.results) {
+    yield result;
+  }
+  while (response.page < response.total_results / response.per_page) {
+    response = await fetchINaturalistApi(path, {
+      ...params,
+      page: response.page + 1,
+    });
+    for (const result of response.results) {
+      yield result;
+    }
+  }
 }
