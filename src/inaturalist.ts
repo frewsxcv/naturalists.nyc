@@ -1,6 +1,9 @@
 import { Mutex } from "async-mutex";
 
-const buildUrl = (url: string, params: Record<string, string | number | boolean | undefined>) => {
+const buildUrl = (
+  url: string,
+  params: Record<string, string | number | boolean | undefined>
+) => {
   const urlObj = new URL(url);
   Object.entries(params).forEach(([key, value]) => {
     urlObj.searchParams.set(key, value === undefined ? "" : value.toString());
@@ -11,7 +14,12 @@ const buildUrl = (url: string, params: Record<string, string | number | boolean 
 const buildINaturalistApiUrl = <P extends Endpoint>(
   path: P,
   params: Record<string, string | number | boolean | undefined>
-) => buildUrl(`https://default-20231018t204727-v3pycdbs6a-uc.a.run.app${path}`, params);
+) =>
+  buildUrl(
+    `https://api.inaturalist.org/v1${path}`,
+    // `https://default-20231018t204727-v3pycdbs6a-uc.a.run.app${path}`,
+    params
+  );
 // ) => buildUrl(`http://localhost:8080${path}`, params);
 
 // https://github.com/inaturalist/iNaturalistAPI/issues/391
@@ -23,7 +31,8 @@ type Endpoint = keyof EndpointsAndParams;
 type EndpointsAndParams = {
   /** Top species in an area */
   "/observations/species_counts": {
-    captive?: string;
+    captive?: boolean;
+    d1?: string; // FIXME: should there be a date time?
     d2?: string; // FIXME: should there be a date time?
     hrank?: string;
     month?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
@@ -31,6 +40,7 @@ type EndpointsAndParams = {
     perPage?: number; // FIXME: integer should be less than 500
     placeId?: number;
     verifiable?: boolean;
+    taxonId?: string;
     year?: string; // FIXME: Should be string | string[]
   };
   /** Histogram per species */
@@ -66,13 +76,16 @@ const cacheTtl: Record<Endpoint, string> = {
 };
 
 type RequestParamsBuilder = {
-  [E in Endpoint]: (params: EndpointsAndParams[E]) => Record<string, string | number | boolean | undefined>;
+  [E in Endpoint]: (
+    params: EndpointsAndParams[E]
+  ) => Record<string, string | number | boolean | undefined>;
 };
 
 const requestParams: RequestParamsBuilder = {
   "/observations/species_counts": (params) => {
     return {
-      captive: "false",
+      captive: params.captive,
+      d1: params.d1,
       d2: params.d2,
       hrank: params.hrank,
       month: params.month,
@@ -80,6 +93,7 @@ const requestParams: RequestParamsBuilder = {
       per_page: params.perPage,
       place_id: params.placeId,
       preferred_place_id: params.placeId, // TODO: what is this
+      taxon_id: params.taxonId,
       verifiable: params.verifiable,
       year: params.year,
     };
