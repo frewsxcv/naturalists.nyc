@@ -42,8 +42,8 @@ type TypicalEndpoints = {
   };
   /** Top species in an area */
   "/observations/species_counts": {
-    response: INaturalistResponse<Taxon>;
-    result: Taxon;
+    response: INaturalistResponse<TaxonCount>;
+    result: TaxonCount;
     params: {
       captive?: boolean;
       d1?: string; // FIXME: should there be a date time?
@@ -54,8 +54,19 @@ type TypicalEndpoints = {
       perPage?: number; // FIXME: integer should be less than 500
       placeId?: number;
       verifiable?: boolean;
-      taxonId?: string;
+      taxonId?: string; // FIXME: this should be string | string[]
       year?: string; // FIXME: Should be string | string[]
+    };
+  };
+  "/observations": {
+    response: INaturalistResponse<Observation>;
+    result: Observation;
+    params: {
+      placeId?: number;
+      captive?: boolean;
+      d1?: string; // FIXME: should there be a date time?
+      d2?: string; // FIXME: should there be a date time?
+      taxonId?: string; // FIXME: this should be string | string[]
     };
   };
 };
@@ -79,6 +90,7 @@ const cacheTtl: Record<keyof AllEndpoints, string> = {
   "/observations/species_counts": daysToSeconds(1),
   "/observations/histogram": daysToSeconds(30),
   "/observations/observers": daysToSeconds(1),
+  "/observations": daysToSeconds(1),
 };
 
 type RequestParamsBuilder = {
@@ -88,6 +100,15 @@ type RequestParamsBuilder = {
 };
 
 const requestParams: RequestParamsBuilder = {
+  "/observations": (params) => {
+    return {
+      place_id: params.placeId,
+      captive: params.captive,
+      d1: params.d1,
+      d2: params.d2,
+      taxon_id: params.taxonId,
+    };
+  },
   "/observations/species_counts": (params) => {
     return {
       captive: params.captive,
@@ -167,6 +188,41 @@ export const getIsoDateOneMonthAgo = (): string => {
   return dateString[0];
 };
 
+export interface Observation {
+  id: number;
+  observed_on: string;
+  time_observed_at: string;
+  taxon: Taxon;
+  place_guess: string;
+  location: string;
+  geojson: {
+    type: string;
+    coordinates: [number, number];
+  };
+  user: {
+    id: number;
+    login: string;
+    spam: boolean;
+    suspended: boolean;
+    created_at: string;
+    login_autocomplete: string;
+    login_exact: string;
+    name: string;
+    name_autocomplete: string;
+    orcid: null;
+    icon: string;
+    observations_count: number;
+    identifications_count: number;
+    journal_posts_count: number;
+    activity_count: number;
+    species_count: number;
+    universal_search_rank: number;
+    roles: any[];
+    site_id: number;
+    icon_url: string;
+  };
+}
+
 export interface Observer {
   user_id: number;
   observation_count: number;
@@ -212,56 +268,58 @@ export interface HistogramResponse {
 }
 
 export interface Taxon {
-  count: number;
-  taxon: {
-    observations_count: number;
-    taxon_schemes_count: number;
-    is_active: boolean;
-    ancestry: string;
-    flag_counts: {
-      resolved: number;
-      unresolved: number;
-    };
-    wikipedia_url: string;
-    current_synonymous_taxon_ids: null | any[];
-    iconic_taxon_id: number;
-    rank_level: number;
-    taxon_changes_count: number;
-    atlas_id: null | any;
-    complete_species_count: null | any;
-    parent_id: number;
-    name: string;
-    rank: string;
-    extinct: boolean;
-    id: number;
-    default_photo: {
-      id: number;
-      license_code: string;
-      attribution: string;
-      url: string;
-      original_dimensions: {
-        height: number;
-        width: number;
-      };
-      flags: any[];
-      square_url: string;
-      medium_url: string;
-    };
-    ancestor_ids: number[];
-    iconic_taxon_name: string;
-    preferred_common_name: string;
-    establishment_means: {
-      establishment_means: string;
-      id: number;
-      place: {
-        id: number;
-        name: string;
-        display_name: string;
-        ancestry: string;
-      };
-    };
-    preferred_establishment_means: string;
+  observations_count: number;
+  taxon_schemes_count: number;
+  is_active: boolean;
+  ancestry: string;
+  flag_counts: {
+    resolved: number;
+    unresolved: number;
   };
+  wikipedia_url: string;
+  current_synonymous_taxon_ids: null | any[];
+  iconic_taxon_id: number;
+  rank_level: number;
+  taxon_changes_count: number;
+  atlas_id: null | any;
+  complete_species_count: null | any;
+  parent_id: number;
+  name: string;
+  rank: string;
+  extinct: boolean;
+  id: number;
+  default_photo: {
+    id: number;
+    license_code: string;
+    attribution: string;
+    url: string;
+    original_dimensions: {
+      height: number;
+      width: number;
+    };
+    flags: any[];
+    square_url: string;
+    medium_url: string;
+  };
+  ancestor_ids: number[];
+  iconic_taxon_name: string;
+  preferred_common_name: string;
+  establishment_means: {
+    establishment_means: string;
+    id: number;
+    place: {
+      id: number;
+      name: string;
+      display_name: string;
+      ancestry: string;
+    };
+  };
+  preferred_establishment_means: string;
+}
+
+export interface TaxonCount {
+  count: number;
+  taxon: Taxon;
 }
 
 export async function* fetchPaginate<P extends keyof TypicalEndpoints>(

@@ -12,7 +12,7 @@ import {
   HistogramResponse,
   INaturalistResponse,
   Observer,
-  Taxon,
+  TaxonCount,
   fetchINaturalistApi,
   getIsoDateOneMonthAgo,
 } from "./inaturalist";
@@ -196,7 +196,7 @@ const Navbar = () => {
 };
 
 const Charts = () => {
-  const [taxa, setTaxa] = useState<Taxon[]>([]);
+  const [taxa, setTaxa] = useState<TaxonCount[]>([]);
 
   useEffect(() => {
     // TODO: Rather than doing this one month at a time, do a couple weeks before

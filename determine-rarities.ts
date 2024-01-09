@@ -48,23 +48,43 @@ const formattedDate = (d: Date) =>
 
 let date = new Date();
 while (true) {
-  console.log(date);
   const taxonIds = await arrayAsyncFrom(fetchTaxonIdsOnDate(date));
-  dateSubtractDay(date);
+  const prevDay = new Date(date);
+  dateSubtractDay(prevDay);
   const prevResults = await arrayAsyncFrom(
-    fetchSpeciesCountsUpThroughDate(date, taxonIds)
+    fetchSpeciesCountsUpThroughDate(prevDay, taxonIds)
   );
   for (const taxonId of taxonIds) {
     if (!prevResultsContainsTaxonId(taxonId, prevResults)) {
-      console.log(taxonId);
+      // TODO: paginate below
+      const observations = await inaturalist.fetchINaturalistApi("/observations", {
+        placeId: nycPlaceId,
+        captive: false,
+        d1: formattedDate(date),
+        d2: formattedDate(date),
+        taxonId: taxonId.toString(),
+      });
+      for (const observation of observations.results) {
+        printRow([
+          date.toISOString(),
+          "https://www.inaturalist.org/observations/" + observations.results[0].id,
+          observation.taxon.preferred_common_name,
+          observation.taxon.name,
+          observation.user.login,
+        ]);
+      }
     }
   }
-  console.log("next...");
+  dateSubtractDay(date);
+}
+
+function printRow(row: any[]) {
+  console.log(row.map(n => n ? `"${n}"` : n).join(","));
 }
 
 function prevResultsContainsTaxonId(
   taxonId: number,
-  prevResults: inaturalist.Taxon[]
+  prevResults: inaturalist.TaxonCount[]
 ) {
   for (const result of prevResults) {
     if (
