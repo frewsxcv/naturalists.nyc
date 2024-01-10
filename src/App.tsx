@@ -14,9 +14,30 @@ import {
   Observer,
   TaxonCount,
   fetchINaturalistApi,
-  getIsoDateOneMonthAgo,
 } from "./inaturalist";
 import { Alert, Nav, NavDropdown, Spinner } from "react-bootstrap";
+
+const getDateOneMonthAgo = (): Date => {
+  // Get a date object for the current time
+  const date = new Date();
+
+  // Set it to one month ago
+  date.setMonth(date.getMonth() - 1);
+
+  return date;
+};
+
+// Get date one month ago
+const getIsoDateOneMonthAgo = (): string => {
+  // Format the date as YYYY-MM-DD
+  const dateString = getDateOneMonthAgo().toISOString().split("T");
+
+  if (!dateString[0]) {
+    throw new Error("Could not generate date string");
+  }
+
+  return dateString[0];
+};
 
 const nycPlaceId = 674;
 

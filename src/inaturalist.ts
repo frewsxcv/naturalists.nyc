@@ -166,28 +166,6 @@ export const fetchINaturalistApi = (() => {
   };
 })();
 
-const getDateOneMonthAgo = (): Date => {
-  // Get a date object for the current time
-  const date = new Date();
-
-  // Set it to one month ago
-  date.setMonth(date.getMonth() - 1);
-
-  return date;
-};
-
-// Get date one month ago
-export const getIsoDateOneMonthAgo = (): string => {
-  // Format the date as YYYY-MM-DD
-  const dateString = getDateOneMonthAgo().toISOString().split("T");
-
-  if (!dateString[0]) {
-    throw new Error("Could not generate date string");
-  }
-
-  return dateString[0];
-};
-
 export interface Observation {
   id: number;
   observed_on: string;
