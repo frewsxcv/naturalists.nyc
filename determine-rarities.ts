@@ -65,21 +65,40 @@ while (true) {
         taxonId: taxonId.toString(),
       });
       for (const observation of observations.results) {
-        printRow([
-          date.toISOString(),
-          "https://www.inaturalist.org/observations/" + observations.results[0].id,
-          observation.taxon.preferred_common_name,
-          observation.taxon.name,
-          observation.user.login,
-        ]);
+        printRow({
+          date: date.toISOString(),
+          url: "https://www.inaturalist.org/observations/" + observations.results[0].id,
+          commonName: observation.taxon.preferred_common_name,
+          scientificName: observation.taxon.name,
+          observer: observation.user.login,
+        });
       }
     }
   }
   dateSubtractDay(date);
 }
 
-function printRow(row: any[]) {
-  console.log(row.map(n => n ? `"${n}"` : n).join(","));
+// function printRow(row: any[]) {
+//   console.log(row.map(n => n ? `"${n}"` : n).join(","));
+// }
+
+interface Row {
+  date: string;
+  url: string;
+  commonName: string;
+  scientificName: string;
+  observer: string;
+}
+
+function printRow(row: Row) {
+  // Format heading, handling if common name is missing
+  const heading = row.commonName ? `${row.commonName} (*${row.scientificName}*)` : `*${row.scientificName}*`;
+  console.log(`# ${heading}`);
+  console.log("");
+  console.log(`* [Observation](${row.url})`);
+  console.log(`* Date: ${row.date}`);
+  console.log(`* Observer: ${row.observer}`);
+  console.log("");
 }
 
 function prevResultsContainsTaxonId(
