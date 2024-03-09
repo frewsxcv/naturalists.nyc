@@ -80,12 +80,12 @@ const youTubeVideoUrls = [
 ];
 
 const histogramResponseToHistogramData = (
-  histogramResponse: HistogramResponse
+  histogramResponse: HistogramResponse,
 ) => {
   return Object.entries(histogramResponse.results.week_of_year).map(
     ([month, count]) => {
       return { month, count };
-    }
+    },
   );
 };
 
@@ -226,11 +226,9 @@ const Charts = () => {
       month: getCurrentMonthOfYear(),
       placeId: nycPlaceId,
       perPage: 30,
-    }).then(
-      (response) => {
-        setTaxa(response.results);
-      }
-    );
+    }).then((response) => {
+      setTaxa(response.results);
+    });
   }, []);
 
   if (!taxa.length) {
@@ -464,13 +462,13 @@ const fetchLandAcknowledgementDismissed = (): boolean => {
 const storeLandAcknowledgementDismissed = (): void => {
   localStorage.setItem(
     landAcknowlegementLocalStorageKey,
-    landAcknowlegementLocalStorageValue
+    landAcknowlegementLocalStorageValue,
   );
 };
 
 const LandAcknowlegement = () => {
   const [isDismissed, setIsDismissed] = useState(
-    fetchLandAcknowledgementDismissed()
+    fetchLandAcknowledgementDismissed(),
   );
 
   if (isDismissed) {
