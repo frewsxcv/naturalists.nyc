@@ -2,7 +2,7 @@ import { Mutex } from "async-mutex";
 
 const buildUrl = (
   url: string,
-  params: Record<string, string | number | boolean | undefined>
+  params: Record<string, string | number | boolean | undefined>,
 ) => {
   const urlObj = new URL(url);
   Object.entries(params).forEach(([key, value]) => {
@@ -13,12 +13,12 @@ const buildUrl = (
 
 const buildINaturalistApiUrl = <P extends keyof AllEndpoints>(
   path: P,
-  params: Record<string, string | number | boolean | undefined>
+  params: Record<string, string | number | boolean | undefined>,
 ) =>
   buildUrl(
     // `https://api.inaturalist.org/v1${path}`,
     `https://default-20231018t204727-v3pycdbs6a-uc.a.run.app${path}`,
-    params
+    params,
   );
 // ) => buildUrl(`http://localhost:8080${path}`, params);
 
@@ -27,6 +27,9 @@ const buildINaturalistApiUrl = <P extends keyof AllEndpoints>(
 // const fetchHeaders = { "User-Agent": "naturalists.nyc" };
 
 type OrderBy = "observation_count" | "species_count";
+
+type Month = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
+type Order = "asc" | "desc";
 
 type TypicalEndpoints = {
   /** Top observers */
@@ -49,8 +52,8 @@ type TypicalEndpoints = {
       d1?: string; // FIXME: should there be a date time?
       d2?: string; // FIXME: should there be a date time?
       hrank?: string;
-      month?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
-      order?: "asc" | "desc";
+      month?: Month;
+      order?: Order;
       perPage?: number; // FIXME: integer should be less than 500
       placeId?: number;
       verifiable?: boolean;
@@ -95,7 +98,7 @@ const cacheTtl: Record<keyof AllEndpoints, string> = {
 
 type RequestParamsBuilder = {
   [E in keyof AllEndpoints]: (
-    params: AllEndpoints[E]["params"]
+    params: AllEndpoints[E]["params"],
   ) => Record<string, string | number | boolean | undefined>;
 };
 
@@ -152,7 +155,7 @@ export const fetchINaturalistApi = (() => {
 
   return async <P extends keyof AllEndpoints>(
     path: P,
-    params: AllEndpoints[P]["params"]
+    params: AllEndpoints[P]["params"],
   ): Promise<AllEndpoints[P]["response"]> => {
     return mutex.runExclusive(async () => {
       const url = buildINaturalistApiUrl(path, requestParams[path](params));
@@ -302,7 +305,7 @@ export interface TaxonCount {
 
 export async function* fetchPaginate<P extends keyof TypicalEndpoints>(
   path: P,
-  params: TypicalEndpoints[P]["params"]
+  params: TypicalEndpoints[P]["params"],
 ): AsyncGenerator<TypicalEndpoints[P]["result"]> {
   let response = await fetchINaturalistApi(path, params);
   for (const result of response.results) {
