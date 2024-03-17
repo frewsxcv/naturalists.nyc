@@ -14,8 +14,10 @@ import {
   Observer,
   TaxonCount,
   fetchINaturalistApi,
+  iconicTaxa,
+  type IconicTaxon,
 } from "./inaturalist";
-import { Alert, Nav, NavDropdown, Spinner } from "react-bootstrap";
+import { Alert, Dropdown, Nav, NavDropdown, Spinner } from "react-bootstrap";
 
 const getDateOneMonthAgo = (): Date => {
   // Get a date object for the current time
@@ -216,20 +218,22 @@ const Navbar = () => {
   );
 };
 
-const Charts = () => {
+const Charts = ({ filter }: { filter: IconicTaxon | undefined }) => {
   const [taxa, setTaxa] = useState<TaxonCount[]>([]);
 
   useEffect(() => {
+    setTaxa([]);
     // TODO: Rather than doing this one month at a time, do a couple weeks before
     //       and after the current date, which might require two requests.
     fetchINaturalistApi("/observations/species_counts", {
       month: getCurrentMonthOfYear(),
       placeId: nycPlaceId,
       perPage: 30,
+      iconic_taxa: filter,
     }).then((response) => {
       setTaxa(response.results);
     });
-  }, []);
+  }, [filter]);
 
   if (!taxa.length) {
     return <Spinner animation="border" />;
@@ -258,6 +262,12 @@ const Charts = () => {
 };
 
 function App() {
+  const [filter, setFilter] = useState<IconicTaxon|undefined>(undefined);
+  const iconicTaxaOptions = iconicTaxa.map((iconicTaxon, i) => {
+    return (
+      <Dropdown.Item key={i} eventKey={iconicTaxon}>{iconicTaxon}</Dropdown.Item>
+    );
+  });
   return (
     <Container>
       <Row className="mb-3">
@@ -338,7 +348,22 @@ function App() {
           <Card className="bg-body-secondary">
             <Card.Body>
               <h2>Active species</h2>
-              <Charts />
+              <p>Filter species to category</p>
+              {/* TODO: Remove the `as` below */}
+              <Row>
+                <Col>
+                  <Dropdown onSelect={(value) => setFilter(value as IconicTaxon)}>
+                    <Dropdown.Toggle>
+                      Filter
+                    </Dropdown.Toggle>
+
+                    <Dropdown.Menu>
+                      {iconicTaxaOptions}
+                    </Dropdown.Menu>
+                  </Dropdown>
+                </Col>
+              </Row>
+              <Charts filter={filter} />
             </Card.Body>
           </Card>
         </Col>

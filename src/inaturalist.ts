@@ -2,7 +2,7 @@ import { Mutex } from "async-mutex";
 
 const buildUrl = (
   url: string,
-  params: Record<string, string | number | boolean | undefined>,
+  params: Record<string, string | number | boolean | undefined>
 ) => {
   const urlObj = new URL(url);
   Object.entries(params).forEach(([key, value]) => {
@@ -13,12 +13,12 @@ const buildUrl = (
 
 const buildINaturalistApiUrl = <P extends keyof AllEndpoints>(
   path: P,
-  params: Record<string, string | number | boolean | undefined>,
+  params: Record<string, string | number | boolean | undefined>
 ) =>
   buildUrl(
     // `https://api.inaturalist.org/v1${path}`,
     `https://default-20231018t204727-v3pycdbs6a-uc.a.run.app${path}`,
-    params,
+    params
   );
 // ) => buildUrl(`http://localhost:8080${path}`, params);
 
@@ -30,6 +30,37 @@ type OrderBy = "observation_count" | "species_count";
 
 type Month = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
 type Order = "asc" | "desc";
+
+export const iconicTaxa: IconicTaxon[] = [
+  "Actinopterygii",
+  "Animalia",
+  "Amphibia",
+  "Arachnida",
+  "Aves",
+  "Chromista",
+  "Fungi",
+  "Insecta",
+  "Mammalia",
+  "Mollusca",
+  "Reptilia",
+  "Plantae",
+  "Protozoa",
+];
+
+export type IconicTaxon =
+  | "Actinopterygii"
+  | "Animalia"
+  | "Amphibia"
+  | "Arachnida"
+  | "Aves"
+  | "Chromista"
+  | "Fungi"
+  | "Insecta"
+  | "Mammalia"
+  | "Mollusca"
+  | "Reptilia"
+  | "Plantae"
+  | "Protozoa";
 
 type TypicalEndpoints = {
   /** Top observers */
@@ -59,6 +90,7 @@ type TypicalEndpoints = {
       verifiable?: boolean;
       taxonId?: string; // FIXME: this should be string | string[]
       year?: string; // FIXME: Should be string | string[]
+      iconic_taxa?: IconicTaxon; // FIXME: Should be IconicTaxa | IconicTaxa[]
     };
   };
   "/observations": {
@@ -98,7 +130,7 @@ const cacheTtl: Record<keyof AllEndpoints, string> = {
 
 type RequestParamsBuilder = {
   [E in keyof AllEndpoints]: (
-    params: AllEndpoints[E]["params"],
+    params: AllEndpoints[E]["params"]
   ) => Record<string, string | number | boolean | undefined>;
 };
 
@@ -126,6 +158,7 @@ const requestParams: RequestParamsBuilder = {
       taxon_id: params.taxonId,
       verifiable: params.verifiable,
       year: params.year,
+      iconic_taxa: params.iconic_taxa,
     };
   },
   "/observations/histogram": (params) => {
@@ -155,7 +188,7 @@ export const fetchINaturalistApi = (() => {
 
   return async <P extends keyof AllEndpoints>(
     path: P,
-    params: AllEndpoints[P]["params"],
+    params: AllEndpoints[P]["params"]
   ): Promise<AllEndpoints[P]["response"]> => {
     return mutex.runExclusive(async () => {
       const url = buildINaturalistApiUrl(path, requestParams[path](params));
@@ -305,7 +338,7 @@ export interface TaxonCount {
 
 export async function* fetchPaginate<P extends keyof TypicalEndpoints>(
   path: P,
-  params: TypicalEndpoints[P]["params"],
+  params: TypicalEndpoints[P]["params"]
 ): AsyncGenerator<TypicalEndpoints[P]["result"]> {
   let response = await fetchINaturalistApi(path, params);
   for (const result of response.results) {
