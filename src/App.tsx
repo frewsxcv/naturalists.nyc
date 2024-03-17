@@ -350,19 +350,15 @@ function App() {
               <h2>Active species</h2>
               <p>Filter species to category</p>
               {/* TODO: Remove the `as` below */}
-              <Row>
-                <Col>
-                  <Dropdown onSelect={(value) => setFilter(value as IconicTaxon)}>
-                    <Dropdown.Toggle>
-                      Filter
-                    </Dropdown.Toggle>
+              <Dropdown onSelect={(value) => setFilter(value as IconicTaxon)}>
+                <Dropdown.Toggle>
+                  Filter
+                </Dropdown.Toggle>
 
-                    <Dropdown.Menu>
-                      {iconicTaxaOptions}
-                    </Dropdown.Menu>
-                  </Dropdown>
-                </Col>
-              </Row>
+                <Dropdown.Menu>
+                  {iconicTaxaOptions}
+                </Dropdown.Menu>
+              </Dropdown>
               <Charts filter={filter} />
             </Card.Body>
           </Card>
