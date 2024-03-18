@@ -43,7 +43,7 @@ const getIsoDateOneMonthAgo = (): string => {
 
 const nycPlaceId = 674;
 
-const youTubeVideoUrls = [
+const youTubeVideoUrls: [string, ...string[]] = [
   "https://www.youtube.com/watch?v=1KY6TleGIdk",
   "https://www.youtube.com/watch?v=340DGp4M03U",
   "https://www.youtube.com/watch?v=5FO-Er9fOEQ",
@@ -315,15 +315,7 @@ function App() {
                 <Guides />
               </Card.Body>
             </Card>
-            <Card className="bg-body-secondary">
-              <Card.Body>
-                <h2>Watch</h2>
-                <YouTube
-                  videoId={randomYouTubeVideoId()}
-                  iframeClassName="w-100"
-                ></YouTube>
-              </Card.Body>
-            </Card>
+            <Watch />
           </div>
         </Col>
         <Col xs={12} md={6} xl={4}>
@@ -518,12 +510,27 @@ const Icon = ({ icon }: { icon: string }) => (
 const randomYouTubeVideoUrl = () => chooseRandom(youTubeVideoUrls);
 
 const randomYouTubeVideoId = () =>
-  randomYouTubeVideoUrl()?.replace(youTubeVideoUrlPrefix, "");
+  randomYouTubeVideoUrl().replace(youTubeVideoUrlPrefix, "");
 
-const chooseRandom = <T extends unknown>(arr: T[]) =>
-  arr[chooseRandomIndex(arr)];
+const chooseRandom = <T extends unknown>(arr: [T, ...T[]]) =>
+  unwrap(arr[chooseRandomIndex(arr)]);
 
-const chooseRandomIndex = <T extends unknown>(arr: T[]): number =>
+const chooseRandomIndex = <T extends unknown>(arr: [T, ...T[]]): number =>
   Math.floor(Math.random() * arr.length);
+
+const Watch = () => {
+  const [videoId, _setVideoId] = useState(randomYouTubeVideoId());
+  return (
+    <Card className="bg-body-secondary">
+      <Card.Body>
+        <h2>Watch</h2>
+        <YouTube
+          videoId={videoId}
+          iframeClassName="w-100"
+        ></YouTube>
+      </Card.Body>
+    </Card>
+  );
+};
 
 export default App;
