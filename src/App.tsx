@@ -82,12 +82,12 @@ const youTubeVideoUrls = [
 ];
 
 const histogramResponseToHistogramData = (
-  histogramResponse: HistogramResponse,
+  histogramResponse: HistogramResponse
 ) => {
   return Object.entries(histogramResponse.results.week_of_year).map(
     ([month, count]) => {
       return { month, count };
-    },
+    }
   );
 };
 
@@ -262,10 +262,12 @@ const Charts = ({ filter }: { filter: IconicTaxon | undefined }) => {
 };
 
 function App() {
-  const [filter, setFilter] = useState<IconicTaxon|undefined>(undefined);
+  const [filter, setFilter] = useState<IconicTaxon | undefined>(undefined);
   const iconicTaxaOptions = iconicTaxa.map((iconicTaxon, i) => {
     return (
-      <Dropdown.Item key={i} eventKey={iconicTaxon}>{iconicTaxon}</Dropdown.Item>
+      <Dropdown.Item key={i} eventKey={iconicTaxon}>
+        {iconicTaxon}
+      </Dropdown.Item>
     );
   });
   return (
@@ -351,13 +353,9 @@ function App() {
               <p>Filter species to category</p>
               {/* TODO: Remove the `as` below */}
               <Dropdown onSelect={(value) => setFilter(value as IconicTaxon)}>
-                <Dropdown.Toggle>
-                  Filter
-                </Dropdown.Toggle>
+                <Dropdown.Toggle>Filter</Dropdown.Toggle>
 
-                <Dropdown.Menu>
-                  {iconicTaxaOptions}
-                </Dropdown.Menu>
+                <Dropdown.Menu>{iconicTaxaOptions}</Dropdown.Menu>
               </Dropdown>
               <Charts filter={filter} />
             </Card.Body>
@@ -483,13 +481,13 @@ const fetchLandAcknowledgementDismissed = (): boolean => {
 const storeLandAcknowledgementDismissed = (): void => {
   localStorage.setItem(
     landAcknowlegementLocalStorageKey,
-    landAcknowlegementLocalStorageValue,
+    landAcknowlegementLocalStorageValue
   );
 };
 
 const LandAcknowlegement = () => {
   const [isDismissed, setIsDismissed] = useState(
-    fetchLandAcknowledgementDismissed(),
+    fetchLandAcknowledgementDismissed()
   );
 
   if (isDismissed) {
