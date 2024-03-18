@@ -3,6 +3,7 @@ import YouTube from "react-youtube";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
+import Button from "react-bootstrap/Button";
 import { default as BootstrapNavbar } from "react-bootstrap/Navbar";
 import Card from "react-bootstrap/Card";
 import * as d3 from "d3";
@@ -519,7 +520,7 @@ const chooseRandomIndex = <T extends unknown>(arr: [T, ...T[]]): number =>
   Math.floor(Math.random() * arr.length);
 
 const Watch = () => {
-  const [videoId, _setVideoId] = useState(randomYouTubeVideoId());
+  const [videoId, setVideoId] = useState(randomYouTubeVideoId());
   return (
     <Card className="bg-body-secondary">
       <Card.Body>
@@ -528,6 +529,9 @@ const Watch = () => {
           videoId={videoId}
           iframeClassName="w-100"
         ></YouTube>
+        <Button onClick={() => setVideoId(randomYouTubeVideoId())}>
+          Next video
+        </Button>
       </Card.Body>
     </Card>
   );
