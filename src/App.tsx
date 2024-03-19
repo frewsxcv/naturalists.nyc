@@ -264,13 +264,6 @@ const Charts = ({ filter }: { filter: IconicTaxon | undefined }) => {
 
 function App() {
   const [filter, setFilter] = useState<IconicTaxon | undefined>(undefined);
-  const iconicTaxaOptions = iconicTaxa.map((iconicTaxon, i) => {
-    return (
-      <Dropdown.Item key={i} eventKey={iconicTaxon}>
-        {iconicTaxon}
-      </Dropdown.Item>
-    );
-  });
   return (
     <>
       <Navbar />
