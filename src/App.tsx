@@ -285,22 +285,7 @@ function App() {
                   <a href="https://discord.gg/FEwKgrDV92">Join the Discord</a>
                 </Card.Body>
               </Card>
-              <Card className="bg-body-secondary">
-                <Card.Body>
-                  <h2>
-                    <Icon icon="news" />
-                    &nbsp;Papers
-                  </h2>
-                  <ul>
-                    <li>
-                      <a href="https://www.ser.org/news/305433/Seeing-the-Forest-and-the-Trees-Outcomes-of-Forest-Restoration-in-The-Bronx-.htm">
-                        Seeing the Forest and the Trees: Outcomes of Forest
-                        Restoration in The Bronx
-                      </a>
-                    </li>
-                  </ul>
-                </Card.Body>
-              </Card>
+              <PapersCard />
               <Card className="bg-body-secondary">
                 <Card.Body>
                   <Guides />
@@ -345,7 +330,11 @@ function App() {
   );
 }
 
-const FilterDropdown = ({ setFilter }: { setFilter: (filter: IconicTaxon) => void }) => {
+const FilterDropdown = ({
+  setFilter,
+}: {
+  setFilter: (filter: IconicTaxon) => void;
+}) => {
   const iconicTaxaOptions = iconicTaxa.map((iconicTaxon, i) => {
     return (
       <Dropdown.Item key={i} eventKey={iconicTaxon}>
@@ -359,6 +348,27 @@ const FilterDropdown = ({ setFilter }: { setFilter: (filter: IconicTaxon) => voi
       <Dropdown.Toggle>Filter</Dropdown.Toggle>
       <Dropdown.Menu>{iconicTaxaOptions}</Dropdown.Menu>
     </Dropdown>
+  );
+};
+
+const PapersCard = () => {
+  return (
+    <Card className="bg-body-secondary">
+      <Card.Body>
+        <h2>
+          <Icon icon="news" />
+          &nbsp;Papers
+        </h2>
+        <ul>
+          <li>
+            <a href="https://www.ser.org/news/305433/Seeing-the-Forest-and-the-Trees-Outcomes-of-Forest-Restoration-in-The-Bronx-.htm">
+              Seeing the Forest and the Trees: Outcomes of Forest Restoration in
+              The Bronx
+            </a>
+          </li>
+        </ul>
+      </Card.Body>
+    </Card>
   );
 };
 
