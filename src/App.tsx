@@ -268,6 +268,9 @@ function App() {
     <>
       <Navbar />
       <Container>
+        <Row className="mb-3">
+          <Col></Col>
+        </Row>
         <Row>
           <Col>
             <LandAcknowlegement />
