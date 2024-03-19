@@ -344,12 +344,7 @@ function App() {
               <Card.Body>
                 <h2>Active species</h2>
                 <p>Filter species to category</p>
-                {/* TODO: Remove the `as` below */}
-                <Dropdown onSelect={(value) => setFilter(value as IconicTaxon)}>
-                  <Dropdown.Toggle>Filter</Dropdown.Toggle>
-
-                  <Dropdown.Menu>{iconicTaxaOptions}</Dropdown.Menu>
-                </Dropdown>
+                <Filter setFilter={setFilter} />
                 <Charts filter={filter} />
               </Card.Body>
             </Card>
@@ -359,6 +354,24 @@ function App() {
     </>
   );
 }
+
+// Component for the filter dropdown
+const Filter = ({ setFilter }: { setFilter: (filter: IconicTaxon) => void }) => {
+  const iconicTaxaOptions = iconicTaxa.map((iconicTaxon, i) => {
+    return (
+      <Dropdown.Item key={i} eventKey={iconicTaxon}>
+        {iconicTaxon}
+      </Dropdown.Item>
+    );
+  });
+  return (
+    <Dropdown onSelect={(value) => setFilter(value as IconicTaxon)}>
+      {/* TODO: Remove the `as` above */}
+      <Dropdown.Toggle>Filter</Dropdown.Toggle>
+      <Dropdown.Menu>{iconicTaxaOptions}</Dropdown.Menu>
+    </Dropdown>
+  );
+};
 
 const Guides = () => {
   return (
