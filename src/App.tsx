@@ -272,90 +272,91 @@ function App() {
     );
   });
   return (
-    <Container>
-      <Row className="mb-3">
-        <Col>
-          <Navbar />
-        </Col>
-      </Row>
-      <Row>
-        <Col>
-          <LandAcknowlegement />
-        </Col>
-      </Row>
-      <Row className="gx-3 row-gap-3">
-        <Col xs={12} md={6} xl={4}>
-          <div className="d-flex flex-column gap-3">
-            <Card className="bg-body-secondary">
-              <Card.Body>
-                <h2>
-                  <Icon icon="chat" />
-                  &nbsp;Connect
-                </h2>
-                <a href="https://discord.gg/FEwKgrDV92">Join the Discord</a>
-              </Card.Body>
-            </Card>
-            <Card className="bg-body-secondary">
-              <Card.Body>
-                <h2>
-                  <Icon icon="news" />
-                  &nbsp;Papers
-                </h2>
-                <ul>
-                  <li>
-                    <a href="https://www.ser.org/news/305433/Seeing-the-Forest-and-the-Trees-Outcomes-of-Forest-Restoration-in-The-Bronx-.htm">
-                      Seeing the Forest and the Trees: Outcomes of Forest
-                      Restoration in The Bronx
-                    </a>
-                  </li>
-                </ul>
-              </Card.Body>
-            </Card>
-            <Card className="bg-body-secondary">
-              <Card.Body>
-                <Guides />
-              </Card.Body>
-            </Card>
-            <Watch />
-          </div>
-        </Col>
-        <Col xs={12} md={6} xl={4}>
-          <div className="d-flex flex-column gap-3">
-            <Card className="bg-body-secondary">
-              <Card.Body>
-                <h2>Top Observers</h2>
+    <>
+      <Navbar />
+      <Container>
+        <Row className="mb-3">
+          <Col></Col>
+        </Row>
+        <Row>
+          <Col>
+            <LandAcknowlegement />
+          </Col>
+        </Row>
+        <Row className="gx-3 row-gap-3">
+          <Col xs={12} md={6} xl={4}>
+            <div className="d-flex flex-column gap-3">
+              <Card className="bg-body-secondary">
+                <Card.Body>
+                  <h2>
+                    <Icon icon="chat" />
+                    &nbsp;Connect
+                  </h2>
+                  <a href="https://discord.gg/FEwKgrDV92">Join the Discord</a>
+                </Card.Body>
+              </Card>
+              <Card className="bg-body-secondary">
+                <Card.Body>
+                  <h2>
+                    <Icon icon="news" />
+                    &nbsp;Papers
+                  </h2>
+                  <ul>
+                    <li>
+                      <a href="https://www.ser.org/news/305433/Seeing-the-Forest-and-the-Trees-Outcomes-of-Forest-Restoration-in-The-Bronx-.htm">
+                        Seeing the Forest and the Trees: Outcomes of Forest
+                        Restoration in The Bronx
+                      </a>
+                    </li>
+                  </ul>
+                </Card.Body>
+              </Card>
+              <Card className="bg-body-secondary">
+                <Card.Body>
+                  <Guides />
+                </Card.Body>
+              </Card>
+              <Watch />
+            </div>
+          </Col>
+          <Col xs={12} md={6} xl={4}>
+            <div className="d-flex flex-column gap-3">
+              <Card className="bg-body-secondary">
+                <Card.Body>
+                  <h2>Top Observers</h2>
 
-                <p>
-                  Observers with most unique species observed in NYC in the past
-                  month:
-                </p>
-                <TopObservers orderBy="species_count" />
+                  <p>
+                    Observers with most unique species observed in NYC in the
+                    past month:
+                  </p>
+                  <TopObservers orderBy="species_count" />
 
-                <p>
-                  Observers with most observations in NYC in the past month:
-                </p>
-                <TopObservers orderBy="observation_count" />
+                  <p>
+                    Observers with most observations in NYC in the past month:
+                  </p>
+                  <TopObservers orderBy="observation_count" />
+                </Card.Body>
+              </Card>
+            </div>
+          </Col>
+          <Col xs={12} xl={4}>
+            <Card className="bg-body-secondary">
+              <Card.Body>
+                <h2>Active species</h2>
+                <p>Filter species to category</p>
+                {/* TODO: Remove the `as` below */}
+                <Dropdown onSelect={(value) => setFilter(value as IconicTaxon)}>
+                  <Dropdown.Toggle>Filter</Dropdown.Toggle>
+
+                  <Dropdown.Menu>{iconicTaxaOptions}</Dropdown.Menu>
+                </Dropdown>
+                <Charts filter={filter} />
               </Card.Body>
             </Card>
-          </div>
-        </Col>
-        <Col xs={12} xl={4}>
-          <Card className="bg-body-secondary">
-            <Card.Body>
-              <h2>Active species</h2>
-              <p>Filter species to category</p>
-              {/* TODO: Remove the `as` below */}
-              <Dropdown onSelect={(value) => setFilter(value as IconicTaxon)}>
-                <Dropdown.Toggle>Filter</Dropdown.Toggle>
-
-                <Dropdown.Menu>{iconicTaxaOptions}</Dropdown.Menu>
-              </Dropdown>
-              <Charts filter={filter} />
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
-    </Container>
+          </Col>
+        </Row>
+      </Container>
+    </>
   );
 }
 
@@ -525,10 +526,7 @@ const Watch = () => {
     <Card className="bg-body-secondary">
       <Card.Body>
         <h2>Watch</h2>
-        <YouTube
-          videoId={videoId}
-          iframeClassName="w-100"
-        ></YouTube>
+        <YouTube videoId={videoId} iframeClassName="w-100"></YouTube>
         <Button onClick={() => setVideoId(randomYouTubeVideoId())}>
           Next video
         </Button>
