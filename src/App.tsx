@@ -178,13 +178,16 @@ const getCurrentWeekOfYear = (): number => {
   return d3.timeWeek.count(d3.timeYear(new Date()), new Date()) + 1;
 };
 
-type Month = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
+const months = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12] as const;
+
+type Month = (typeof months)[number];
 
 /** Is 1-indexed */
-const getCurrentMonthOfYear = (): Month => {
-  // FIXME: remove casting
-  return (d3.timeMonth.count(d3.timeYear(new Date()), new Date()) + 1) as Month;
-};
+const getCurrentMonthOfYear = (): Month =>
+  numberToMonth(d3.timeMonth.count(d3.timeYear(new Date()), new Date()) + 1);
+
+const numberToMonth = (n: number): Month =>
+  unwrap(months.find((month) => month === n));
 
 const youTubeVideoUrlPrefix = "https://www.youtube.com/watch?v=";
 
