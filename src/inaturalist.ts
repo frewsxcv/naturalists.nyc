@@ -31,7 +31,7 @@ type OrderBy = "observation_count" | "species_count";
 type Month = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
 type Order = "asc" | "desc";
 
-export const iconicTaxa: IconicTaxon[] = [
+export const iconicTaxa = [
   "Actinopterygii",
   "Animalia",
   "Amphibia",
@@ -45,22 +45,9 @@ export const iconicTaxa: IconicTaxon[] = [
   "Reptilia",
   "Plantae",
   "Protozoa",
-];
+] as const;
 
-export type IconicTaxon =
-  | "Actinopterygii"
-  | "Animalia"
-  | "Amphibia"
-  | "Arachnida"
-  | "Aves"
-  | "Chromista"
-  | "Fungi"
-  | "Insecta"
-  | "Mammalia"
-  | "Mollusca"
-  | "Reptilia"
-  | "Plantae"
-  | "Protozoa";
+export type IconicTaxon = typeof iconicTaxa[number];
 
 type TypicalEndpoints = {
   /** Top observers */
