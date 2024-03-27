@@ -325,7 +325,7 @@ function App() {
               <Card.Body>
                 <h2>Active species</h2>
                 <p>Filter species to category</p>
-                <FilterDropdown setFilter={setFilter} />
+                <FilterDropdown filter={filter} setFilter={setFilter} />
                 <Charts filter={filter} />
               </Card.Body>
             </Card>
@@ -337,8 +337,10 @@ function App() {
 }
 
 const FilterDropdown = ({
+  filter,
   setFilter,
 }: {
+  filter: IconicTaxon | undefined;
   setFilter: (filter: IconicTaxon) => void;
 }) => {
   const iconicTaxaOptions = iconicTaxa.map((iconicTaxon, i) => {
@@ -348,10 +350,12 @@ const FilterDropdown = ({
       </Dropdown.Item>
     );
   });
+  const toggleText = filter ? `Filter: ${filter}` : "Filter";
+  // TODO: add none option
   return (
     <Dropdown onSelect={(value) => setFilter(value as IconicTaxon)}>
       {/* TODO: Remove the `as` above */}
-      <Dropdown.Toggle>Filter</Dropdown.Toggle>
+      <Dropdown.Toggle>{toggleText}</Dropdown.Toggle>
       <Dropdown.Menu>{iconicTaxaOptions}</Dropdown.Menu>
     </Dropdown>
   );
