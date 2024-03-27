@@ -267,6 +267,12 @@ const Charts = ({ filter }: { filter: IconicTaxon | undefined }) => {
 
 function App() {
   const [filter, setFilter] = useState<IconicTaxon | undefined>(undefined);
+  const clearFilterButton =
+    filter ?
+      <Button onClick={() => setFilter(undefined)}>
+        Clear filter
+      </Button> :
+      null;
   return (
     <>
       <Navbar />
@@ -325,7 +331,10 @@ function App() {
               <Card.Body>
                 <h2>Active species</h2>
                 <p>Filter species to category</p>
-                <FilterDropdown filter={filter} setFilter={setFilter} />
+                <div className="d-flex flex-row gap-1">
+                  <FilterDropdown filter={filter} setFilter={setFilter} />
+                  {clearFilterButton}
+                </div>
                 <Charts filter={filter} />
               </Card.Body>
             </Card>
