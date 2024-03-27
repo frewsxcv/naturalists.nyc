@@ -267,12 +267,9 @@ const Charts = ({ filter }: { filter: IconicTaxon | undefined }) => {
 
 function App() {
   const [filter, setFilter] = useState<IconicTaxon | undefined>(undefined);
-  const clearFilterButton =
-    filter ?
-      <Button onClick={() => setFilter(undefined)}>
-        Clear filter
-      </Button> :
-      null;
+  const clearFilterButton = filter ? (
+    <Button onClick={() => setFilter(undefined)}>Clear filter</Button>
+  ) : null;
   return (
     <>
       <Navbar />
@@ -288,21 +285,9 @@ function App() {
         <Row className="gx-3 row-gap-3">
           <Col xs={12} md={6} xl={4}>
             <div className="d-flex flex-column gap-3">
-              <Card className="bg-body-secondary">
-                <Card.Body>
-                  <h2>
-                    <Icon icon="chat" />
-                    &nbsp;Connect
-                  </h2>
-                  <a href="https://discord.gg/FEwKgrDV92">Join the Discord</a>
-                </Card.Body>
-              </Card>
+              <ConnectCard />
               <PapersCard />
-              <Card className="bg-body-secondary">
-                <Card.Body>
-                  <Guides />
-                </Card.Body>
-              </Card>
+              <GuidesCard />
               <Watch />
             </div>
           </Col>
@@ -344,6 +329,30 @@ function App() {
     </>
   );
 }
+
+const GuidesCard = () => {
+  return (
+    <Card className="bg-body-secondary">
+      <Card.Body>
+        <Guides />
+      </Card.Body>
+    </Card>
+  );
+};
+
+const ConnectCard = () => {
+  return (
+    <Card className="bg-body-secondary">
+      <Card.Body>
+        <h2>
+          <Icon icon="chat" />
+          &nbsp;Connect
+        </h2>
+        <a href="https://discord.gg/FEwKgrDV92">Join the Discord</a>
+      </Card.Body>
+    </Card>
+  );
+};
 
 const FilterDropdown = ({
   filter,
