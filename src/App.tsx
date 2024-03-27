@@ -360,7 +360,6 @@ const FilterDropdown = ({
     );
   });
   const toggleText = filter ? `Filter: ${filter}` : "Filter";
-  // TODO: add none option
   return (
     <Dropdown onSelect={(value) => setFilter(value as IconicTaxon)}>
       {/* TODO: Remove the `as` above */}
