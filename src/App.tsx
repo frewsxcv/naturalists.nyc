@@ -222,6 +222,25 @@ const Navbar = () => {
   );
 };
 
+const ChartTaxaSection = ({ taxon }: { taxon: TaxonCount }) => {
+  return (
+    <Col xs={12} md={6} lg={12}>
+      <Card className="bg-body-tertiary">
+        <Card.Header>
+          {taxon.taxon.preferred_common_name} (<em>{taxon.taxon.name}</em>)
+        </Card.Header>
+        <Card.Body>
+          <img
+            src={taxon.taxon.default_photo.square_url}
+            alt={taxon.taxon.name}
+          />
+          <BarChart taxonId={taxon.taxon.id} />
+        </Card.Body>
+      </Card>
+    </Col>
+  );
+};
+
 const Charts = ({ filter }: { filter: IconicTaxon | undefined }) => {
   const [taxa, setTaxa] = useState<TaxonCount[]>([]);
 
@@ -244,22 +263,7 @@ const Charts = ({ filter }: { filter: IconicTaxon | undefined }) => {
   }
 
   const taxaSections = taxa.map((taxon, i) => {
-    return (
-      <Col xs={12} md={6} lg={12}>
-        <Card className="bg-body-tertiary" key={i}>
-          <Card.Header>
-            {taxon.taxon.preferred_common_name} (<em>{taxon.taxon.name}</em>)
-          </Card.Header>
-          <Card.Body>
-            <img
-              src={taxon.taxon.default_photo.square_url}
-              alt={taxon.taxon.name}
-            />
-            <BarChart taxonId={taxon.taxon.id} />
-          </Card.Body>
-        </Card>
-      </Col>
-    );
+    return <ChartTaxaSection taxon={taxon} key={i} />;
   });
 
   return <Row className="row-gap-3">{taxaSections}</Row>;
