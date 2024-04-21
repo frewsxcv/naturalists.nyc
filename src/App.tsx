@@ -182,7 +182,7 @@ const BarChart = ({ taxonId }: { taxonId: number }) => {
       .attr("y2", height)
       .attr("stroke-width", 2)
       .attr("stroke", "var(--bs-danger)");
-  }, [data]);
+  }, [data, taxonId]);
 
   if (isFetching) {
     return <Spinner animation="border" />;
