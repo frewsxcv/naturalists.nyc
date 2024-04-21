@@ -139,17 +139,39 @@ const BarChart = ({ taxonId }: { taxonId: number }) => {
       .select(svgRef.current)
       .attr("viewBox", `0 0 ${width} ${height}`);
 
+    // Filled in bar
     svg
-      .selectAll(".bar")
+      .selectAll()
       .data(data)
       .enter()
       .append("rect")
-      .attr("class", "bar")
       .attr("x", (d) => unwrap(x(d.month)))
       .attr("width", x.bandwidth())
       .attr("y", (d) => y(d.count) / 2)
       .attr("height", (d) => height - y(d.count))
+      .attr("fill-opacity", "1")
       .attr("fill", "var(--bs-body-color)");
+
+    // Link hover
+    svg
+      .selectAll()
+      .data(data)
+      .enter()
+      .append("a")
+      // FIXME BELOW
+      .attr(
+        "href",
+        (d) =>
+          `https://www.inaturalist.org/observations?place_id=${nycPlaceId}&taxon_id=${taxonId}&week=${d.month}`
+      )
+      .attr("target", "_blank")
+      .append("rect")
+      .attr("class", "green-hover")
+      .attr("height", height)
+      .attr("width", x.bandwidth())
+      .attr("x", (d) => unwrap(x(d.month)))
+      .attr("y", 0)
+      .attr("fill-opacity", "0");
 
     // Add red line for current week
     svg
