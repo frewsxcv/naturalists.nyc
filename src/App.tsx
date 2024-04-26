@@ -9,6 +9,7 @@ import Card from "react-bootstrap/Card";
 import * as d3 from "d3";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useEffect, useRef, useState } from "react";
+import { MdChat, MdNewspaper, MdManageSearch } from "react-icons/md";
 import {
   HistogramResponse,
   INaturalistResponse,
@@ -321,7 +322,7 @@ function App() {
             <div className="d-flex flex-column gap-3">
               <Card className="bg-body-secondary">
                 <Card.Body>
-                  <h2>Top Observers</h2>
+                  <Card.Title>Top Observers</Card.Title>
 
                   <p>
                     Observers with most unique species observed in NYC in the
@@ -340,13 +341,15 @@ function App() {
           <Col xs={12} xl={4}>
             <Card className="bg-body-secondary">
               <Card.Body>
-                <h2>Active species</h2>
+                <Card.Title>Active species</Card.Title>
                 <p>Filter species to category</p>
-                <div className="d-flex flex-row gap-1">
-                  <FilterDropdown filter={filter} setFilter={setFilter} />
-                  {clearFilterButton}
+                <div className="d-flex flex-column gap-1">
+                  <div className="d-flex flex-row gap-1">
+                    <FilterDropdown filter={filter} setFilter={setFilter} />
+                    {clearFilterButton}
+                  </div>
+                  <Charts filter={filter} />
                 </div>
-                <Charts filter={filter} />
               </Card.Body>
             </Card>
           </Col>
@@ -370,10 +373,10 @@ const ConnectCard = () => {
   return (
     <Card className="bg-body-secondary">
       <Card.Body>
-        <h2>
-          <Icon icon="chat" />
+        <Card.Title>
+          <MdChat />
           &nbsp;Connect
-        </h2>
+        </Card.Title>
         <a href="https://discord.gg/FEwKgrDV92">Join the Discord</a>
       </Card.Body>
     </Card>
@@ -408,10 +411,10 @@ const PapersCard = () => {
   return (
     <Card className="bg-body-secondary">
       <Card.Body>
-        <h2>
-          <Icon icon="news" />
+        <Card.Title>
+          <MdNewspaper />
           &nbsp;Papers
-        </h2>
+        </Card.Title>
         <ul>
           <li>
             <a href="https://www.ser.org/news/305433/Seeing-the-Forest-and-the-Trees-Outcomes-of-Forest-Restoration-in-The-Bronx-.htm">
@@ -428,10 +431,10 @@ const PapersCard = () => {
 const Guides = () => {
   return (
     <>
-      <h2>
-        <Icon icon="quick_reference_all" />
+      <Card.Title>
+        <MdManageSearch />
         &nbsp;Guides
-      </h2>
+      </Card.Title>
       <ul>
         <li>
           <a href="https://www.amnh.org/content/download/35179/518842/file/ASeasonalGuidetoNewYorkCitysInvertebrates.pdf">
@@ -570,10 +573,6 @@ const LandAcknowlegement = () => {
   );
 };
 
-const Icon = ({ icon }: { icon: string }) => (
-  <span className="material-symbols-outlined">{icon}</span>
-);
-
 const randomYouTubeVideoUrl = () => chooseRandom(youTubeVideoUrls);
 
 const randomYouTubeVideoId = () =>
@@ -590,7 +589,7 @@ const Watch = () => {
   return (
     <Card className="bg-body-secondary">
       <Card.Body>
-        <h2>Watch</h2>
+        <Card.Title>Watch</Card.Title>
         <YouTube videoId={videoId} iframeClassName="w-100"></YouTube>
         <Button onClick={() => setVideoId(randomYouTubeVideoId())}>
           Next video
