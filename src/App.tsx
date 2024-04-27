@@ -322,7 +322,7 @@ function App() {
             <div className="d-flex flex-column gap-3">
               <Card className="bg-body-secondary">
                 <Card.Body>
-                  <Card.Title>Top Observers</Card.Title>
+                  <CardTitle>Top Observers</CardTitle>
 
                   <p>
                     Observers with most unique species observed in NYC in the
@@ -341,7 +341,7 @@ function App() {
           <Col xs={12} xl={4}>
             <Card className="bg-body-secondary">
               <Card.Body>
-                <Card.Title>Active species</Card.Title>
+                <CardTitle>Active species</CardTitle>
                 <p>Filter species to category</p>
                 <div className="d-flex flex-column gap-1">
                   <div className="d-flex flex-row gap-1">
@@ -373,10 +373,10 @@ const ConnectCard = () => {
   return (
     <Card className="bg-body-secondary">
       <Card.Body>
-        <Card.Title>
+        <CardTitle>
           <MdChat />
           &nbsp;Connect
-        </Card.Title>
+        </CardTitle>
         <a href="https://discord.gg/FEwKgrDV92">Join the Discord</a>
       </Card.Body>
     </Card>
@@ -411,10 +411,10 @@ const PapersCard = () => {
   return (
     <Card className="bg-body-secondary">
       <Card.Body>
-        <Card.Title>
+        <CardTitle>
           <MdNewspaper />
           &nbsp;Papers
-        </Card.Title>
+        </CardTitle>
         <ul>
           <li>
             <a href="https://www.ser.org/news/305433/Seeing-the-Forest-and-the-Trees-Outcomes-of-Forest-Restoration-in-The-Bronx-.htm">
@@ -428,13 +428,21 @@ const PapersCard = () => {
   );
 };
 
+const CardTitle = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <Card.Title className="d-flex flex-row align-items-center">
+      {children}
+    </Card.Title>
+  );
+};
+
 const Guides = () => {
   return (
     <>
-      <Card.Title>
+      <CardTitle>
         <MdManageSearch />
         &nbsp;Guides
-      </Card.Title>
+      </CardTitle>
       <ul>
         <li>
           <a href="https://www.amnh.org/content/download/35179/518842/file/ASeasonalGuidetoNewYorkCitysInvertebrates.pdf">
@@ -589,7 +597,7 @@ const Watch = () => {
   return (
     <Card className="bg-body-secondary">
       <Card.Body>
-        <Card.Title>Watch</Card.Title>
+        <CardTitle>Watch</CardTitle>
         <YouTube videoId={videoId} iframeClassName="w-100"></YouTube>
         <Button onClick={() => setVideoId(randomYouTubeVideoId())}>
           Next video
