@@ -17,9 +17,6 @@ export function prevYearFromDate(date: Date) {
   return d;
 }
 
-  const oneYearAgoFromDate = new Date(date);
-  dateSubtractYear(oneYearAgoFromDate);
-
 /** Generate dates descending starting from the given date */
 export function* datesDescFrom(startDate: Date) {
   for (let date = new Date(startDate); ; dateSubtractDay(date)) {
