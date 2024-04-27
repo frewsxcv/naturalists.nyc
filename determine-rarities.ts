@@ -1,4 +1,10 @@
 import * as inaturalist from "./src/inaturalist.ts";
+import {
+  datesDescFrom,
+  formattedDate,
+  prevDayFromDate,
+  prevYearFromDate,
+} from "./src/dates.ts";
 
 const nycPlaceId = 674;
 
@@ -6,9 +12,7 @@ async function* fetchSpeciesCountsUpThroughDate(
   date: Date,
   taxonIds: number[]
 ) {
-  const oneYearAgoFromDate = new Date(date);
-  dateSubtractYear(oneYearAgoFromDate);
-  yield* fetchSpeciesCounts(oneYearAgoFromDate, date, taxonIds);
+  yield* fetchSpeciesCounts(prevYearFromDate(date), date, taxonIds);
 }
 
 async function* fetchSpeciesCountsOnDate(
@@ -42,13 +46,6 @@ async function* fetchSpeciesCounts(
   });
 }
 
-const dateSubtractDay = (d: Date) => d.setDate(d.getDate() - 1);
-
-const dateSubtractYear = (d: Date) => d.setFullYear(d.getFullYear() - 1);
-
-const formattedDate = (d: Date) =>
-  `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
-
 const observationUrl = (id: number) =>
   `https://www.inaturalist.org/observations/${id}`;
 
@@ -62,12 +59,6 @@ const printObservationRow = (observation: inaturalist.Observation) => {
   });
 };
 
-const prevDateFromDate = (date: Date) => {
-  const previousDay = new Date(date);
-  dateSubtractDay(previousDay);
-  return previousDay;
-};
-
 // TODO: paginate below
 function fetchObservationsOnDate(date: Date, taxonId: number) {
   return inaturalist.fetchINaturalistApi("/observations", {
@@ -77,13 +68,6 @@ function fetchObservationsOnDate(date: Date, taxonId: number) {
     d2: formattedDate(date),
     taxonId: taxonId.toString(),
   });
-}
-
-/** Generate dates descending starting from the given date */
-function* datesDescFrom(startDate: Date) {
-  for (let date = new Date(startDate); ; dateSubtractDay(date)) {
-    yield date;
-  }
 }
 
 interface Row {
@@ -134,7 +118,7 @@ async function arrayAsyncFrom<T>(gen: AsyncIterable<T>): Promise<T[]> {
 for (const date of datesDescFrom(new Date())) {
   const taxonIds = await arrayAsyncFrom(fetchTaxonIdsOnDate(date, undefined));
   const prevYearResults = await arrayAsyncFrom(
-    fetchSpeciesCountsUpThroughDate(prevDateFromDate(date), taxonIds)
+    fetchSpeciesCountsUpThroughDate(prevDayFromDate(date), taxonIds)
   );
   for (const taxonId of taxonIds) {
     if (!prevResultsContainsTaxonId(taxonId, prevYearResults)) {
