@@ -327,14 +327,16 @@ export async function* fetchPaginate<P extends keyof TypicalEndpoints>(
   path: P,
   params: TypicalEndpoints[P]["params"]
 ): AsyncGenerator<TypicalEndpoints[P]["result"]> {
-  let response = await fetchINaturalistApi(path, params);
+  let page = 1;
+  let response = await fetchINaturalistApi(path, { ...params, page });
   for (const result of response.results) {
     yield result;
   }
-  while (response.page < response.total_results / response.per_page) {
+  while (page < response.total_results / response.per_page) {
+    page += 1;
     response = await fetchINaturalistApi(path, {
       ...params,
-      page: response.page + 1,
+      page,
     });
     for (const result of response.results) {
       yield result;

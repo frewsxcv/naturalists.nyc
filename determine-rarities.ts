@@ -14,7 +14,7 @@ async function* fetchSpeciesCountsUpThroughDate(
     captive: false,
     d1: formattedDate(oneYearAgoFromDate),
     d2: formattedDate(date),
-    perPage: 500,
+    perPage: 200,
     hrank: "genus",
     taxonId: taxonIds.join(","),
   });
@@ -27,7 +27,7 @@ async function* fetchSpeciesCountsOnDate(date: Date) {
     verifiable: true,
     d1: formattedDate(date),
     d2: formattedDate(date),
-    perPage: 500,
+    perPage: 200,
     hrank: "genus",
   });
 }
