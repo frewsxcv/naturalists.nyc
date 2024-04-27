@@ -48,10 +48,25 @@ const formattedDate = (d: Date) =>
 
 const observationUrl = (id: number) => `https://www.inaturalist.org/observations/${id}`;
 
+const printObservationRow = (observation: inaturalist.Observation) => {
+  printRow({
+    date: observation.observed_on,
+    url: observationUrl(observation.id),
+    commonName: observation.taxon.preferred_common_name,
+    scientificName: observation.taxon.name,
+    observer: observation.user.login,
+  });
+}
+
+const prevDateFromDate = (date: Date) => {
+  const previousDay = new Date(date);
+  dateSubtractDay(previousDay);
+  return previousDay;
+}
+
 for (const date of dateGeneratorDescending(new Date())) {
   const taxonIds = await arrayAsyncFrom(fetchTaxonIdsOnDate(date));
-  const prevDay = new Date(date);
-  dateSubtractDay(prevDay);
+  const prevDay = prevDateFromDate(date);
   const prevResults = await arrayAsyncFrom(
     fetchSpeciesCountsUpThroughDate(prevDay, taxonIds)
   );
@@ -66,13 +81,7 @@ for (const date of dateGeneratorDescending(new Date())) {
         taxonId: taxonId.toString(),
       });
       for (const observation of observations.results) {
-        printRow({
-          date: observation.observed_on,
-          url: observationUrl(observations.results[0].id),
-          commonName: observation.taxon.preferred_common_name,
-          scientificName: observation.taxon.name,
-          observer: observation.user.login,
-        });
+        printObservationRow(observation);
       }
     }
   }
