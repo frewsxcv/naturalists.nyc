@@ -29,21 +29,31 @@ async function* fetchTaxonIdsOnDate(date: Date, taxonId: undefined | number[]) {
   }
 }
 
+function* chunks<T>(arr: T[], n: number): Generator<T[], void> {
+  for (let i = 0; i < arr.length; i += n) {
+    yield arr.slice(i, i + n);
+  }
+}
+
 async function* fetchSpeciesCounts(
   dateFrom: Date,
   dateTo: Date,
   taxonId: number[] | undefined
 ) {
-  yield* inaturalist.fetchPaginate("/observations/species_counts", {
-    order: "asc",
-    placeId: nycPlaceId,
-    captive: false,
-    d1: formattedDate(dateFrom),
-    d2: formattedDate(dateTo),
-    perPage: 500, // FIXME
-    hrank: "genus",
-    taxonId: taxonId?.join(","),
-  });
+  const perPage = 100;
+  // If we pass too many taxonIds to the API, it will return an error, so we split it up in 100 chunks
+  for (const chunk of chunks(taxonId ?? [], perPage)) {
+    yield* inaturalist.fetchPaginate("/observations/species_counts", {
+      order: "asc",
+      placeId: nycPlaceId,
+      captive: false,
+      d1: formattedDate(dateFrom),
+      d2: formattedDate(dateTo),
+      perPage: perPage,
+      hrank: "genus",
+      taxonId: chunk.join(","),
+    });
+  }
 }
 
 const observationUrl = (id: number) =>
