@@ -14,7 +14,7 @@ async function* fetchSpeciesCountsUpThroughDate(
     captive: false,
     d1: formattedDate(oneYearAgoFromDate),
     d2: formattedDate(date),
-    perPage: 200,
+    perPage: 500, // FIXME
     hrank: "genus",
     taxonId: taxonIds.join(","),
   });
@@ -27,7 +27,7 @@ async function* fetchSpeciesCountsOnDate(date: Date) {
     verifiable: true,
     d1: formattedDate(date),
     d2: formattedDate(date),
-    perPage: 200,
+    perPage: 500, // FIXME
     hrank: "genus",
   });
 }
@@ -46,8 +46,9 @@ const dateSubtractYear = (d: Date) => d.setFullYear(d.getFullYear() - 1);
 const formattedDate = (d: Date) =>
   `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
 
-let date = new Date();
-while (true) {
+const observationUrl = (id: number) => `https://www.inaturalist.org/observations/${id}`;
+
+for (const date of dateGeneratorDescending(new Date())) {
   const taxonIds = await arrayAsyncFrom(fetchTaxonIdsOnDate(date));
   const prevDay = new Date(date);
   dateSubtractDay(prevDay);
@@ -66,8 +67,8 @@ while (true) {
       });
       for (const observation of observations.results) {
         printRow({
-          date: date.toISOString(),
-          url: "https://www.inaturalist.org/observations/" + observations.results[0].id,
+          date: observation.observed_on,
+          url: observationUrl(observations.results[0].id),
           commonName: observation.taxon.preferred_common_name,
           scientificName: observation.taxon.name,
           observer: observation.user.login,
@@ -75,7 +76,12 @@ while (true) {
       }
     }
   }
-  dateSubtractDay(date);
+}
+
+function *dateGeneratorDescending(startDate: Date) {
+    for (let date = new Date(startDate); ; dateSubtractDay(date)) {
+      yield date;
+    }
 }
 
 // function printRow(row: any[]) {
