@@ -94,10 +94,6 @@ function* dateGeneratorDescending(startDate: Date) {
   }
 }
 
-// function printRow(row: any[]) {
-//   console.log(row.map(n => n ? `"${n}"` : n).join(","));
-// }
-
 interface Row {
   date: string;
   url: string;
