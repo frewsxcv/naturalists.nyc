@@ -20,25 +20,25 @@ async function* fetchSpeciesCountsUpThroughDate(
   });
 }
 
-async function* fetchSpeciesCountsOnDate(date: Date, taxonId: number[]|undefined) {
-  yield* fetchSpeciesCounts(
-    date,
-    date,
-    taxonId,
-  );
+async function* fetchSpeciesCountsOnDate(
+  date: Date,
+  taxonId: number[] | undefined
+) {
+  yield* fetchSpeciesCounts(date, date, taxonId);
 }
 
-async function* fetchTaxonIdsOnDate(
-  date: Date,
-  taxonId: undefined | number[],
-) {
+async function* fetchTaxonIdsOnDate(date: Date, taxonId: undefined | number[]) {
   const speciesCounts = fetchSpeciesCountsOnDate(date, taxonId);
   for await (const speciesCount of speciesCounts) {
     yield speciesCount.taxon.id;
   }
 }
 
-async function* fetchSpeciesCounts(dateFrom: Date, dateTo: Date, taxonId: number[]|undefined) {
+async function* fetchSpeciesCounts(
+  dateFrom: Date,
+  dateTo: Date,
+  taxonId: number[] | undefined
+) {
   yield* inaturalist.fetchPaginate("/observations/species_counts", {
     order: "asc",
     placeId: nycPlaceId,
@@ -50,7 +50,6 @@ async function* fetchSpeciesCounts(dateFrom: Date, dateTo: Date, taxonId: number
     taxonId: taxonId?.join(","),
   });
 }
-
 
 const dateSubtractDay = (d: Date) => d.setDate(d.getDate() - 1);
 
