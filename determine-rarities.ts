@@ -79,7 +79,8 @@ function fetchObservationsOnDate(date: Date, taxonId: number) {
   });
 }
 
-function* dateGeneratorDescending(startDate: Date) {
+/** Generate dates descending starting from the given date */
+function* datesDescFrom(startDate: Date) {
   for (let date = new Date(startDate); ; dateSubtractDay(date)) {
     yield date;
   }
@@ -130,7 +131,7 @@ async function arrayAsyncFrom<T>(gen: AsyncIterable<T>): Promise<T[]> {
   return out;
 }
 
-for (const date of dateGeneratorDescending(new Date())) {
+for (const date of datesDescFrom(new Date())) {
   const taxonIds = await arrayAsyncFrom(fetchTaxonIdsOnDate(date, undefined));
   const prevYearResults = await arrayAsyncFrom(
     fetchSpeciesCountsUpThroughDate(prevDateFromDate(date), taxonIds)
