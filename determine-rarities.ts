@@ -42,7 +42,7 @@ async function* fetchSpeciesCounts(
 ) {
   const perPage = 100;
   // If we pass too many taxonIds to the API, it will return an error, so we split it up in 100 chunks
-  for (const chunk of chunks(taxonId ?? [], perPage)) {
+  for (const chunk of chunks(taxonId ?? [undefined], perPage)) {
     yield* inaturalist.fetchPaginate("/observations/species_counts", {
       order: "asc",
       placeId: nycPlaceId,
