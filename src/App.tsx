@@ -9,7 +9,14 @@ import Card from "react-bootstrap/Card";
 import * as d3 from "d3";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useEffect, useRef, useState } from "react";
-import { MdChat, MdNewspaper, MdManageSearch } from "react-icons/md";
+import {
+  MdChat,
+  MdNewspaper,
+  MdManageSearch,
+  MdTv,
+  MdBolt,
+  MdWorkspacePremium,
+} from "react-icons/md";
 import {
   HistogramResponse,
   INaturalistResponse,
@@ -322,7 +329,10 @@ function App() {
             <div className="d-flex flex-column gap-3">
               <Card className="bg-body-secondary">
                 <Card.Body>
-                  <CardTitle>Top Observers</CardTitle>
+                  <CardTitle>
+                    <MdWorkspacePremium />
+                    &nbsp;Top Observers
+                  </CardTitle>
 
                   <p>
                     Observers with most unique species observed in NYC in the
@@ -341,7 +351,10 @@ function App() {
           <Col xs={12} xl={4}>
             <Card className="bg-body-secondary">
               <Card.Body>
-                <CardTitle>Active species</CardTitle>
+                <CardTitle>
+                  <MdBolt />
+                  &nbsp;Active species
+                </CardTitle>
                 <p>Filter species to category</p>
                 <div className="d-flex flex-column gap-1">
                   <div className="d-flex flex-row gap-1">
@@ -597,7 +610,10 @@ const Watch = () => {
   return (
     <Card className="bg-body-secondary">
       <Card.Body>
-        <CardTitle>Watch</CardTitle>
+        <CardTitle>
+          <MdTv />
+          &nbsp;Watch
+        </CardTitle>
         <YouTube videoId={videoId} iframeClassName="w-100"></YouTube>
         <Button onClick={() => setVideoId(randomYouTubeVideoId())}>
           Next video
