@@ -59,6 +59,7 @@ type TypicalEndpoints = {
       date?: string;
       perPage?: number;
       orderBy?: OrderBy;
+      page?: number;
     };
   };
   /** Top species in an area */
@@ -78,6 +79,7 @@ type TypicalEndpoints = {
       taxonId?: string; // FIXME: this should be string | string[]
       year?: string; // FIXME: Should be string | string[]
       iconic_taxa?: IconicTaxon; // FIXME: Should be IconicTaxa | IconicTaxa[]
+      page?: number;
     };
   };
   "/observations": {
@@ -89,6 +91,7 @@ type TypicalEndpoints = {
       d1?: string; // FIXME: should there be a date time?
       d2?: string; // FIXME: should there be a date time?
       taxonId?: string; // FIXME: this should be string | string[]
+      page?: number;
     };
   };
 };
@@ -129,6 +132,7 @@ const requestParams: RequestParamsBuilder = {
       d1: params.d1,
       d2: params.d2,
       taxon_id: params.taxonId,
+      page: params.page,
     };
   },
   "/observations/species_counts": (params) => {
@@ -146,6 +150,7 @@ const requestParams: RequestParamsBuilder = {
       verifiable: params.verifiable,
       year: params.year,
       iconic_taxa: params.iconic_taxa,
+      page: params.page,
     };
   },
   "/observations/histogram": (params) => {
@@ -166,6 +171,7 @@ const requestParams: RequestParamsBuilder = {
       d1: params.date,
       per_page: params.perPage,
       order_by: params.orderBy,
+      page: params.page,
     };
   },
 };
