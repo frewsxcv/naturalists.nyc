@@ -8,16 +8,7 @@ async function* fetchSpeciesCountsUpThroughDate(
 ) {
   const oneYearAgoFromDate = new Date(date);
   dateSubtractYear(oneYearAgoFromDate);
-  yield* inaturalist.fetchPaginate("/observations/species_counts", {
-    order: "asc",
-    placeId: nycPlaceId,
-    captive: false,
-    d1: formattedDate(oneYearAgoFromDate),
-    d2: formattedDate(date),
-    perPage: 500, // FIXME
-    hrank: "genus",
-    taxonId: taxonIds.join(","),
-  });
+  yield* fetchSpeciesCounts(oneYearAgoFromDate, date, taxonIds);
 }
 
 async function* fetchSpeciesCountsOnDate(
@@ -141,12 +132,11 @@ async function arrayAsyncFrom<T>(gen: AsyncIterable<T>): Promise<T[]> {
 
 for (const date of dateGeneratorDescending(new Date())) {
   const taxonIds = await arrayAsyncFrom(fetchTaxonIdsOnDate(date, undefined));
-  const prevDay = prevDateFromDate(date);
-  const prevResults = await arrayAsyncFrom(
-    fetchSpeciesCountsUpThroughDate(prevDay, taxonIds)
+  const prevYearResults = await arrayAsyncFrom(
+    fetchSpeciesCountsUpThroughDate(prevDateFromDate(date), taxonIds)
   );
   for (const taxonId of taxonIds) {
-    if (!prevResultsContainsTaxonId(taxonId, prevResults)) {
+    if (!prevResultsContainsTaxonId(taxonId, prevYearResults)) {
       const observations = await fetchObservationsOnDate(date, taxonId);
       for (const observation of observations.results) {
         printObservationRow(observation);
