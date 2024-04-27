@@ -20,24 +20,37 @@ async function* fetchSpeciesCountsUpThroughDate(
   });
 }
 
-async function* fetchSpeciesCountsOnDate(date: Date) {
-  yield* inaturalist.fetchPaginate("/observations/species_counts", {
-    order: "asc",
-    placeId: nycPlaceId,
-    verifiable: true,
-    d1: formattedDate(date),
-    d2: formattedDate(date),
-    perPage: 500, // FIXME
-    hrank: "genus",
-  });
+async function* fetchSpeciesCountsOnDate(date: Date, taxonId: number[]|undefined) {
+  yield* fetchSpeciesCounts(
+    date,
+    date,
+    taxonId,
+  );
 }
 
-async function* fetchTaxonIdsOnDate(date: Date) {
-  const speciesCounts = fetchSpeciesCountsOnDate(date);
+async function* fetchTaxonIdsOnDate(
+  date: Date,
+  taxonId: undefined | number[],
+) {
+  const speciesCounts = fetchSpeciesCountsOnDate(date, taxonId);
   for await (const speciesCount of speciesCounts) {
     yield speciesCount.taxon.id;
   }
 }
+
+async function* fetchSpeciesCounts(dateFrom: Date, dateTo: Date, taxonId: number[]|undefined) {
+  yield* inaturalist.fetchPaginate("/observations/species_counts", {
+    order: "asc",
+    placeId: nycPlaceId,
+    captive: false,
+    d1: formattedDate(dateFrom),
+    d2: formattedDate(dateTo),
+    perPage: 500, // FIXME
+    hrank: "genus",
+    taxonId: taxonId?.join(","),
+  });
+}
+
 
 const dateSubtractDay = (d: Date) => d.setDate(d.getDate() - 1);
 
@@ -46,7 +59,8 @@ const dateSubtractYear = (d: Date) => d.setFullYear(d.getFullYear() - 1);
 const formattedDate = (d: Date) =>
   `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
 
-const observationUrl = (id: number) => `https://www.inaturalist.org/observations/${id}`;
+const observationUrl = (id: number) =>
+  `https://www.inaturalist.org/observations/${id}`;
 
 const printObservationRow = (observation: inaturalist.Observation) => {
   printRow({
@@ -56,41 +70,29 @@ const printObservationRow = (observation: inaturalist.Observation) => {
     scientificName: observation.taxon.name,
     observer: observation.user.login,
   });
-}
+};
 
 const prevDateFromDate = (date: Date) => {
   const previousDay = new Date(date);
   dateSubtractDay(previousDay);
   return previousDay;
+};
+
+// TODO: paginate below
+function fetchObservationsOnDate(date: Date, taxonId: number) {
+  return inaturalist.fetchINaturalistApi("/observations", {
+    placeId: nycPlaceId,
+    captive: false,
+    d1: formattedDate(date),
+    d2: formattedDate(date),
+    taxonId: taxonId.toString(),
+  });
 }
 
-for (const date of dateGeneratorDescending(new Date())) {
-  const taxonIds = await arrayAsyncFrom(fetchTaxonIdsOnDate(date));
-  const prevDay = prevDateFromDate(date);
-  const prevResults = await arrayAsyncFrom(
-    fetchSpeciesCountsUpThroughDate(prevDay, taxonIds)
-  );
-  for (const taxonId of taxonIds) {
-    if (!prevResultsContainsTaxonId(taxonId, prevResults)) {
-      // TODO: paginate below
-      const observations = await inaturalist.fetchINaturalistApi("/observations", {
-        placeId: nycPlaceId,
-        captive: false,
-        d1: formattedDate(date),
-        d2: formattedDate(date),
-        taxonId: taxonId.toString(),
-      });
-      for (const observation of observations.results) {
-        printObservationRow(observation);
-      }
-    }
+function* dateGeneratorDescending(startDate: Date) {
+  for (let date = new Date(startDate); ; dateSubtractDay(date)) {
+    yield date;
   }
-}
-
-function *dateGeneratorDescending(startDate: Date) {
-    for (let date = new Date(startDate); ; dateSubtractDay(date)) {
-      yield date;
-    }
 }
 
 // function printRow(row: any[]) {
@@ -107,7 +109,9 @@ interface Row {
 
 function printRow(row: Row) {
   // Format heading, handling if common name is missing
-  const heading = row.commonName ? `${row.commonName} (*${row.scientificName}*)` : `*${row.scientificName}*`;
+  const heading = row.commonName
+    ? `${row.commonName} (*${row.scientificName}*)`
+    : `*${row.scientificName}*`;
   console.log(`# ${heading}`);
   console.log("");
   console.log(`* [Observation](${row.url})`);
@@ -138,4 +142,20 @@ async function arrayAsyncFrom<T>(gen: AsyncIterable<T>): Promise<T[]> {
     out.push(x);
   }
   return out;
+}
+
+for (const date of dateGeneratorDescending(new Date())) {
+  const taxonIds = await arrayAsyncFrom(fetchTaxonIdsOnDate(date, undefined));
+  const prevDay = prevDateFromDate(date);
+  const prevResults = await arrayAsyncFrom(
+    fetchSpeciesCountsUpThroughDate(prevDay, taxonIds)
+  );
+  for (const taxonId of taxonIds) {
+    if (!prevResultsContainsTaxonId(taxonId, prevResults)) {
+      const observations = await fetchObservationsOnDate(date, taxonId);
+      for (const observation of observations.results) {
+        printObservationRow(observation);
+      }
+    }
+  }
 }

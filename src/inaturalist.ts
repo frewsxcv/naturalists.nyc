@@ -179,6 +179,7 @@ export const fetchINaturalistApi = (() => {
   ): Promise<AllEndpoints[P]["response"]> => {
     return mutex.runExclusive(async () => {
       const url = buildINaturalistApiUrl(path, requestParams[path](params));
+      console.log(url.toString());
       const response = await fetch(url, {
         headers: {
           "X-CACHE-TTL": cacheTtl[path],
@@ -342,4 +343,5 @@ export async function* fetchPaginate<P extends keyof TypicalEndpoints>(
       yield result;
     }
   }
+  console.log('---------------------');
 }
