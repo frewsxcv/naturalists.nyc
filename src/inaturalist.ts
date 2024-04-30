@@ -49,7 +49,7 @@ export const iconicTaxa = [
 
 export type IconicTaxon = typeof iconicTaxa[number];
 
-type TypicalEndpoints = {
+export type TypicalEndpoints = {
   /** Top observers */
   "/observations/observers": {
     response: INaturalistResponse<Observer>;
@@ -195,6 +195,8 @@ export const fetchINaturalistApi = (() => {
   };
 })();
 
+export type QualityGrade = "casual" | "needs_id" | "research";
+
 export interface Observation {
   id: number;
   observed_on: string;
@@ -202,10 +204,14 @@ export interface Observation {
   taxon: Taxon;
   place_guess: string;
   location: string;
+  quality_grade: QualityGrade;
   geojson: {
     type: string;
     coordinates: [number, number];
   };
+  photos: {
+    url: string;
+  }[],
   user: {
     id: number;
     login: string;

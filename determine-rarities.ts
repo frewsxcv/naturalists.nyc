@@ -60,14 +60,37 @@ const observationUrl = (id: number) =>
   `https://www.inaturalist.org/observations/${id}`;
 
 const printObservationRow = (observation: inaturalist.Observation) => {
-  printRow({
-    date: observation.observed_on,
-    url: observationUrl(observation.id),
-    commonName: observation.taxon.preferred_common_name,
-    scientificName: observation.taxon.name,
-    observer: observation.user.login,
-  });
+  const commonName = observation.taxon.preferred_common_name;
+  const scientificName = observation.taxon.name;
+  const photoUrl = observation.photos[0]?.url;
+  const heading = commonName
+    ? `${commonName} (*${scientificName}*)`
+    : `*${scientificName}*`;
+  const url = observationUrl(observation.id);
+
+  console.log(`# ${heading}`);
+  if (photoUrl) {
+    console.log("");
+    console.log(`![Observation photo](${photoUrl.replace("square", "small")})`);
+  }
+  console.log("");
+  console.log(`* [Observation](${url})`);
+  console.log(`* Date: ${observation.observed_on}`);
+  console.log(`* Observer: ${observation.user.login} (Created: ${observation.user.created_at})`);
+  console.log(`* Quality grade: ${formatQualityGrade(observation.quality_grade)}`);
+  console.log("");
 };
+
+function formatQualityGrade(quality_grade: inaturalist.QualityGrade) {
+  switch (quality_grade) {
+    case "casual":
+      return "⚪️ Casual";
+    case "needs_id":
+      return "🟡 Needs ID";
+    case "research":
+      return "🟢 Research";
+  }
+}
 
 // TODO: paginate below
 function fetchObservationsOnDate(date: Date, taxonId: number) {
@@ -86,19 +109,7 @@ interface Row {
   commonName: string;
   scientificName: string;
   observer: string;
-}
-
-function printRow(row: Row) {
-  // Format heading, handling if common name is missing
-  const heading = row.commonName
-    ? `${row.commonName} (*${row.scientificName}*)`
-    : `*${row.scientificName}*`;
-  console.log(`# ${heading}`);
-  console.log("");
-  console.log(`* [Observation](${row.url})`);
-  console.log(`* Date: ${row.date}`);
-  console.log(`* Observer: ${row.observer}`);
-  console.log("");
+  photoUrl: string|undefined;
 }
 
 function prevResultsContainsTaxonId(
