@@ -116,15 +116,10 @@ function prevResultsContainsTaxonId(
   taxonId: number,
   prevResults: inaturalist.TaxonCount[]
 ) {
-  for (const result of prevResults) {
-    if (
-      result.taxon.id === taxonId ||
-      result.taxon.ancestor_ids.includes(taxonId)
-    ) {
-      return true;
-    }
-  }
-  return false;
+  return prevResults.some(
+    (result) =>
+      result.taxon.id === taxonId || result.taxon.ancestor_ids.includes(taxonId)
+  );
 }
 
 // https://stackoverflow.com/questions/58668361/how-can-i-convert-an-async-iterator-to-an-array
