@@ -76,8 +76,12 @@ const printObservationRow = (observation: inaturalist.Observation) => {
   console.log("");
   console.log(`* [Observation](${url})`);
   console.log(`* Date: ${observation.observed_on}`);
-  console.log(`* Observer: ${observation.user.login} (Created: ${observation.user.created_at})`);
-  console.log(`* Quality grade: ${formatQualityGrade(observation.quality_grade)}`);
+  console.log(
+    `* Observer: ${observation.user.login} (Created: ${observation.user.created_at})`
+  );
+  console.log(
+    `* Quality grade: ${formatQualityGrade(observation.quality_grade)}`
+  );
   console.log("");
 };
 
