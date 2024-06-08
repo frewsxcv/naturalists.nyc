@@ -40,7 +40,7 @@ const BarChart = ({ taxonId, placeId }: { taxonId: number, placeId: number }) =>
       .finally(() => {
         setIsFetching(false);
       });
-  }, [taxonId]);
+  }, [placeId, taxonId]);
 
   useEffect(() => {
     if (!data) {
@@ -109,7 +109,7 @@ const BarChart = ({ taxonId, placeId }: { taxonId: number, placeId: number }) =>
       .attr("y2", height)
       .attr("stroke-width", 2)
       .attr("stroke", "var(--bs-danger)");
-  }, [data, taxonId]);
+  }, [placeId, data, taxonId]);
 
   if (isFetching) {
     return <Spinner animation="border" />;
@@ -163,7 +163,7 @@ export const Charts = ({ filter, placeId }: ChartFilterProp & { placeId: number 
     }).then((response) => {
       setTaxa(response.results);
     });
-  }, [filter]);
+  }, [placeId, filter]);
 
   if (!taxa.length) {
     return <Spinner animation="border" />;
