@@ -252,7 +252,7 @@ const Navbar = () => {
   );
 };
 
-const ChartTaxaSection = ({ taxon }: { taxon: TaxonCount }) => {
+const ChartTaxaSection = ({ taxon }: TaxonProp) => {
   return (
     <Col xs={12} md={6} lg={12}>
       <Card className="bg-body-tertiary">
@@ -271,7 +271,27 @@ const ChartTaxaSection = ({ taxon }: { taxon: TaxonCount }) => {
   );
 };
 
-const Charts = ({ filter }: { filter: IconicTaxon | undefined }) => {
+type ChartFilterProp = {
+  filter: IconicTaxon | undefined;
+};
+
+type ChartSetFilterProp = {
+  setFilter: (filter: IconicTaxon) => void;
+};
+
+type TaxonProp = {
+  taxon: TaxonCount;
+};
+
+type ChildrenProp = {
+  children: React.ReactNode;
+};
+
+type OrderByProp = {
+  orderBy: "observation_count" | "species_count";
+};
+
+const Charts = ({ filter }: ChartFilterProp) => {
   const [taxa, setTaxa] = useState<TaxonCount[]>([]);
 
   useEffect(() => {
@@ -399,10 +419,7 @@ const ConnectCard = () => {
 const FilterDropdown = ({
   filter,
   setFilter,
-}: {
-  filter: IconicTaxon | undefined;
-  setFilter: (filter: IconicTaxon) => void;
-}) => {
+}: ChartFilterProp & ChartSetFilterProp) => {
   const iconicTaxaOptions = iconicTaxa.map((iconicTaxon, i) => {
     return (
       <Dropdown.Item key={i} eventKey={iconicTaxon}>
@@ -441,7 +458,7 @@ const PapersCard = () => {
   );
 };
 
-const CardTitle = ({ children }: { children: React.ReactNode }) => {
+const CardTitle = ({ children }: ChildrenProp) => {
   return (
     <Card.Title className="d-flex flex-row align-items-center">
       {children}
@@ -469,9 +486,7 @@ const Guides = () => {
 
 const TopObservers = ({
   orderBy,
-}: {
-  orderBy: "observation_count" | "species_count";
-}) => {
+}: OrderByProp) => {
   const [data, setData] = useState<INaturalistResponse<Observer> | null>(null);
   const date = getIsoDateOneMonthAgo();
   useEffect(() => {
