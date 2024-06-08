@@ -1,4 +1,3 @@
-// import logo from './logo.svg';
 import YouTube from "react-youtube";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
@@ -6,9 +5,8 @@ import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import { default as BootstrapNavbar } from "react-bootstrap/Navbar";
 import Card from "react-bootstrap/Card";
-import * as d3 from "d3";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   MdChat,
   MdNewspaper,
@@ -18,15 +16,15 @@ import {
   MdWorkspacePremium,
 } from "react-icons/md";
 import {
-  HistogramResponse,
   INaturalistResponse,
   Observer,
-  TaxonCount,
   fetchINaturalistApi,
   iconicTaxa,
   type IconicTaxon,
 } from "./inaturalist";
 import { Alert, Dropdown, Nav, NavDropdown, Spinner } from "react-bootstrap";
+import { Charts, type ChartFilterProp } from "./components/charts";
+import { unwrap } from "./utils";
 
 const getDateOneMonthAgo = (): Date => {
   // Get a date object for the current time
@@ -90,146 +88,7 @@ const youTubeVideoUrls: [string, ...string[]] = [
   "https://www.youtube.com/watch?v=GszzRHZck3o", // NYC H2O: Urban Lichens a talk by James Lendemer Ph.D.
 ];
 
-const histogramResponseToHistogramData = (
-  histogramResponse: HistogramResponse
-) => {
-  return Object.entries(histogramResponse.results.week_of_year).map(
-    ([month, count]) => {
-      return { month, count };
-    }
-  );
-};
-
-type HistogramData = { month: string; count: number }[];
-
-// Uses d3.js to render a histogram of the number of observations of a taxon
-// over the course of a year.
-const BarChart = ({ taxonId }: { taxonId: number }) => {
-  const svgRef = useRef(null);
-  const [isFetching, setIsFetching] = useState(true);
-  const [data, setData] = useState<HistogramData | null>(null);
-
-  useEffect(() => {
-    fetchINaturalistApi("/observations/histogram", {
-      taxonId,
-      placeId: nycPlaceId,
-    })
-      .then((response) => {
-        const data = histogramResponseToHistogramData(response);
-        setData(data);
-      })
-      .finally(() => {
-        setIsFetching(false);
-      });
-  }, [taxonId]);
-
-  useEffect(() => {
-    if (!data) {
-      return;
-    }
-    const width = 500;
-    const height = 50;
-    const maxCount = Math.max(...data.map((d) => d.count));
-
-    const x = d3
-      .scaleBand()
-      .range([0, width])
-      .domain(data.map((d) => d.month))
-      .padding(0.1);
-    const y = d3
-      .scalePow()
-      // Exponent < 1 reduces the high counts and increases the low counts slightly
-      .exponent(0.4)
-      .range([height, 0])
-      .domain([0, maxCount]);
-
-    const svg = d3
-      .select(svgRef.current)
-      .attr("viewBox", `0 0 ${width} ${height}`);
-
-    // Filled in bar
-    svg
-      .selectAll()
-      .data(data)
-      .enter()
-      .append("rect")
-      .attr("x", (d) => unwrap(x(d.month)))
-      .attr("width", x.bandwidth())
-      .attr("y", (d) => y(d.count) / 2)
-      .attr("height", (d) => height - y(d.count))
-      .attr("fill-opacity", "1")
-      .attr("fill", "var(--bs-body-color)");
-
-    // Link hover
-    svg
-      .selectAll()
-      .data(data)
-      .enter()
-      .append("a")
-      // FIXME BELOW
-      .attr(
-        "href",
-        (d) =>
-          `https://www.inaturalist.org/observations?place_id=${nycPlaceId}&taxon_id=${taxonId}&week=${d.month}`
-      )
-      .attr("target", "_blank")
-      .append("rect")
-      .attr("class", "green-hover")
-      .attr("height", height)
-      .attr("width", x.bandwidth())
-      .attr("x", (d) => unwrap(x(d.month)))
-      .attr("y", 0)
-      .attr("fill-opacity", "0");
-
-    // Add red line for current week
-    svg
-      .append("line")
-      .attr("x1", unwrap(x(getCurrentWeekOfYear().toString())))
-      .attr("y1", 0)
-      .attr("x2", unwrap(x(getCurrentWeekOfYear().toString())))
-      .attr("y2", height)
-      .attr("stroke-width", 2)
-      .attr("stroke", "var(--bs-danger)");
-  }, [data, taxonId]);
-
-  if (isFetching) {
-    return <Spinner animation="border" />;
-  }
-
-  if (!data) {
-    return <div>Error: Could not fetch data</div>;
-  }
-
-  return <svg style={{ border: "1px solid black" }} ref={svgRef}></svg>;
-};
-
-/** Is 1-indexed */
-const getCurrentWeekOfYear = (): number => {
-  return d3.timeWeek.count(d3.timeYear(new Date()), new Date()) + 1;
-};
-
-const months = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12] as const;
-
-type Month = (typeof months)[number];
-
-/** Is 1-indexed */
-const getCurrentMonthOfYear = (): Month =>
-  numberToMonth(d3.timeMonth.count(d3.timeYear(new Date()), new Date()) + 1);
-
-const numberToMonth = (n: number): Month =>
-  unwrap(months.find((month) => month === n));
-
 const youTubeVideoUrlPrefix = "https://www.youtube.com/watch?v=";
-
-const unwrap = <T extends unknown>(t: T | null | undefined): T => {
-  if (t === undefined) {
-    throw new Error("Encountered unexpected undefined value");
-  }
-  if (t === null) {
-    throw new Error("Encountered unexpected null value");
-  }
-  return t;
-};
 
 const Navbar = () => {
   return (
@@ -252,35 +111,8 @@ const Navbar = () => {
   );
 };
 
-const ChartTaxaSection = ({ taxon }: TaxonProp) => {
-  return (
-    <Col xs={12} md={6} lg={12}>
-      <Card className="bg-body-tertiary">
-        <Card.Header>
-          {taxon.taxon.preferred_common_name} (<em>{taxon.taxon.name}</em>)
-        </Card.Header>
-        <Card.Body>
-          <img
-            src={taxon.taxon.default_photo.square_url}
-            alt={taxon.taxon.name}
-          />
-          <BarChart taxonId={taxon.taxon.id} />
-        </Card.Body>
-      </Card>
-    </Col>
-  );
-};
-
-type ChartFilterProp = {
-  filter: IconicTaxon | undefined;
-};
-
 type ChartSetFilterProp = {
   setFilter: (filter: IconicTaxon) => void;
-};
-
-type TaxonProp = {
-  taxon: TaxonCount;
 };
 
 type ChildrenProp = {
@@ -289,34 +121,6 @@ type ChildrenProp = {
 
 type OrderByProp = {
   orderBy: "observation_count" | "species_count";
-};
-
-const Charts = ({ filter }: ChartFilterProp) => {
-  const [taxa, setTaxa] = useState<TaxonCount[]>([]);
-
-  useEffect(() => {
-    setTaxa([]);
-    // TODO: Rather than doing this one month at a time, do a couple weeks before
-    //       and after the current date, which might require two requests.
-    fetchINaturalistApi("/observations/species_counts", {
-      month: getCurrentMonthOfYear(),
-      placeId: nycPlaceId,
-      perPage: 30,
-      iconic_taxa: filter,
-    }).then((response) => {
-      setTaxa(response.results);
-    });
-  }, [filter]);
-
-  if (!taxa.length) {
-    return <Spinner animation="border" />;
-  }
-
-  const taxaSections = taxa.map((taxon, i) => {
-    return <ChartTaxaSection taxon={taxon} key={i} />;
-  });
-
-  return <Row className="row-gap-3">{taxaSections}</Row>;
 };
 
 function App() {
@@ -381,7 +185,7 @@ function App() {
                     <FilterDropdown filter={filter} setFilter={setFilter} />
                     {clearFilterButton}
                   </div>
-                  <Charts filter={filter} />
+                  <Charts filter={filter} placeId={nycPlaceId} />
                 </div>
               </Card.Body>
             </Card>
