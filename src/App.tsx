@@ -288,9 +288,23 @@ const Guides = () => {
   );
 };
 
-const TopObservers = ({
-  orderBy,
-}: OrderByProp) => {
+function buildObservationsLink(
+  date: string,
+  nycPlaceId: number,
+  userLogin: string,
+  orderBy: "observation_count" | "species_count"
+): string {
+  switch (orderBy) {
+    case "species_count":
+      return `https://www.inaturalist.org/observations?d1=${date}&place_id=${nycPlaceId}&user_id=${userLogin}&hrank=species&view=species`;
+    case "observation_count":
+      return `https://www.inaturalist.org/observations?d1=${date}&place_id=${nycPlaceId}&user_id=${userLogin}`;
+    default:
+      assertUnreachable(orderBy);
+  }
+}
+
+const TopObservers = ({ orderBy }: OrderByProp) => {
   const [data, setData] = useState<INaturalistResponse<Observer> | null>(null);
   const date = getIsoDateOneMonthAgo();
   useEffect(() => {
@@ -308,15 +322,18 @@ const TopObservers = ({
   }
   const topObservers = data.results.map((observer, i) => {
     const profileUrl = `https://www.inaturalist.org/people/${observer.user.id}`;
-    let observationsLink: string;
+    const observationsLink = buildObservationsLink(
+      date,
+      nycPlaceId,
+      observer.user.login,
+      orderBy
+    );
     let plural: string;
     switch (orderBy) {
       case "species_count":
-        observationsLink = `https://www.inaturalist.org/observations?d1=${date}&place_id=${nycPlaceId}&user_id=${observer.user.login}&hrank=species&view=species`;
         plural = "species";
         break;
       case "observation_count":
-        observationsLink = `https://www.inaturalist.org/observations?d1=${date}&place_id=${nycPlaceId}&user_id=${observer.user.login}`;
         plural = "observations";
         break;
       default:
