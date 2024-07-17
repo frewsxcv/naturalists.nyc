@@ -129,7 +129,7 @@ const getCurrentWeekOfYear = (): number => {
   return d3.timeWeek.count(d3.timeYear(new Date()), new Date()) + 1;
 };
 
-const ChartTaxaSection = ({ taxon, placeId }: TaxonProp & { placeId: number }) => {
+export const ChartTaxaSection = ({ taxon, placeId }: TaxonProp & { placeId: number }) => {
   return (
     <Col xs={12} md={6} lg={12}>
       <Card className="bg-body-tertiary">
