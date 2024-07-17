@@ -241,7 +241,7 @@ const FilterDropdown = ({
   );
 };
 
-const PapersCard = () => {
+export const PapersCard = () => {
   return (
     <Card className="bg-body-secondary">
       <Card.Body>
