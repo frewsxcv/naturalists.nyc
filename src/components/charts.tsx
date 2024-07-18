@@ -23,7 +23,13 @@ type TaxonProp = {
 
 // Uses d3.js to render a histogram of the number of observations of a taxon
 // over the course of a year.
-const BarChart = ({ taxonId, placeId }: { taxonId: number, placeId: number }) => {
+const BarChart = ({
+  taxonId,
+  placeId,
+}: {
+  taxonId: number;
+  placeId: number;
+}) => {
   const svgRef = useRef(null);
   const [isFetching, setIsFetching] = useState(true);
   const [data, setData] = useState<HistogramData | null>(null);
@@ -129,26 +135,46 @@ const getCurrentWeekOfYear = (): number => {
   return d3.timeWeek.count(d3.timeYear(new Date()), new Date()) + 1;
 };
 
-export const ChartTaxaSection = ({ taxon, placeId }: TaxonProp & { placeId: number }) => {
+export const ChartTaxaSection = ({
+  taxon,
+  placeId,
+}: TaxonProp & { placeId: number }) => {
   return (
     <Col xs={12} md={6} lg={12}>
-      <Card className="bg-body-tertiary">
-        <Card.Header>
-          {taxon.taxon.preferred_common_name} (<em>{taxon.taxon.name}</em>)
-        </Card.Header>
-        <Card.Body>
-          <img
-            src={taxon.taxon.default_photo.square_url}
-            alt={taxon.taxon.name}
-          />
-          <BarChart taxonId={taxon.taxon.id} placeId={placeId} />
-        </Card.Body>
+      <Card
+        className="bg-body-tertiary"
+        style={{ height: "100px", overflow: "hidden" }}
+      >
+        <div className="row g-0">
+          <Col sm={3} xs={4}>
+            <img
+              style={{ objectFit: "cover", height: "100px", width: "100%" }}
+              className="img-fluid"
+              src={taxon.taxon.default_photo.medium_url}
+              alt={taxon.taxon.name}
+            />
+          </Col>
+          <Col sm={9} xs={8}>
+            <Card.Body>
+              <div className="d-flex flex-column">
+                <div>{taxon.taxon.preferred_common_name}</div>
+                <div>
+                  <em>{taxon.taxon.name}</em>
+                </div>
+                <BarChart taxonId={taxon.taxon.id} placeId={placeId} />
+              </div>
+            </Card.Body>
+          </Col>
+        </div>
       </Card>
     </Col>
   );
 };
 
-export const Charts = ({ filter, placeId }: ChartFilterProp & { placeId: number }) => {
+export const Charts = ({
+  filter,
+  placeId,
+}: ChartFilterProp & { placeId: number }) => {
   const [taxa, setTaxa] = useState<TaxonCount[]>([]);
 
   useEffect(() => {
