@@ -3,7 +3,7 @@ import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
-import { default as BootstrapNavbar } from "react-bootstrap/Navbar";
+import Navbar from "./components/Navbar";
 import Card from "react-bootstrap/Card";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useEffect, useState } from "react";
@@ -26,6 +26,7 @@ import {
 import { Alert, Dropdown, Nav, NavDropdown, Spinner } from "react-bootstrap";
 import { Charts, type ChartFilterProp } from "./components/charts";
 import { unwrap } from "./utils";
+import { createBrowserRouter, Route, Router, RouterProvider, Routes } from "react-router-dom";
 
 const getDateOneMonthAgo = (): Date => {
   // Get a date object for the current time
@@ -91,30 +92,6 @@ const youTubeVideoUrls: [string, ...string[]] = [
 
 const youTubeVideoUrlPrefix = "https://www.youtube.com/watch?v=";
 
-const Navbar = () => {
-  return (
-    <BootstrapNavbar expand="lg" className="bg-body-secondary">
-      <Container>
-        <BootstrapNavbar.Brand href=".">
-          <MdEco />
-          &nbsp;naturalists.nyc
-        </BootstrapNavbar.Brand>
-        <BootstrapNavbar.Toggle aria-controls="basic-navbar-nav" />
-        <BootstrapNavbar.Collapse id="basic-navbar-nav">
-          <Nav className="me-auto">
-            <Nav.Link href="/">Home</Nav.Link>
-            <NavDropdown title="About" id="basic-nav-dropdown">
-              <NavDropdown.Item href="https://github.com/frewsxcv/naturalists.nyc">
-                Source
-              </NavDropdown.Item>
-            </NavDropdown>
-          </Nav>
-        </BootstrapNavbar.Collapse>
-      </Container>
-    </BootstrapNavbar>
-  );
-};
-
 type ChartSetFilterProp = {
   setFilter: (filter: IconicTaxon) => void;
 };
@@ -127,14 +104,14 @@ type OrderByProp = {
   orderBy: "observation_count" | "species_count";
 };
 
-function App() {
+const Explore = () => {
   const [filter, setFilter] = useState<IconicTaxon | undefined>(undefined);
   const clearFilterButton = filter ? (
     <Button onClick={() => setFilter(undefined)}>Clear filter</Button>
   ) : null;
   return (
     <>
-      <Navbar />
+      <Navbar selectedTab="explore" />
       <Container>
         <Row className="mb-3">
           <Col></Col>
@@ -198,7 +175,19 @@ function App() {
       </Container>
     </>
   );
-}
+};
+
+const Learn = () => {
+  // Placeholder for the Learn component content
+  return (
+    <>
+      <Navbar selectedTab="learn" />
+      <Container>
+        {/* Content for Learn component goes here */}
+      </Container>
+    </>
+  );
+};
 
 const GuidesCard = () => {
   return (
@@ -462,5 +451,20 @@ const Watch = () => {
     </Card>
   );
 };
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Explore />,
+  },
+  {
+    path: "/learn",
+    element: <Learn />,
+  },
+]);
+
+function App() {
+  return <RouterProvider router={router} />;
+}
 
 export default App;
