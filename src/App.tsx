@@ -305,7 +305,7 @@ const TopObservers = ({ orderBy }: OrderByProp) => {
             </span>
           </a>
           &nbsp;(
-          <a href={observationsLink}>
+          <a target="_blank" rel="noreferrer" href={observationsLink}>
             {observer[orderBy]} {plural}
           </a>
           )
