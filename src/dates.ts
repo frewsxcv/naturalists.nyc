@@ -23,3 +23,17 @@ export function* datesDescFrom(startDate: Date) {
     yield date;
   }
 }
+
+const getDateOneMonthAgo = (): Date => {
+  const date = new Date();
+  date.setMonth(date.getMonth() - 1);
+  return date;
+};
+
+export const getIsoDateOneMonthAgo = (): string => {
+  const dateString = getDateOneMonthAgo().toISOString().split("T");
+  if (!dateString[0]) {
+    throw new Error("Could not generate date string");
+  }
+  return dateString[0];
+};
