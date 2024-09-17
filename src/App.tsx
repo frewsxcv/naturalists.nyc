@@ -124,6 +124,10 @@ type OrderByProp = {
 };
 
 function App() {
+  const [filter, setFilter] = useState<IconicTaxon | undefined>(undefined);
+  const clearFilterButton = filter ? (
+    <Button onClick={() => setFilter(undefined)}>Clear filter</Button>
+  ) : null;
   return (
     <>
       <Navbar />
@@ -169,60 +173,28 @@ function App() {
             </div>
           </Col>
           <Col xs={12} xl={4}>
-            <ActiveSpeciesCard />
+            <Card className="bg-body-secondary">
+              <Card.Body>
+                <CardTitle>
+                  <MdBolt />
+                  &nbsp;Active species
+                </CardTitle>
+                <p>Filter species to category</p>
+                <div className="d-flex flex-column gap-1">
+                  <div className="d-flex flex-row gap-1">
+                    <FilterDropdown filter={filter} setFilter={setFilter} />
+                    {clearFilterButton}
+                  </div>
+                  <Charts filter={filter} placeId={nycPlaceId} />
+                </div>
+              </Card.Body>
+            </Card>
           </Col>
         </Row>
       </Container>
     </>
   );
 }
-
-const ActiveSpeciesCard = () => {
-  const [filter, setFilter] = useState<IconicTaxon | undefined>(undefined);
-
-  const clearFilterButton = filter ? (
-    <Button onClick={() => setFilter(undefined)}>Clear filter</Button>
-  ) : null;
-
-  return (
-    <Card className="bg-body-secondary">
-      <Card.Body>
-        <CardTitle>
-          <MdBolt />
-          &nbsp;Active species
-        </CardTitle>
-        <p>Filter species to category</p>
-        <div className="d-flex flex-column gap-1">
-          <div className="d-flex flex-row gap-1">
-            <FilterDropdown filter={filter} setFilter={setFilter} />
-            {clearFilterButton}
-          </div>
-          <Charts filter={filter} placeId={nycPlaceId} />
-        </div>
-      </Card.Body>
-    </Card>
-  );
-};
-
-const FilterDropdown = ({
-  filter,
-  setFilter,
-}: ChartFilterProp & ChartSetFilterProp) => {
-  const iconicTaxaOptions = iconicTaxa.map((iconicTaxon, i) => {
-    return (
-      <Dropdown.Item key={i} eventKey={iconicTaxon}>
-        {iconicTaxon}
-      </Dropdown.Item>
-    );
-  });
-  const toggleText = filter ? `Filter: ${filter}` : "Filter";
-  return (
-    <Dropdown onSelect={(value) => setFilter(value as IconicTaxon)}>
-      <Dropdown.Toggle>{toggleText}</Dropdown.Toggle>
-      <Dropdown.Menu>{iconicTaxaOptions}</Dropdown.Menu>
-    </Dropdown>
-  );
-};
 
 const GuidesCard = () => {
   return (
@@ -245,6 +217,27 @@ const ConnectCard = () => {
         <a href="https://discord.gg/FEwKgrDV92">Join the Discord</a>
       </Card.Body>
     </Card>
+  );
+};
+
+const FilterDropdown = ({
+  filter,
+  setFilter,
+}: ChartFilterProp & ChartSetFilterProp) => {
+  const iconicTaxaOptions = iconicTaxa.map((iconicTaxon, i) => {
+    return (
+      <Dropdown.Item key={i} eventKey={iconicTaxon}>
+        {iconicTaxon}
+      </Dropdown.Item>
+    );
+  });
+  const toggleText = filter ? `Filter: ${filter}` : "Filter";
+  return (
+    <Dropdown onSelect={(value) => setFilter(value as IconicTaxon)}>
+      {/* TODO: Remove the `as` above */}
+      <Dropdown.Toggle>{toggleText}</Dropdown.Toggle>
+      <Dropdown.Menu>{iconicTaxaOptions}</Dropdown.Menu>
+    </Dropdown>
   );
 };
 
@@ -432,7 +425,7 @@ const LandAcknowlegement = () => {
       of years before the arrival of Europeans. As naturalists, we hope to
       contribute to a greater understanding and appreciation of the
       interconnectedness between humans and the natural world, as exemplified by
-      the Lenape people's relationship with the land.
+      the Lenape people’s relationship with the land.
     </Alert>
   );
 };
