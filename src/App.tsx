@@ -205,6 +205,38 @@ const Guides = () => {
   );
 };
 
+const ProfileImage = ({
+  iconUrl,
+  name,
+}: {
+  iconUrl: string | null;
+  name: string;
+}) => {
+  const imageSize = "30px";
+  return iconUrl ? (
+    <img
+      src={iconUrl}
+      alt={`${name} avatar`}
+      style={{
+        objectFit: "cover",
+        width: imageSize,
+        height: imageSize,
+      }}
+    />
+  ) : (
+    <div
+      style={{
+        verticalAlign: "middle",
+        display: "inline-block",
+        backgroundColor: "var(--bs-body-color)",
+        objectFit: "cover",
+        width: imageSize,
+        height: imageSize,
+      }}
+    ></div>
+  );
+};
+
 function buildObservationsLink(
   date: string,
   nycPlaceId: number,
@@ -256,34 +288,15 @@ const TopObservers = ({ orderBy }: OrderByProp) => {
       default:
         assertUnreachable(orderBy);
     }
-    const imageSize = "30px";
-    const profileImage = observer.user.icon_url ? (
-      <img
-        src={observer.user.icon_url}
-        alt={`${observer.user.name} avatar`}
-        style={{
-          objectFit: "cover",
-          width: imageSize,
-          height: imageSize,
-        }}
-      />
-    ) : (
-      <div
-        style={{
-          verticalAlign: "middle",
-          display: "inline-block",
-          backgroundColor: "var(--bs-body-color)",
-          objectFit: "cover",
-          width: imageSize,
-          height: imageSize,
-        }}
-      ></div>
-    );
+
     return (
       <li key={i}>
         <div className="border">
           <a target="_blank" rel="noreferrer" href={profileUrl}>
-            {profileImage}
+            <ProfileImage
+              iconUrl={observer.user.icon_url}
+              name={observer.user.name}
+            />
             <span className="ms-2">
               {observer.user.name || observer.user.login}
             </span>
