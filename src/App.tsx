@@ -102,7 +102,6 @@ const Explore = () => {
 };
 
 const Learn = () => {
-  // Placeholder for the Learn component content
   return (
     <>
       <Navbar selectedTab="explore" />
