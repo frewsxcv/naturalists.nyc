@@ -11,7 +11,6 @@ import {
   MdChat,
   MdNewspaper,
   MdManageSearch,
-  MdTv,
   MdBolt,
   MdWorkspacePremium,
 } from "react-icons/md";
@@ -22,26 +21,19 @@ import {
   iconicTaxa,
   type IconicTaxon,
 } from "./inaturalist";
-import { Alert, Dropdown, Nav, NavDropdown, Spinner } from "react-bootstrap";
+import { Dropdown, Spinner } from "react-bootstrap";
 import { Charts, type ChartFilterProp } from "./components/charts";
-import { unwrap } from "./utils";
-import { createBrowserRouter, Route, Router, RouterProvider, Routes } from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { getIsoDateOneMonthAgo } from "./dates";
-import { youTubeVideoUrls } from "./urls";
 import { assertUnreachable } from "./utils"; // Add this import
 import LandAcknowlegement from "./components/LandAcknowledgement";
-import { chooseRandom, chooseRandomIndex } from "./utils";
+import Watch from "./components/Watch";
+import CardTitle from "./components/CardTitle";
 
 const nycPlaceId = 674;
 
-const youTubeVideoUrlPrefix = "https://www.youtube.com/watch?v=";
-
 type ChartSetFilterProp = {
   setFilter: (filter: IconicTaxon) => void;
-};
-
-type ChildrenProp = {
-  children: React.ReactNode;
 };
 
 type OrderByProp = {
@@ -199,14 +191,6 @@ export const PapersCard = () => {
   );
 };
 
-const CardTitle = ({ children }: ChildrenProp) => {
-  return (
-    <Card.Title className="d-flex flex-row align-items-center">
-      {children}
-    </Card.Title>
-  );
-};
-
 const Guides = () => {
   return (
     <>
@@ -318,29 +302,6 @@ const TopObservers = ({ orderBy }: OrderByProp) => {
     );
   });
   return <ol className="d-flex flex-column gap-1">{topObservers}</ol>;
-};
-
-const randomYouTubeVideoUrl = () => chooseRandom(youTubeVideoUrls);
-
-const randomYouTubeVideoId = () =>
-  randomYouTubeVideoUrl().replace(youTubeVideoUrlPrefix, "");
-
-const Watch = () => {
-  const [videoId, setVideoId] = useState(randomYouTubeVideoId());
-  return (
-    <Card className="bg-body-secondary">
-      <Card.Body>
-        <CardTitle>
-          <MdTv />
-          &nbsp;Watch
-        </CardTitle>
-        <YouTube videoId={videoId} iframeClassName="w-100"></YouTube>
-        <Button onClick={() => setVideoId(randomYouTubeVideoId())}>
-          Next video
-        </Button>
-      </Card.Body>
-    </Card>
-  );
 };
 
 const router = createBrowserRouter([
