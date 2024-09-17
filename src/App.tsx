@@ -14,7 +14,6 @@ import {
   MdTv,
   MdBolt,
   MdWorkspacePremium,
-  MdEco,
 } from "react-icons/md";
 import {
   INaturalistResponse,

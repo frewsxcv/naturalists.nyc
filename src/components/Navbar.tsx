@@ -1,12 +1,16 @@
 import { default as BootstrapNavbar } from "react-bootstrap/Navbar";
 import { Nav, NavDropdown } from "react-bootstrap";
 import { Container as BootstrapContainer } from "react-bootstrap";
+import { MdEco } from "react-icons/md";
 
 const Navbar = ({ selectedTab }: { selectedTab: "explore" | "learn" }) => {
   return (
     <BootstrapNavbar expand="lg" className="bg-body-secondary">
       <BootstrapContainer>
-        <BootstrapNavbar.Brand href=".">naturalists.nyc</BootstrapNavbar.Brand>
+        <BootstrapNavbar.Brand href=".">
+          <MdEco />
+          &nbsp;naturalists.nyc
+        </BootstrapNavbar.Brand>
         <BootstrapNavbar.Toggle aria-controls="basic-navbar-nav" />
         <BootstrapNavbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
