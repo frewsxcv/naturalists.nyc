@@ -14,6 +14,7 @@ import {
   MdTv,
   MdBolt,
   MdWorkspacePremium,
+  MdEco,
 } from "react-icons/md";
 import {
   INaturalistResponse,
@@ -94,7 +95,10 @@ const Navbar = () => {
   return (
     <BootstrapNavbar expand="lg" className="bg-body-secondary">
       <Container>
-        <BootstrapNavbar.Brand href=".">naturalists.nyc</BootstrapNavbar.Brand>
+        <BootstrapNavbar.Brand href=".">
+          <MdEco />
+          &nbsp;naturalists.nyc
+        </BootstrapNavbar.Brand>
         <BootstrapNavbar.Toggle aria-controls="basic-navbar-nav" />
         <BootstrapNavbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
