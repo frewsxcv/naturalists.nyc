@@ -1,6 +1,5 @@
-import YouTube from "react-youtube";
-import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
+import Container from "./components/container";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import Navbar from "./components/Navbar";
@@ -49,24 +48,13 @@ const Explore = () => {
     <>
       <Navbar selectedTab="explore" />
       <Container>
-        <Row className="mb-3">
-          <Col></Col>
-        </Row>
         <Row>
           <Col>
             <LandAcknowlegement />
           </Col>
         </Row>
         <Row className="gx-3 row-gap-3">
-          <Col xs={12} md={6} xl={4}>
-            <div className="d-flex flex-column gap-3">
-              <ConnectCard />
-              <PapersCard />
-              <GuidesCard />
-              <Watch />
-            </div>
-          </Col>
-          <Col xs={12} md={6} xl={4}>
+          <Col xs={12} md={6}>
             <div className="d-flex flex-column gap-3">
               <Card className="bg-body-secondary">
                 <Card.Body>
@@ -89,7 +77,7 @@ const Explore = () => {
               </Card>
             </div>
           </Col>
-          <Col xs={12} xl={4}>
+          <Col xs={12} md={6}>
             <Card className="bg-body-secondary">
               <Card.Body>
                 <CardTitle>
@@ -117,9 +105,18 @@ const Learn = () => {
   // Placeholder for the Learn component content
   return (
     <>
-      <Navbar selectedTab="learn" />
+      <Navbar selectedTab="explore" />
       <Container>
-        {/* Content for Learn component goes here */}
+        <Row className="gx-3 row-gap-3">
+          <Col xs={12} md={6} xl={4}>
+            <div className="d-flex flex-column gap-3">
+              <ConnectCard />
+              <PapersCard />
+              <GuidesCard />
+              <Watch />
+            </div>
+          </Col>
+        </Row>
       </Container>
     </>
   );
