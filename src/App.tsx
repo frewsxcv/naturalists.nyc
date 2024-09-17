@@ -158,12 +158,15 @@ const FilterDropdown = ({
   });
   const toggleText = filter ? `Filter: ${filter}` : "Filter";
   return (
-    <Dropdown onSelect={(value) => setFilter(value as IconicTaxon)}>
-      {/* TODO: Remove the `as` above */}
+    <Dropdown onSelect={(value) => value && isIconicTaxon(value) && setFilter(value)}>
       <Dropdown.Toggle>{toggleText}</Dropdown.Toggle>
       <Dropdown.Menu>{iconicTaxaOptions}</Dropdown.Menu>
     </Dropdown>
   );
+};
+
+const isIconicTaxon = (taxon: string): taxon is IconicTaxon => {
+  return iconicTaxa.some((iconicTaxon) => iconicTaxon === taxon);
 };
 
 export const PapersCard = () => {
