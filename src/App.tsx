@@ -12,6 +12,7 @@ import {
   MdManageSearch,
   MdBolt,
   MdWorkspacePremium,
+  MdFilterList,
 } from "react-icons/md";
 import {
   INaturalistResponse,
@@ -81,14 +82,16 @@ const Explore = () => {
             <Card className="bg-body-secondary">
               <Card.Body>
                 <CardTitle>
-                  <MdBolt />
-                  &nbsp;Active species
-                </CardTitle>
-                <div className="d-flex flex-column gap-1">
+                  <div className="flex-grow-1">
+                    <MdBolt />
+                    &nbsp;Active species
+                  </div>
                   <div className="d-flex flex-row gap-1">
                     <FilterDropdown filter={filter} setFilter={setFilter} />
                     {clearFilterButton}
                   </div>
+                </CardTitle>
+                <div className="d-flex flex-column gap-1">
                   <Charts filter={filter} placeId={nycPlaceId} />
                 </div>
               </Card.Body>
@@ -161,6 +164,7 @@ const FilterDropdown = ({
       onSelect={(value) => value && isIconicTaxon(value) && setFilter(value)}
     >
       <Dropdown.Toggle size="sm" variant="secondary">
+        <MdFilterList />&nbsp;
         {toggleText}
       </Dropdown.Toggle>
       <Dropdown.Menu>{iconicTaxaOptions}</Dropdown.Menu>
