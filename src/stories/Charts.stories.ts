@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Charts } from "../components/Charts";
+import Charts from "../components/Charts";
 
 const meta = {
   title: "Charts",
