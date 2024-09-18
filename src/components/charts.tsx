@@ -10,7 +10,7 @@ import {
   fetchINaturalistApi,
   type IconicTaxon,
 } from "../inaturalist";
-import { Spinner } from "react-bootstrap";
+import { Placeholder, Spinner } from "react-bootstrap";
 import { unwrap } from "../utils";
 
 export type ChartFilterProp = {
@@ -118,7 +118,11 @@ const BarChart = ({
   }, [placeId, data, taxonId]);
 
   if (isFetching) {
-    return <Spinner animation="border" />;
+    return (
+      <Placeholder as="p" animation="glow">
+        <Placeholder xs={12} />
+      </Placeholder>
+    );
   }
 
   if (!data) {
