@@ -42,7 +42,7 @@ type OrderByProp = {
 const Explore = () => {
   const [filter, setFilter] = useState<IconicTaxon | undefined>(undefined);
   const clearFilterButton = filter ? (
-    <Button onClick={() => setFilter(undefined)}>Clear filter</Button>
+    <Button onClick={() => setFilter(undefined)} size="sm">Clear filter</Button>
   ) : null;
   return (
     <>
@@ -84,7 +84,6 @@ const Explore = () => {
                   <MdBolt />
                   &nbsp;Active species
                 </CardTitle>
-                <p>Filter species to category</p>
                 <div className="d-flex flex-column gap-1">
                   <div className="d-flex flex-row gap-1">
                     <FilterDropdown filter={filter} setFilter={setFilter} />
@@ -161,7 +160,9 @@ const FilterDropdown = ({
     <Dropdown
       onSelect={(value) => value && isIconicTaxon(value) && setFilter(value)}
     >
-      <Dropdown.Toggle>{toggleText}</Dropdown.Toggle>
+      <Dropdown.Toggle size="sm" variant="secondary">
+        {toggleText}
+      </Dropdown.Toggle>
       <Dropdown.Menu>{iconicTaxaOptions}</Dropdown.Menu>
     </Dropdown>
   );
