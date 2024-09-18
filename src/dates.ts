@@ -1,3 +1,6 @@
+import * as d3 from "d3";
+import { unwrap } from "./utils";
+
 const dateSubtractDay = (d: Date) => d.setDate(d.getDate() - 1);
 
 const dateSubtractYear = (d: Date) => d.setFullYear(d.getFullYear() - 1);
@@ -37,3 +40,19 @@ export const getIsoDateOneMonthAgo = (): string => {
   }
   return dateString[0];
 };
+
+/** Is 1-indexed */
+export const getCurrentWeekOfYear = (): number => {
+  return d3.timeWeek.count(d3.timeYear(new Date()), new Date()) + 1;
+};
+
+const months = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12] as const;
+
+type Month = (typeof months)[number];
+
+/** Is 1-indexed */
+export const getCurrentMonthOfYear = (): Month =>
+  numberToMonth(d3.timeMonth.count(d3.timeYear(new Date()), new Date()) + 1);
+
+const numberToMonth = (n: number): Month =>
+  unwrap(months.find((month) => month === n));

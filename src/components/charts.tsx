@@ -11,6 +11,7 @@ import {
 } from "../inaturalist";
 import { Placeholder, Spinner } from "react-bootstrap";
 import { unwrap } from "../utils";
+import { getCurrentWeekOfYear, getCurrentMonthOfYear } from "../dates";
 
 export type ChartFilterProp = {
   filter: IconicTaxon | undefined;
@@ -138,11 +139,6 @@ const BarChart = ({
 
 type HistogramData = { month: string; count: number }[];
 
-/** Is 1-indexed */
-const getCurrentWeekOfYear = (): number => {
-  return d3.timeWeek.count(d3.timeYear(new Date()), new Date()) + 1;
-};
-
 const histogramHeight = 40;
 
 const TaxonImage = ({ taxon }: { taxon: TaxonCount }) => {
@@ -227,14 +223,3 @@ const histogramResponseToHistogramData = (
     }
   );
 };
-
-const months = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12] as const;
-
-type Month = (typeof months)[number];
-
-/** Is 1-indexed */
-const getCurrentMonthOfYear = (): Month =>
-  numberToMonth(d3.timeMonth.count(d3.timeYear(new Date()), new Date()) + 1);
-
-const numberToMonth = (n: number): Month =>
-  unwrap(months.find((month) => month === n));
