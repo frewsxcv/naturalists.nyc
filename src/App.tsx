@@ -41,10 +41,6 @@ type OrderByProp = {
 };
 
 const Explore = () => {
-  const [filter, setFilter] = useState<IconicTaxon | undefined>(undefined);
-  const clearFilterButton = filter ? (
-    <Button onClick={() => setFilter(undefined)} size="sm">Clear filter</Button>
-  ) : null;
   return (
     <>
       <Navbar selectedTab="explore" />
@@ -56,50 +52,41 @@ const Explore = () => {
         </Row>
         <Row className="gx-3 row-gap-3">
           <Col xs={12} md={6}>
-            <div className="d-flex flex-column gap-3">
-              <Card className="bg-body-secondary">
-                <Card.Body>
-                  <CardTitle>
-                    <MdWorkspacePremium />
-                    &nbsp;Top Observers
-                  </CardTitle>
-
-                  <p>
-                    Observers with most unique species observed in NYC in the
-                    past month:
-                  </p>
-                  <TopObservers orderBy="species_count" />
-
-                  <p>
-                    Observers with most observations in NYC in the past month:
-                  </p>
-                  <TopObservers orderBy="observation_count" />
-                </Card.Body>
-              </Card>
-            </div>
+            <TopObserversCard />
           </Col>
           <Col xs={12} md={6}>
-            <Card className="bg-body-secondary">
-              <Card.Body>
-                <CardTitle>
-                  <div className="flex-grow-1">
-                    <MdBolt />
-                    &nbsp;Active species
-                  </div>
-                  <div className="d-flex flex-row gap-1">
-                    <FilterDropdown filter={filter} setFilter={setFilter} />
-                    {clearFilterButton}
-                  </div>
-                </CardTitle>
-                <div className="d-flex flex-column gap-1">
-                  <Charts filter={filter} placeId={nycPlaceId} />
-                </div>
-              </Card.Body>
-            </Card>
+            <ActiveSpeciesCard />
           </Col>
         </Row>
       </Container>
     </>
+  );
+};
+
+const ActiveSpeciesCard = () => {
+  const [filter, setFilter] = useState<IconicTaxon | undefined>(undefined);
+  const clearFilterButton = filter ? (
+    <Button onClick={() => setFilter(undefined)} size="sm">Clear filter</Button>
+  ) : null;
+
+  return (
+    <Card className="bg-body-secondary">
+      <Card.Body>
+        <CardTitle>
+          <div className="flex-grow-1">
+            <MdBolt />
+            &nbsp;Active species
+          </div>
+          <div className="d-flex flex-row gap-1">
+            <FilterDropdown filter={filter} setFilter={setFilter} />
+            {clearFilterButton}
+          </div>
+        </CardTitle>
+        <div className="d-flex flex-column gap-1">
+          <Charts filter={filter} placeId={nycPlaceId} />
+        </div>
+      </Card.Body>
+    </Card>
   );
 };
 
@@ -348,6 +335,29 @@ const TopObservers = ({ orderBy }: OrderByProp) => {
     />
   ));
   return <ol className="d-flex flex-column gap-1">{topObservers}</ol>;
+};
+
+const TopObserversCard = () => {
+  return (
+    <Card className="bg-body-secondary">
+      <Card.Body>
+        <CardTitle>
+          <MdWorkspacePremium />
+          &nbsp;Top Observers
+        </CardTitle>
+
+        <p>
+          Observers with most unique species observed in NYC in the past month:
+        </p>
+        <TopObservers orderBy="species_count" />
+
+        <p>
+          Observers with most observations in NYC in the past month:
+        </p>
+        <TopObservers orderBy="observation_count" />
+      </Card.Body>
+    </Card>
+  );
 };
 
 const router = createBrowserRouter([
