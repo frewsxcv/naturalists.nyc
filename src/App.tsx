@@ -158,7 +158,9 @@ const FilterDropdown = ({
   });
   const toggleText = filter ? `Filter: ${filter}` : "Filter";
   return (
-    <Dropdown onSelect={(value) => value && isIconicTaxon(value) && setFilter(value)}>
+    <Dropdown
+      onSelect={(value) => value && isIconicTaxon(value) && setFilter(value)}
+    >
       <Dropdown.Toggle>{toggleText}</Dropdown.Toggle>
       <Dropdown.Menu>{iconicTaxaOptions}</Dropdown.Menu>
     </Dropdown>
@@ -308,16 +310,23 @@ function buildObservationsLink(
   }
 }
 
+const fetchTopObservers = async (
+  orderBy: "observation_count" | "species_count",
+  date: string
+) => {
+  return await fetchINaturalistApi("/observations/observers", {
+    placeId: nycPlaceId,
+    date,
+    orderBy,
+    perPage: 10,
+  });
+};
+
 const TopObservers = ({ orderBy }: OrderByProp) => {
   const [data, setData] = useState<INaturalistResponse<Observer> | null>(null);
   const date = getIsoDateOneMonthAgo();
   useEffect(() => {
-    fetchINaturalistApi("/observations/observers", {
-      placeId: nycPlaceId,
-      date,
-      orderBy,
-      perPage: 10,
-    }).then((response) => {
+    fetchTopObservers(orderBy, date).then((response) => {
       setData(response);
     });
   }, [orderBy, date]);
