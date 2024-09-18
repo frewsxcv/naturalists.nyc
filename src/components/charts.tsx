@@ -12,6 +12,8 @@ import {
 import { Placeholder, Spinner } from "react-bootstrap";
 import { unwrap } from "../utils";
 import { getCurrentWeekOfYear, getCurrentMonthOfYear } from "../dates";
+import { MdOpenInNew } from "react-icons/md";
+import CardTitle from "./CardTitle";
 
 export type ChartFilterProp = {
   filter: IconicTaxon | undefined;
@@ -166,13 +168,26 @@ export const ChartTaxaSection = ({
           </Col>
           <Col sm={9} xs={8}>
             <Card.Body>
-              <Card.Title>
-                {taxon.taxon.preferred_common_name}
-              </Card.Title>
+              <CardTitle>
+                <span style={{ flexGrow: 1 }}>
+                  {taxon.taxon.preferred_common_name}
+                </span>
+                &nbsp;
+                <a
+                  href={`https://www.inaturalist.org/taxa/${taxon.taxon.id}`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <MdOpenInNew />
+                </a>
+              </CardTitle>
               <Card.Subtitle>
                 <em>{taxon.taxon.name}</em>
               </Card.Subtitle>
-              <Card.Text className="mt-2" style={{ height: histogramHeight + "px" }}>
+              <Card.Text
+                className="mt-2"
+                style={{ height: histogramHeight + "px" }}
+              >
                 <BarChart taxonId={taxon.taxon.id} placeId={placeId} />
               </Card.Text>
             </Card.Body>
@@ -183,10 +198,7 @@ export const ChartTaxaSection = ({
   );
 };
 
-const Charts = ({
-  filter,
-  placeId,
-}: ChartFilterProp & { placeId: number }) => {
+const Charts = ({ filter, placeId }: ChartFilterProp & { placeId: number }) => {
   const [taxa, setTaxa] = useState<TaxonCount[]>([]);
 
   useEffect(() => {
