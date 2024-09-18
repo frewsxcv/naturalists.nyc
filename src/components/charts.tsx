@@ -165,20 +165,20 @@ export const ChartTaxaSection = ({
       <Card className="bg-body-tertiary">
         <div className="row g-0">
           {/* TODO: Remove the 160px magic number below */}
-          <Col sm={3} xs={4} style={{ height: "120px" }}>
+          <Col sm={3} xs={4} style={{ height: "128px" }}>
             <TaxonImage taxon={taxon} />
           </Col>
           <Col sm={9} xs={8}>
             <Card.Body>
-              <div className="d-flex flex-column">
-                <div>{taxon.taxon.preferred_common_name}</div>
-                <div>
-                  <em>{taxon.taxon.name}</em>
-                </div>
-                <div style={{ height: histogramHeight + "px" }}>
-                  <BarChart taxonId={taxon.taxon.id} placeId={placeId} />
-                </div>
-              </div>
+              <Card.Title>
+                {taxon.taxon.preferred_common_name}
+              </Card.Title>
+              <Card.Subtitle>
+                <em>{taxon.taxon.name}</em>
+              </Card.Subtitle>
+              <Card.Text className="mt-2" style={{ height: histogramHeight + "px" }}>
+                <BarChart taxonId={taxon.taxon.id} placeId={placeId} />
+              </Card.Text>
             </Card.Body>
           </Col>
         </div>
