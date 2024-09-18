@@ -2,7 +2,6 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Card from "react-bootstrap/Card";
 import * as d3 from "d3";
-import "bootstrap/dist/css/bootstrap.min.css";
 import { useEffect, useRef, useState } from "react";
 import {
   HistogramResponse,
@@ -53,7 +52,6 @@ const BarChart = ({
       return;
     }
     const width = 500;
-    const height = 50;
     const maxCount = Math.max(...data.map((d) => d.count));
 
     const x = d3
@@ -65,12 +63,13 @@ const BarChart = ({
       .scalePow()
       // Exponent < 1 reduces the high counts and increases the low counts slightly
       .exponent(0.4)
-      .range([height, 0])
+      .range([histogramHeight, 0])
       .domain([0, maxCount]);
 
     const svg = d3
       .select(svgRef.current)
-      .attr("viewBox", `0 0 ${width} ${height}`);
+      .attr("viewBox", `0 0 ${width} ${histogramHeight}`)
+      .attr("class", "rounded");
 
     // Filled in bar
     svg
@@ -81,7 +80,7 @@ const BarChart = ({
       .attr("x", (d) => unwrap(x(d.month)))
       .attr("width", x.bandwidth())
       .attr("y", (d) => y(d.count) / 2)
-      .attr("height", (d) => height - y(d.count))
+      .attr("height", (d) => histogramHeight - y(d.count))
       .attr("fill-opacity", "1")
       .attr("fill", "var(--bs-body-color)");
 
@@ -100,7 +99,7 @@ const BarChart = ({
       .attr("target", "_blank")
       .append("rect")
       .attr("class", "green-hover")
-      .attr("height", height)
+      .attr("height", histogramHeight)
       .attr("width", x.bandwidth())
       .attr("x", (d) => unwrap(x(d.month)))
       .attr("y", 0)
@@ -112,15 +111,15 @@ const BarChart = ({
       .attr("x1", unwrap(x(getCurrentWeekOfYear().toString())))
       .attr("y1", 0)
       .attr("x2", unwrap(x(getCurrentWeekOfYear().toString())))
-      .attr("y2", height)
+      .attr("y2", histogramHeight)
       .attr("stroke-width", 2)
       .attr("stroke", "var(--bs-danger)");
   }, [placeId, data, taxonId]);
 
   if (isFetching) {
     return (
-      <Placeholder as="p" animation="glow">
-        <Placeholder xs={12} />
+      <Placeholder as="div" animation="glow">
+        <Placeholder xs={12} style={{ height: histogramHeight + "px" }} />
       </Placeholder>
     );
   }
@@ -129,7 +128,12 @@ const BarChart = ({
     return <div>Error: Could not fetch data</div>;
   }
 
-  return <svg style={{ border: "1px solid black" }} ref={svgRef}></svg>;
+  return (
+    <svg
+      style={{ border: "1px solid var(--bs-border-color)" }}
+      ref={svgRef}
+    ></svg>
+  );
 };
 
 type HistogramData = { month: string; count: number }[];
@@ -139,24 +143,30 @@ const getCurrentWeekOfYear = (): number => {
   return d3.timeWeek.count(d3.timeYear(new Date()), new Date()) + 1;
 };
 
+const histogramHeight = 40;
+
+const TaxonImage = ({ taxon }: { taxon: TaxonCount }) => {
+  return (
+    <img
+      style={{ objectFit: "cover", height: "100%", width: "100%" }}
+      className="img-fluid rounded-start"
+      src={taxon.taxon.default_photo.medium_url}
+      alt={taxon.taxon.name}
+    />
+  );
+};
+
 export const ChartTaxaSection = ({
   taxon,
   placeId,
 }: TaxonProp & { placeId: number }) => {
   return (
-    <Col xs={12} md={6} lg={12}>
-      <Card
-        className="bg-body-tertiary"
-        style={{ height: "100px", overflow: "hidden" }}
-      >
+    <Col xs={12}>
+      <Card className="bg-body-tertiary">
         <div className="row g-0">
-          <Col sm={3} xs={4}>
-            <img
-              style={{ objectFit: "cover", height: "100px", width: "100%" }}
-              className="img-fluid"
-              src={taxon.taxon.default_photo.medium_url}
-              alt={taxon.taxon.name}
-            />
+          {/* TODO: Remove the 160px magic number below */}
+          <Col sm={3} xs={4} style={{ height: "120px" }}>
+            <TaxonImage taxon={taxon} />
           </Col>
           <Col sm={9} xs={8}>
             <Card.Body>
@@ -165,7 +175,9 @@ export const ChartTaxaSection = ({
                 <div>
                   <em>{taxon.taxon.name}</em>
                 </div>
-                <BarChart taxonId={taxon.taxon.id} placeId={placeId} />
+                <div style={{ height: histogramHeight + "px" }}>
+                  <BarChart taxonId={taxon.taxon.id} placeId={placeId} />
+                </div>
               </div>
             </Card.Body>
           </Col>
