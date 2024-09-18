@@ -183,7 +183,7 @@ export const ChartTaxaSection = ({
   );
 };
 
-export const Charts = ({
+const Charts = ({
   filter,
   placeId,
 }: ChartFilterProp & { placeId: number }) => {
@@ -223,3 +223,5 @@ const histogramResponseToHistogramData = (
     }
   );
 };
+
+export default Charts;

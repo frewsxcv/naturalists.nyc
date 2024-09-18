@@ -1,5 +1,5 @@
 import Row from "react-bootstrap/Row";
-import Container from "./components/container";
+import Container from "./components/Container";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import Navbar from "./components/Navbar";
@@ -22,7 +22,7 @@ import {
   type IconicTaxon,
 } from "./inaturalist";
 import { Dropdown, Spinner } from "react-bootstrap";
-import { Charts, type ChartFilterProp } from "./components/charts";
+import Charts, { type ChartFilterProp } from "./components/Charts";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { getIsoDateOneMonthAgo } from "./dates";
 import { assertUnreachable } from "./utils"; // Add this import

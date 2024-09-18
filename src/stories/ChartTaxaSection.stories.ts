@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { ChartTaxaSection } from "../components/charts";
+import { ChartTaxaSection } from "../components/Charts";
 import { taxa } from "../fixtures";
 
 const meta = {
