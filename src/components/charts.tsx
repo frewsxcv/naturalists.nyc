@@ -163,7 +163,7 @@ export const ChartTaxaSection = ({
   return (
     <Col xs={12}>
       <Card className="bg-body-tertiary">
-        <div className="row g-0">
+        <Row className="g-0">
           {/* TODO: Remove the 160px magic number below */}
           <Col sm={3} xs={4} style={{ height: "128px" }}>
             <TaxonImage taxon={taxon} />
@@ -181,7 +181,7 @@ export const ChartTaxaSection = ({
               </Card.Text>
             </Card.Body>
           </Col>
-        </div>
+        </Row>
       </Card>
     </Col>
   );
