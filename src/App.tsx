@@ -240,6 +240,58 @@ const ProfileImage = ({
   );
 };
 
+const ObserverItem = ({
+  observer,
+  date,
+  nycPlaceId,
+  orderBy,
+}: {
+  observer: Observer;
+  date: string;
+  nycPlaceId: number;
+  orderBy: "observation_count" | "species_count";
+}) => {
+  const profileUrl = `https://www.inaturalist.org/people/${observer.user.id}`;
+  const observationsLink = buildObservationsLink(
+    date,
+    nycPlaceId,
+    observer.user.login,
+    orderBy
+  );
+  let plural: string;
+  switch (orderBy) {
+    case "species_count":
+      plural = "species";
+      break;
+    case "observation_count":
+      plural = "observations";
+      break;
+    default:
+      assertUnreachable(orderBy);
+  }
+
+  return (
+    <li>
+      <div className="border">
+        <a target="_blank" rel="noreferrer" href={profileUrl}>
+          <ProfileImage
+            iconUrl={observer.user.icon_url}
+            name={observer.user.name}
+          />
+          <span className="ms-2">
+            {observer.user.name || observer.user.login}
+          </span>
+        </a>
+        &nbsp;(
+        <a target="_blank" rel="noreferrer" href={observationsLink}>
+          {observer[orderBy]} {plural}
+        </a>
+        )
+      </div>
+    </li>
+  );
+};
+
 function buildObservationsLink(
   date: string,
   nycPlaceId: number,
@@ -272,47 +324,15 @@ const TopObservers = ({ orderBy }: OrderByProp) => {
   if (!data) {
     return <Spinner animation="border" />;
   }
-  const topObservers = data.results.map((observer, i) => {
-    const profileUrl = `https://www.inaturalist.org/people/${observer.user.id}`;
-    const observationsLink = buildObservationsLink(
-      date,
-      nycPlaceId,
-      observer.user.login,
-      orderBy
-    );
-    let plural: string;
-    switch (orderBy) {
-      case "species_count":
-        plural = "species";
-        break;
-      case "observation_count":
-        plural = "observations";
-        break;
-      default:
-        assertUnreachable(orderBy);
-    }
-
-    return (
-      <li key={i}>
-        <div className="border">
-          <a target="_blank" rel="noreferrer" href={profileUrl}>
-            <ProfileImage
-              iconUrl={observer.user.icon_url}
-              name={observer.user.name}
-            />
-            <span className="ms-2">
-              {observer.user.name || observer.user.login}
-            </span>
-          </a>
-          &nbsp;(
-          <a target="_blank" rel="noreferrer" href={observationsLink}>
-            {observer[orderBy]} {plural}
-          </a>
-          )
-        </div>
-      </li>
-    );
-  });
+  const topObservers = data.results.map((observer, i) => (
+    <ObserverItem
+      key={i}
+      observer={observer}
+      date={date}
+      nycPlaceId={nycPlaceId}
+      orderBy={orderBy}
+    />
+  ));
   return <ol className="d-flex flex-column gap-1">{topObservers}</ol>;
 };
 
