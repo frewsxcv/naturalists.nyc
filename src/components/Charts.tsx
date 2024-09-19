@@ -14,6 +14,7 @@ import { unwrap } from "../utils";
 import { getCurrentWeekOfYear, getCurrentMonthOfYear } from "../dates";
 import { MdOpenInNew } from "react-icons/md";
 import CardTitle from "./CardTitle";
+import Pagination from "react-bootstrap/Pagination";
 
 export type ChartFilterProp = {
   filter: IconicTaxon | undefined;
@@ -162,7 +163,7 @@ export const ChartTaxaSection = ({
     <Col xs={12}>
       <Card className="bg-body-tertiary">
         <Row className="g-0">
-          {/* TODO: Remove the 160px magic number below */}
+          {/* TODO: Remove the 128px magic number below */}
           <Col sm={3} xs={4} style={{ height: "128px" }}>
             <TaxonImage taxon={taxon} />
           </Col>
@@ -200,6 +201,8 @@ export const ChartTaxaSection = ({
 
 const Charts = ({ filter, placeId }: ChartFilterProp & { placeId: number }) => {
   const [taxa, setTaxa] = useState<TaxonCount[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const taxaPerPage = 5;
 
   useEffect(() => {
     setTaxa([]);
@@ -215,15 +218,40 @@ const Charts = ({ filter, placeId }: ChartFilterProp & { placeId: number }) => {
     });
   }, [placeId, filter]);
 
-  if (!taxa.length) {
-    return <Spinner animation="border" />;
-  }
+  const indexOfLastTaxon = currentPage * taxaPerPage;
+  const indexOfFirstTaxon = indexOfLastTaxon - taxaPerPage;
+  const currentTaxa = taxa.slice(indexOfFirstTaxon, indexOfLastTaxon);
 
-  const taxaSections = taxa.map((taxon, i) => {
-    return <ChartTaxaSection taxon={taxon} key={i} placeId={placeId} />;
+  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+
+  const taxaSections = currentTaxa.map((taxon, i) => {
+    return <ChartTaxaSection taxon={taxon} key={taxon.taxon.id} placeId={placeId} />;
   });
 
-  return <Row className="row-gap-3">{taxaSections}</Row>;
+  return (
+    <>
+      <Row className="row-gap-3">{taxaSections}</Row>
+      <Pagination>
+        <Pagination.Prev
+          disabled={currentPage === 1}
+          onClick={() => paginate(currentPage - 1)}
+        />
+        {[...Array(Math.ceil(taxa.length / taxaPerPage)).keys()].map((number) => (
+          <Pagination.Item
+            key={number + 1}
+            active={number + 1 === currentPage}
+            onClick={() => paginate(number + 1)}
+          >
+            {number + 1}
+          </Pagination.Item>
+        ))}
+        <Pagination.Next
+          disabled={currentPage === Math.ceil(taxa.length / taxaPerPage)}
+          onClick={() => paginate(currentPage + 1)}
+        />
+      </Pagination>
+    </>
+  );
 };
 
 const histogramResponseToHistogramData = (
