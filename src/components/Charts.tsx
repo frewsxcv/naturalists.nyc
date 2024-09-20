@@ -231,25 +231,27 @@ const Charts = ({ filter, placeId }: ChartFilterProp & { placeId: number }) => {
   return (
     <>
       <Row className="row-gap-3">{taxaSections}</Row>
-      <Pagination>
-        <Pagination.Prev
-          disabled={currentPage === 1}
-          onClick={() => paginate(currentPage - 1)}
-        />
-        {[...Array(Math.ceil(taxa.length / taxaPerPage)).keys()].map((number) => (
-          <Pagination.Item
-            key={number + 1}
-            active={number + 1 === currentPage}
-            onClick={() => paginate(number + 1)}
-          >
-            {number + 1}
-          </Pagination.Item>
-        ))}
-        <Pagination.Next
-          disabled={currentPage === Math.ceil(taxa.length / taxaPerPage)}
-          onClick={() => paginate(currentPage + 1)}
-        />
-      </Pagination>
+      <div className="d-flex justify-content-center">
+        <Pagination className="m-0">
+          <Pagination.Prev
+            disabled={currentPage === 1}
+            onClick={() => paginate(currentPage - 1)}
+          />
+          {[...Array(Math.ceil(taxa.length / taxaPerPage)).keys()].map((number) => (
+            <Pagination.Item
+              key={number + 1}
+              active={number + 1 === currentPage}
+              onClick={() => paginate(number + 1)}
+            >
+              {number + 1}
+            </Pagination.Item>
+          ))}
+          <Pagination.Next
+            disabled={currentPage === Math.ceil(taxa.length / taxaPerPage)}
+            onClick={() => paginate(currentPage + 1)}
+          />
+        </Pagination>
+      </div>
     </>
   );
 };
