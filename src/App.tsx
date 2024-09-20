@@ -96,10 +96,14 @@ const Learn = () => {
       <Navbar selectedTab="explore" />
       <Container>
         <Row className="gx-3 row-gap-3">
-          <Col xs={12} md={6} xl={4}>
+          <Col xs={12} md={6}>
             <div className="d-flex flex-column gap-3">
               <ConnectCard />
               <PapersCard />
+            </div>
+          </Col>
+          <Col xs={12} md={6}>
+            <div className="d-flex flex-column gap-3">
               <GuidesCard />
               <Watch />
             </div>
