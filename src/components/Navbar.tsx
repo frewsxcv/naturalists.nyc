@@ -17,7 +17,7 @@ const Navbar = ({ selectedTab }: { selectedTab: "explore" | "learn" }) => {
             <Nav.Link href="/" active={selectedTab === "explore"}>
               Explore
             </Nav.Link>
-            <Nav.Link href="/learn" active={selectedTab === "learn"}>
+            <Nav.Link href="/#/learn" active={selectedTab === "learn"}>
               Learn
             </Nav.Link>
             <NavDropdown title="About" id="basic-nav-dropdown">

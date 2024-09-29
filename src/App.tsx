@@ -23,7 +23,7 @@ import {
 } from "./inaturalist";
 import { Dropdown, Spinner } from "react-bootstrap";
 import Charts, { type ChartFilterProp } from "./components/Charts";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { RouterProvider, Route, Routes, HashRouter } from "react-router-dom";
 import { getIsoDateOneMonthAgo } from "./dates";
 import { assertUnreachable } from "./utils"; // Add this import
 import LandAcknowlegement from "./components/LandAcknowledgement";
@@ -360,19 +360,15 @@ const TopObserversCard = () => {
   );
 };
 
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <Explore />,
-  },
-  {
-    path: "/learn",
-    element: <Learn />,
-  },
-]);
-
 function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <HashRouter>
+      <Routes>
+        <Route path="/" element={<Explore />} />
+        <Route path="/learn" element={<Learn />} />
+      </Routes>
+    </HashRouter>
+  );
 }
 
 export default App;
