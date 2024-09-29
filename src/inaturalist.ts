@@ -108,9 +108,6 @@ type AllEndpoints = TypicalEndpoints & {
   };
 };
 
-/** Calculate days in seconds */
-const daysToSeconds = (days: number): string => "" + days * 24 * 60 * 60;
-
 const cacheTtl: Record<keyof AllEndpoints, string> = {
   "/observations/species_counts": daysToSeconds(1),
   "/observations/histogram": daysToSeconds(30),

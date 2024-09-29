@@ -17,3 +17,14 @@ export const chooseRandom = <T extends unknown>(arr: [T, ...T[]]) =>
 
 export const chooseRandomIndex = <T extends unknown>(arr: [T, ...T[]]): number =>
   Math.floor(Math.random() * arr.length);
+
+export const buildUrl = (
+  url: string,
+  params: Record<string, string | number | boolean | undefined>
+) => {
+  const urlObj = new URL(url);
+  Object.entries(params).forEach(([key, value]) => {
+    urlObj.searchParams.set(key, value === undefined ? "" : value.toString());
+  });
+  return urlObj;
+};

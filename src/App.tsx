@@ -23,9 +23,9 @@ import {
 } from "./inaturalist";
 import { Dropdown, Spinner } from "react-bootstrap";
 import Charts, { type ChartFilterProp } from "./components/Charts";
-import { RouterProvider, Route, Routes, HashRouter } from "react-router-dom";
+import { Route, Routes, HashRouter } from "react-router-dom";
 import { getIsoDateOneMonthAgo } from "./dates";
-import { assertUnreachable } from "./utils"; // Add this import
+import { assertUnreachable } from "./utils";
 import LandAcknowlegement from "./components/LandAcknowledgement";
 import Watch from "./components/Watch";
 import CardTitle from "./components/CardTitle";
