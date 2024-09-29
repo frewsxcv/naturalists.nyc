@@ -1,15 +1,6 @@
 import { Mutex } from "async-mutex";
-
-const buildUrl = (
-  url: string,
-  params: Record<string, string | number | boolean | undefined>
-) => {
-  const urlObj = new URL(url);
-  Object.entries(params).forEach(([key, value]) => {
-    urlObj.searchParams.set(key, value === undefined ? "" : value.toString());
-  });
-  return urlObj;
-};
+import { daysToSeconds } from "./dates";
+import { buildUrl } from "./utils";
 
 const buildINaturalistApiUrl = <P extends keyof AllEndpoints>(
   path: P,
