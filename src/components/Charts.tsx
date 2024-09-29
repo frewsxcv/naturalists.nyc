@@ -202,12 +202,12 @@ export const ChartTaxaSection = ({
 const Charts = ({ filter, placeId }: ChartFilterProp & { placeId: number }) => {
   const [taxa, setTaxa] = useState<TaxonCount[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(true); // Add loading state
   const taxaPerPage = 5;
 
   useEffect(() => {
     setTaxa([]);
-    // TODO: Rather than doing this one month at a time, do a couple weeks before
-    //       and after the current date, which might require two requests.
+    setIsLoading(true); // Set loading to true when fetching starts
     fetchINaturalistApi("/observations/species_counts", {
       month: getCurrentMonthOfYear(),
       placeId,
@@ -215,6 +215,7 @@ const Charts = ({ filter, placeId }: ChartFilterProp & { placeId: number }) => {
       iconic_taxa: filter,
     }).then((response) => {
       setTaxa(response.results);
+      setIsLoading(false); // Set loading to false when fetching ends
     });
   }, [placeId, filter]);
 
@@ -227,6 +228,14 @@ const Charts = ({ filter, placeId }: ChartFilterProp & { placeId: number }) => {
   const taxaSections = currentTaxa.map((taxon, i) => {
     return <ChartTaxaSection taxon={taxon} key={taxon.taxon.id} placeId={placeId} />;
   });
+
+  if (isLoading) {
+    return (
+      <div className="d-flex justify-content-center">
+        <Spinner animation="border" />
+      </div>
+    );
+  }
 
   return (
     <>
