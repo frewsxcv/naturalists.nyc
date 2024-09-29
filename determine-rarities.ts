@@ -127,14 +127,24 @@ function prevResultsContainsTaxonId(
   );
 }
 
+// Iterate over dates in descending order starting from today
 for (const date of datesDescFrom(new Date())) {
+  // Fetch taxon IDs observed on the current date
   const taxonIds = await arrayAsyncFrom(fetchTaxonIdsOnDate(date, undefined));
+
+  // Fetch species counts up through the previous year for the fetched taxon IDs
   const prevYearResults = await arrayAsyncFrom(
     fetchSpeciesCountsUpThroughDate(prevDayFromDate(date), taxonIds)
   );
+
+  // Iterate over each taxon ID observed on the current date
   for (const taxonId of taxonIds) {
+    // Check if the taxon ID is not present in the previous year's results
     if (!prevResultsContainsTaxonId(taxonId, prevYearResults)) {
+      // Fetch observations for the current date and taxon ID
       const observations = await fetchObservationsOnDate(date, taxonId);
+
+      // Print details of each observation
       for (const observation of observations.results) {
         printObservationRow(observation);
       }
