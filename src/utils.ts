@@ -28,3 +28,12 @@ export const buildUrl = (
   });
   return urlObj;
 };
+
+// https://stackoverflow.com/questions/58668361/how-can-i-convert-an-async-iterator-to-an-array
+export async function arrayAsyncFrom<T>(gen: AsyncIterable<T>): Promise<T[]> {
+  const out: T[] = [];
+  for await (const x of gen) {
+    out.push(x);
+  }
+  return out;
+}

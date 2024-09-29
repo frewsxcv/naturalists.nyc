@@ -5,6 +5,7 @@ import {
   prevDayFromDate,
   prevYearFromDate,
 } from "./src/dates.ts";
+import { arrayAsyncFrom } from "./src/utils.ts";
 
 const nycPlaceId = 674;
 
@@ -124,15 +125,6 @@ function prevResultsContainsTaxonId(
     (result) =>
       result.taxon.id === taxonId || result.taxon.ancestor_ids.includes(taxonId)
   );
-}
-
-// https://stackoverflow.com/questions/58668361/how-can-i-convert-an-async-iterator-to-an-array
-async function arrayAsyncFrom<T>(gen: AsyncIterable<T>): Promise<T[]> {
-  const out: T[] = [];
-  for await (const x of gen) {
-    out.push(x);
-  }
-  return out;
 }
 
 for (const date of datesDescFrom(new Date())) {
