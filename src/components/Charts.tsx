@@ -185,12 +185,9 @@ export const ChartTaxaSection = ({
               <Card.Subtitle>
                 <em>{taxon.taxon.name}</em>
               </Card.Subtitle>
-              <Card.Text
-                className="mt-2"
-                style={{ height: histogramHeight + "px" }}
-              >
+              <div className="mt-2" style={{ height: histogramHeight + "px" }}>
                 <BarChart taxonId={taxon.taxon.id} placeId={placeId} />
-              </Card.Text>
+              </div>
             </Card.Body>
           </Col>
         </Row>
