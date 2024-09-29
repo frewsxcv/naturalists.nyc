@@ -343,16 +343,16 @@ const TopObserversCard = () => {
       <Card.Body>
         <CardTitle>
           <MdWorkspacePremium />
-          &nbsp;Top Observers
+          &nbsp;Top iNaturalist Observers
         </CardTitle>
 
         <p>
-          Observers with most unique species observed in NYC in the past month:
+          Top iNaturalist observers in NYC over the last 30 days, ranked by unique species:
         </p>
         <TopObservers orderBy="species_count" />
 
         <p>
-          Observers with most observations in NYC in the past month:
+          Top iNaturalist observers in NYC over the last 30 days, ranked by total observations:
         </p>
         <TopObservers orderBy="observation_count" />
       </Card.Body>
