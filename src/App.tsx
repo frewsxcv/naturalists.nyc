@@ -23,9 +23,9 @@ import {
 } from "./inaturalist";
 import { Dropdown, Spinner } from "react-bootstrap";
 import Charts, { type ChartFilterProp } from "./components/Charts";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { Route, Routes, HashRouter } from "react-router-dom";
 import { getIsoDateOneMonthAgo } from "./dates";
-import { assertUnreachable } from "./utils"; // Add this import
+import { assertUnreachable } from "./utils";
 import LandAcknowlegement from "./components/LandAcknowledgement";
 import Watch from "./components/Watch";
 import CardTitle from "./components/CardTitle";
@@ -347,16 +347,16 @@ const TopObserversCard = () => {
       <Card.Body>
         <CardTitle>
           <MdWorkspacePremium />
-          &nbsp;Top Observers
+          &nbsp;Top iNaturalist Observers
         </CardTitle>
 
         <p>
-          Observers with most unique species observed in NYC in the past month:
+          Top iNaturalist observers in NYC over the last 30 days, ranked by unique species:
         </p>
         <TopObservers orderBy="species_count" />
 
         <p>
-          Observers with most observations in NYC in the past month:
+          Top iNaturalist observers in NYC over the last 30 days, ranked by total observations:
         </p>
         <TopObservers orderBy="observation_count" />
       </Card.Body>
@@ -364,19 +364,15 @@ const TopObserversCard = () => {
   );
 };
 
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <Explore />,
-  },
-  {
-    path: "/learn",
-    element: <Learn />,
-  },
-]);
-
 function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <HashRouter>
+      <Routes>
+        <Route path="/" element={<Explore />} />
+        <Route path="/learn" element={<Learn />} />
+      </Routes>
+    </HashRouter>
+  );
 }
 
 export default App;

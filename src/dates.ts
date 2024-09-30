@@ -56,3 +56,6 @@ export const getCurrentMonthOfYear = (): Month =>
 
 const numberToMonth = (n: number): Month =>
   unwrap(months.find((month) => month === n));
+
+/** Calculate days in seconds */
+export const daysToSeconds = (days: number): string => "" + days * 24 * 60 * 60;

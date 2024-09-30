@@ -5,6 +5,7 @@ import {
   prevDayFromDate,
   prevYearFromDate,
 } from "./src/dates.ts";
+import { arrayAsyncFrom } from "./src/utils.ts";
 
 const nycPlaceId = 674;
 
@@ -126,23 +127,24 @@ function prevResultsContainsTaxonId(
   );
 }
 
-// https://stackoverflow.com/questions/58668361/how-can-i-convert-an-async-iterator-to-an-array
-async function arrayAsyncFrom<T>(gen: AsyncIterable<T>): Promise<T[]> {
-  const out: T[] = [];
-  for await (const x of gen) {
-    out.push(x);
-  }
-  return out;
-}
-
+// Iterate over dates in descending order starting from today
 for (const date of datesDescFrom(new Date())) {
+  // Fetch taxon IDs observed on the current date
   const taxonIds = await arrayAsyncFrom(fetchTaxonIdsOnDate(date, undefined));
+
+  // Fetch species counts up through the previous year for the fetched taxon IDs
   const prevYearResults = await arrayAsyncFrom(
     fetchSpeciesCountsUpThroughDate(prevDayFromDate(date), taxonIds)
   );
+
+  // Iterate over each taxon ID observed on the current date
   for (const taxonId of taxonIds) {
+    // Check if the taxon ID is not present in the previous year's results
     if (!prevResultsContainsTaxonId(taxonId, prevYearResults)) {
+      // Fetch observations for the current date and taxon ID
       const observations = await fetchObservationsOnDate(date, taxonId);
+
+      // Print details of each observation
       for (const observation of observations.results) {
         printObservationRow(observation);
       }
