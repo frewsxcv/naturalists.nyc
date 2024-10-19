@@ -233,6 +233,7 @@ export type QualityGrade = "casual" | "needs_id" | "research";
 export interface Observation {
   id: number;
   observed_on: string;
+  observed_on_string: string;
   time_observed_at: string;
   taxon: Taxon;
   place_guess: string;

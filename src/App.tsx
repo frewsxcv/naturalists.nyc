@@ -440,6 +440,8 @@ const ObservationItem = ({ observation }: { observation: Observation }) => {
       subtitle={<em>{observation.taxon?.name}</em>}
       body={<>
         <PlaceName placeId={placeId} />
+        <br />
+        <small>{observation.observed_on}</small>
       </>}
     >
     </GenericCardSection>
