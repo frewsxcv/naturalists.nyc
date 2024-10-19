@@ -110,6 +110,7 @@ export type TypicalEndpoints = {
       expectedNearby?: boolean;
       perPage?: number;
       qualityGrade?: QualityGrade;
+      orderBy?: "created_at" | "observed_on";
     };
   };
   "/places": {
@@ -159,6 +160,7 @@ const requestParams: RequestParamsBuilder = {
       expected_nearby: params.expectedNearby,
       per_page: params.perPage,
       quality_grade: params.qualityGrade,
+      order_by: params.orderBy,
     };
   },
   "/observations/species_counts": (params) => {

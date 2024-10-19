@@ -333,6 +333,7 @@ const fetchUnexpectedObservations = async (page: number) => {
     expectedNearby: false,
     qualityGrade: "research",
     perPage: 5,
+    orderBy: "observed_on",
     page,
   });
 };
