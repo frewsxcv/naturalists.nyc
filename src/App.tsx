@@ -35,6 +35,7 @@ import Watch from "./components/Watch";
 import CardTitle from "./components/CardTitle";
 import { GenericCardSection } from "./components/GenericCardSection";
 import { PlaceName } from "./components/PlaceName";
+import Pagination from "./components/Pagination";
 const nycPlaceId = 674;
 
 type ChartSetFilterProp = {
@@ -326,12 +327,13 @@ const fetchTopObservers = async (
   });
 };
 
-const fetchUnexpectedObservations = async () => {
+const fetchUnexpectedObservations = async (page: number) => {
   return await fetchINaturalistApi("/observations", {
     placeId: nycPlaceId,
     expectedNearby: false,
     qualityGrade: "research",
     perPage: 5,
+    page,
   });
 };
 
@@ -395,16 +397,29 @@ const UnexpectedObservationsCard = () => {
 
 const UnexpectedObservations = () => {
   const [data, setData] = useState<INaturalistResponse<Observation> | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+
   useEffect(() => {
-    fetchUnexpectedObservations().then((response) => {
+    fetchUnexpectedObservations(currentPage).then((response) => {
       setData(response);
     });
-  }, []);
+  }, [currentPage]);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
   return (
     <div className="d-flex flex-column gap-2">
       {data?.results.map((observation, i) => (
         <ObservationItem key={i} observation={observation} />
       ))}
+      <Pagination
+        currentPage={currentPage}
+        totalItems={data?.total_results || 0}
+        itemsPerPage={5}
+        onPageChange={handlePageChange}
+      />
     </div>
   );
 };

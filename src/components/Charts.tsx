@@ -11,8 +11,9 @@ import { Placeholder, Spinner } from "react-bootstrap";
 import { unwrap } from "../utils";
 import { getCurrentWeekOfYear, getCurrentMonthOfYear } from "../dates";
 import { GenericCardSection } from "./GenericCardSection";
-import Pagination from "react-bootstrap/Pagination";
 import { LinkIcon } from "./LinkIcon";
+import Pagination from "./Pagination";
+
 export type ChartFilterProp = {
   filter: IconicTaxon | undefined;
 };
@@ -171,12 +172,12 @@ export const ChartTaxaSection = ({
 const Charts = ({ filter, placeId }: ChartFilterProp & { placeId: number }) => {
   const [taxa, setTaxa] = useState<TaxonCount[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [isLoading, setIsLoading] = useState(true); // Add loading state
+  const [isLoading, setIsLoading] = useState(true);
   const taxaPerPage = 5;
 
   useEffect(() => {
     setTaxa([]);
-    setIsLoading(true); // Set loading to true when fetching starts
+    setIsLoading(true);
     fetchINaturalistApi("/observations/species_counts", {
       month: getCurrentMonthOfYear(),
       placeId,
@@ -184,7 +185,7 @@ const Charts = ({ filter, placeId }: ChartFilterProp & { placeId: number }) => {
       iconic_taxa: filter,
     }).then((response) => {
       setTaxa(response.results);
-      setIsLoading(false); // Set loading to false when fetching ends
+      setIsLoading(false);
     });
   }, [placeId, filter]);
 
@@ -209,27 +210,12 @@ const Charts = ({ filter, placeId }: ChartFilterProp & { placeId: number }) => {
   return (
     <>
       <Row className="row-gap-3">{taxaSections}</Row>
-      <div className="d-flex justify-content-center">
-        <Pagination className="m-0">
-          <Pagination.Prev
-            disabled={currentPage === 1}
-            onClick={() => paginate(currentPage - 1)}
-          />
-          {[...Array(Math.ceil(taxa.length / taxaPerPage)).keys()].map((number) => (
-            <Pagination.Item
-              key={number + 1}
-              active={number + 1 === currentPage}
-              onClick={() => paginate(number + 1)}
-            >
-              {number + 1}
-            </Pagination.Item>
-          ))}
-          <Pagination.Next
-            disabled={currentPage === Math.ceil(taxa.length / taxaPerPage)}
-            onClick={() => paginate(currentPage + 1)}
-          />
-        </Pagination>
-      </div>
+      <Pagination
+        currentPage={currentPage}
+        totalItems={taxa.length}
+        itemsPerPage={taxaPerPage}
+        onPageChange={paginate}
+      />
     </>
   );
 };
