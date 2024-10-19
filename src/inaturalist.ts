@@ -1,6 +1,7 @@
 import { Mutex } from "async-mutex";
 import { daysToSeconds } from "./dates";
 import { buildUrl } from "./utils";
+import { hoursToSeconds } from "./dates";
 
 const buildINaturalistApiUrl = <P extends keyof AllEndpoints>(
   path: P,
@@ -136,7 +137,7 @@ const cacheTtl: Record<keyof AllEndpoints, string> = {
   "/observations/species_counts": daysToSeconds(1),
   "/observations/histogram": daysToSeconds(30),
   "/observations/observers": daysToSeconds(1),
-  "/observations": daysToSeconds(1),
+  "/observations": hoursToSeconds(1),
   "/places": daysToSeconds(30),
 };
 

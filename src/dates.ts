@@ -59,3 +59,5 @@ const numberToMonth = (n: number): Month =>
 
 /** Calculate days in seconds */
 export const daysToSeconds = (days: number): string => "" + days * 24 * 60 * 60;
+
+export const hoursToSeconds = (hours: number): string => "" + hours * 60 * 60;
