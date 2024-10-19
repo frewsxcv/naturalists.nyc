@@ -5,12 +5,22 @@ import { buildUrl } from "./utils";
 const buildINaturalistApiUrl = <P extends keyof AllEndpoints>(
   path: P,
   params: Record<string, string | number | boolean | undefined>
-) =>
-  buildUrl(
+) => {
+  // TODO: this shouldn't be hardcoded
+  if (path === "/places") {
+    return buildUrl(
+      // `https://api.inaturalist.org/v1${path}`,
+      `https://default-20231018t204727-v3pycdbs6a-uc.a.run.app/places/${params.id}`,
+      {}
+    );
+  }
+
+  return buildUrl(
     // `https://api.inaturalist.org/v1${path}`,
     `https://default-20231018t204727-v3pycdbs6a-uc.a.run.app${path}`,
     params
   );
+};
 // ) => buildUrl(`http://localhost:8080${path}`, params);
 
 // https://github.com/inaturalist/iNaturalistAPI/issues/391
@@ -38,7 +48,20 @@ export const iconicTaxa = [
   "Protozoa",
 ] as const;
 
-export type IconicTaxon = typeof iconicTaxa[number];
+export type IconicTaxon = (typeof iconicTaxa)[number];
+
+export type Place = {
+  id: number;
+  name: string;
+  display_name: string;
+  admin_level: number;
+  ancestor_place_ids: number[];
+  bbox_area: number;
+  geometry_geojson: {
+    type: string;
+    coordinates: number[][][];
+  };
+};
 
 export type TypicalEndpoints = {
   /** Top observers */
@@ -83,6 +106,16 @@ export type TypicalEndpoints = {
       d2?: string; // FIXME: should there be a date time?
       taxonId?: string; // FIXME: this should be string | string[]
       page?: number;
+      expectedNearby?: boolean;
+      perPage?: number;
+      qualityGrade?: QualityGrade;
+    };
+  };
+  "/places": {
+    response: INaturalistResponse<Place>;
+    result: Place;
+    params: {
+      id?: number;
     };
   };
 };
@@ -104,6 +137,7 @@ const cacheTtl: Record<keyof AllEndpoints, string> = {
   "/observations/histogram": daysToSeconds(30),
   "/observations/observers": daysToSeconds(1),
   "/observations": daysToSeconds(1),
+  "/places": daysToSeconds(30),
 };
 
 type RequestParamsBuilder = {
@@ -121,6 +155,9 @@ const requestParams: RequestParamsBuilder = {
       d2: params.d2,
       taxon_id: params.taxonId,
       page: params.page,
+      expected_nearby: params.expectedNearby,
+      per_page: params.perPage,
+      quality_grade: params.qualityGrade,
     };
   },
   "/observations/species_counts": (params) => {
@@ -162,6 +199,11 @@ const requestParams: RequestParamsBuilder = {
       page: params.page,
     };
   },
+  "/places": (params) => {
+    return {
+      id: params.id,
+    };
+  },
 };
 
 export const fetchINaturalistApi = (() => {
@@ -191,6 +233,7 @@ export interface Observation {
   time_observed_at: string;
   taxon: Taxon;
   place_guess: string;
+  place_ids: number[];
   location: string;
   quality_grade: QualityGrade;
   geojson: {
@@ -199,7 +242,7 @@ export interface Observation {
   };
   photos: {
     url: string;
-  }[],
+  }[];
   user: {
     id: number;
     login: string;
@@ -291,7 +334,7 @@ export interface Taxon {
   id: number;
   default_photo: {
     id: number;
-    license_code: string|null;
+    license_code: string | null;
     attribution: string;
     url: string;
     original_dimensions: {

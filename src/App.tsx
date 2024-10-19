@@ -4,6 +4,7 @@ import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import Navbar from "./components/Navbar";
 import Card from "react-bootstrap/Card";
+import { LinkIcon } from "./components/LinkIcon";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useEffect, useState } from "react";
 import {
@@ -13,10 +14,13 @@ import {
   MdBolt,
   MdWorkspacePremium,
   MdFilterList,
+  MdStar,
 } from "react-icons/md";
 import {
   INaturalistResponse,
+  Observation,
   Observer,
+  Place,
   fetchINaturalistApi,
   iconicTaxa,
   type IconicTaxon,
@@ -29,7 +33,8 @@ import { assertUnreachable } from "./utils";
 import LandAcknowlegement from "./components/LandAcknowledgement";
 import Watch from "./components/Watch";
 import CardTitle from "./components/CardTitle";
-
+import { GenericCardSection } from "./components/GenericCardSection";
+import { PlaceName } from "./components/PlaceName";
 const nycPlaceId = 674;
 
 type ChartSetFilterProp = {
@@ -55,7 +60,10 @@ const Explore = () => {
             <TopObserversCard />
           </Col>
           <Col xs={12} md={6}>
-            <ActiveSpeciesCard />
+            <div className="d-flex flex-column gap-3">
+              <ActiveSpeciesCard />
+              <UnexpectedObservationsCard />
+            </div>
           </Col>
         </Row>
       </Container>
@@ -318,6 +326,15 @@ const fetchTopObservers = async (
   });
 };
 
+const fetchUnexpectedObservations = async () => {
+  return await fetchINaturalistApi("/observations", {
+    placeId: nycPlaceId,
+    expectedNearby: false,
+    qualityGrade: "research",
+    perPage: 5,
+  });
+};
+
 const TopObservers = ({ orderBy }: OrderByProp) => {
   const [data, setData] = useState<INaturalistResponse<Observer> | null>(null);
   const date = getIsoDateOneMonthAgo();
@@ -362,6 +379,60 @@ const TopObserversCard = () => {
       </Card.Body>
     </Card>
   );
+};
+
+const UnexpectedObservationsCard = () => {
+  return <Card className="bg-body-secondary">
+    <Card.Body>
+      <CardTitle>
+        <MdStar />
+        &nbsp;Unexpected observations
+      </CardTitle>
+      <UnexpectedObservations />
+    </Card.Body>
+  </Card>;
+};
+
+const UnexpectedObservations = () => {
+  const [data, setData] = useState<INaturalistResponse<Observation> | null>(null);
+  useEffect(() => {
+    fetchUnexpectedObservations().then((response) => {
+      setData(response);
+    });
+  }, []);
+  return (
+    <div className="d-flex flex-column gap-2">
+      {data?.results.map((observation, i) => (
+        <ObservationItem key={i} observation={observation} />
+      ))}
+    </div>
+  );
+};
+
+const ObservationItem = ({ observation }: { observation: Observation }) => {
+  const imageUrl = observation.photos?.[0]?.url;
+  const placeId = observation.place_ids[observation.place_ids.length - 1];
+
+  return (
+    <GenericCardSection
+      imageUrl={imageUrl ? convertPhotoUrlToOriginal(imageUrl) : undefined}
+      title={<>
+        {observation.taxon.preferred_common_name}
+        &nbsp;
+        <LinkIcon url={`https://www.inaturalist.org/observations/${observation.id}`} />
+      </>}
+      subtitle={<em>{observation.taxon?.name}</em>}
+      body={<>
+        <PlaceName placeId={placeId} />
+      </>}
+    >
+    </GenericCardSection>
+  );
+};
+
+// Convert https://inaturalist-open-data.s3.amazonaws.com/photos/443200086/square.jpg to https://inaturalist-open-data.s3.amazonaws.com/photos/443200086/original.jpg
+const convertPhotoUrlToOriginal = (photoUrl: string) => {
+  return photoUrl.replace(/\/square\.(\w+)$/, "/medium.$1");
 };
 
 function App() {
