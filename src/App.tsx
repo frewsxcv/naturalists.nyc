@@ -178,6 +178,12 @@ export const PapersCard = () => {
               The Bronx
             </a>
           </li>
+          <li>
+            <a href="https://www.coreytcallaghan.com/papers/Bowler_et_al-2024-Treating%20gaps%20and%20biases%20in%20biodiversity%20data%20as%20a%20missing%20data%20problem.pdf">
+              Treating gaps and biases in biodiversity data as a missing data
+              problem
+            </a>
+          </li>
         </ul>
       </Card.Body>
     </Card>
