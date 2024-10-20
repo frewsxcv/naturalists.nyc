@@ -2,7 +2,7 @@ import Row from "react-bootstrap/Row";
 import Container from "./components/Container";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
-import Navbar from "./components/Navbar";
+import Navbar, { defaultPlace, type SelectedPlace } from "./components/Navbar";
 import Card from "react-bootstrap/Card";
 import { LinkIcon } from "./components/LinkIcon";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -36,7 +36,6 @@ import CardTitle from "./components/CardTitle";
 import { GenericCardSection } from "./components/GenericCardSection";
 import { PlaceName } from "./components/PlaceName";
 import Pagination from "./components/Pagination";
-const nycPlaceId = 674;
 
 type ChartSetFilterProp = {
   setFilter: (filter: IconicTaxon) => void;
@@ -46,10 +45,20 @@ type OrderByProp = {
   orderBy: "observation_count" | "species_count";
 };
 
-const Explore = () => {
+const Explore = ({
+  selectedPlace,
+  setSelectedPlace,
+}: {
+  selectedPlace: SelectedPlace;
+  setSelectedPlace: (place: SelectedPlace) => void;
+}) => {
   return (
     <>
-      <Navbar selectedTab="explore" />
+      <Navbar
+        selectedTab="explore"
+        selectedPlace={selectedPlace}
+        setSelectedPlace={setSelectedPlace}
+      />
       <Container>
         <Row>
           <Col>
@@ -58,12 +67,12 @@ const Explore = () => {
         </Row>
         <Row className="gx-3 row-gap-3">
           <Col xs={12} md={6}>
-            <TopObserversCard />
+            <TopObserversCard selectedPlace={selectedPlace} />
           </Col>
           <Col xs={12} md={6}>
             <div className="d-flex flex-column gap-3">
-              <ActiveSpeciesCard />
-              <UnexpectedObservationsCard />
+              <ActiveSpeciesCard selectedPlace={selectedPlace} />
+              <UnexpectedObservationsCard selectedPlace={selectedPlace} />
             </div>
           </Col>
         </Row>
@@ -72,10 +81,16 @@ const Explore = () => {
   );
 };
 
-const ActiveSpeciesCard = () => {
+const ActiveSpeciesCard = ({
+  selectedPlace,
+}: {
+  selectedPlace: SelectedPlace;
+}) => {
   const [filter, setFilter] = useState<IconicTaxon | undefined>(undefined);
   const clearFilterButton = filter ? (
-    <Button onClick={() => setFilter(undefined)} size="sm">Clear filter</Button>
+    <Button onClick={() => setFilter(undefined)} size="sm">
+      Clear filter
+    </Button>
   ) : null;
 
   return (
@@ -92,17 +107,27 @@ const ActiveSpeciesCard = () => {
           </div>
         </CardTitle>
         <div className="d-flex flex-column gap-1">
-          <Charts filter={filter} placeId={nycPlaceId} />
+          <Charts filter={filter} placeId={selectedPlace.id} />
         </div>
       </Card.Body>
     </Card>
   );
 };
 
-const Learn = () => {
+const Learn = ({
+  selectedPlace,
+  setSelectedPlace,
+}: {
+  selectedPlace: SelectedPlace;
+  setSelectedPlace: (place: SelectedPlace) => void;
+}) => {
   return (
     <>
-      <Navbar selectedTab="explore" />
+      <Navbar
+        selectedTab="learn"
+        selectedPlace={selectedPlace}
+        setSelectedPlace={setSelectedPlace}
+      />
       <Container>
         <Row className="gx-3 row-gap-3">
           <Col xs={12} md={6}>
@@ -164,7 +189,8 @@ const FilterDropdown = ({
       onSelect={(value) => value && isIconicTaxon(value) && setFilter(value)}
     >
       <Dropdown.Toggle size="sm" variant="secondary">
-        <MdFilterList />&nbsp;
+        <MdFilterList />
+        &nbsp;
         {toggleText}
       </Dropdown.Toggle>
       <Dropdown.Menu>{iconicTaxaOptions}</Dropdown.Menu>
@@ -256,18 +282,18 @@ const ProfileImage = ({
 const ObserverItem = ({
   observer,
   date,
-  nycPlaceId,
+  placeId,
   orderBy,
 }: {
   observer: Observer;
   date: string;
-  nycPlaceId: number;
+  placeId: number;
   orderBy: "observation_count" | "species_count";
 }) => {
   const profileUrl = `https://www.inaturalist.org/people/${observer.user.id}`;
   const observationsLink = buildObservationsLink(
     date,
-    nycPlaceId,
+    placeId,
     observer.user.login,
     orderBy
   );
@@ -323,19 +349,20 @@ function buildObservationsLink(
 
 const fetchTopObservers = async (
   orderBy: "observation_count" | "species_count",
-  date: string
+  date: string,
+  placeId: number
 ) => {
   return await fetchINaturalistApi("/observations/observers", {
-    placeId: nycPlaceId,
+    placeId,
     date,
     orderBy,
     perPage: 10,
   });
 };
 
-const fetchUnexpectedObservations = async (page: number) => {
+const fetchUnexpectedObservations = async (placeId: number, page: number) => {
   return await fetchINaturalistApi("/observations", {
-    placeId: nycPlaceId,
+    placeId,
     expectedNearby: false,
     qualityGrade: "research",
     perPage: 5,
@@ -344,14 +371,18 @@ const fetchUnexpectedObservations = async (page: number) => {
   });
 };
 
-const TopObservers = ({ orderBy }: OrderByProp) => {
+const TopObservers = ({
+  orderBy,
+  selectedPlace,
+}: OrderByProp & { selectedPlace: SelectedPlace }) => {
   const [data, setData] = useState<INaturalistResponse<Observer> | null>(null);
   const date = getIsoDateOneMonthAgo();
   useEffect(() => {
-    fetchTopObservers(orderBy, date).then((response) => {
+    setData(null);
+    fetchTopObservers(orderBy, date, selectedPlace.id).then((response) => {
       setData(response);
     });
-  }, [orderBy, date]);
+  }, [orderBy, date, selectedPlace]);
   if (!data) {
     return <Spinner animation="border" />;
   }
@@ -360,14 +391,18 @@ const TopObservers = ({ orderBy }: OrderByProp) => {
       key={i}
       observer={observer}
       date={date}
-      nycPlaceId={nycPlaceId}
+      placeId={selectedPlace.id}
       orderBy={orderBy}
     />
   ));
   return <ol className="d-flex flex-column gap-1">{topObservers}</ol>;
 };
 
-const TopObserversCard = () => {
+const TopObserversCard = ({
+  selectedPlace,
+}: {
+  selectedPlace: SelectedPlace;
+}) => {
   return (
     <Card className="bg-body-secondary">
       <Card.Body>
@@ -377,40 +412,54 @@ const TopObserversCard = () => {
         </CardTitle>
 
         <p>
-          Top iNaturalist observers in NYC over the last 30 days, ranked by unique species:
+          Top iNaturalist observers in {selectedPlace.name} over the last 30
+          days, ranked by unique species:
         </p>
-        <TopObservers orderBy="species_count" />
+        <TopObservers orderBy="species_count" selectedPlace={selectedPlace} />
 
         <p>
-          Top iNaturalist observers in NYC over the last 30 days, ranked by total observations:
+          Top iNaturalist observers in {selectedPlace.name} over the last 30
+          days, ranked by total observations:
         </p>
-        <TopObservers orderBy="observation_count" />
+        <TopObservers
+          orderBy="observation_count"
+          selectedPlace={selectedPlace}
+        />
       </Card.Body>
     </Card>
   );
 };
 
-const UnexpectedObservationsCard = () => {
-  return <Card className="bg-body-secondary">
-    <Card.Body>
-      <CardTitle>
-        <MdStar />
-        &nbsp;Unexpected observations
-      </CardTitle>
-      <UnexpectedObservations />
-    </Card.Body>
-  </Card>;
+const UnexpectedObservationsCard = ({
+  selectedPlace,
+}: {
+  selectedPlace: SelectedPlace;
+}) => {
+  return (
+    <Card className="bg-body-secondary">
+      <Card.Body>
+        <CardTitle>
+          <MdStar />
+          &nbsp;Unexpected observations
+        </CardTitle>
+        <UnexpectedObservations placeId={selectedPlace.id} />
+      </Card.Body>
+    </Card>
+  );
 };
 
-const UnexpectedObservations = () => {
-  const [data, setData] = useState<INaturalistResponse<Observation> | null>(null);
+const UnexpectedObservations = ({ placeId }: { placeId: number }) => {
+  const [data, setData] = useState<INaturalistResponse<Observation> | null>(
+    null
+  );
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
-    fetchUnexpectedObservations(currentPage).then((response) => {
+    setData(null);
+    fetchUnexpectedObservations(placeId, currentPage).then((response) => {
       setData(response);
     });
-  }, [currentPage]);
+  }, [currentPage, placeId]);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -438,19 +487,24 @@ const ObservationItem = ({ observation }: { observation: Observation }) => {
   return (
     <GenericCardSection
       imageUrl={imageUrl ? convertPhotoUrlToOriginal(imageUrl) : undefined}
-      title={<>
-        {observation.taxon.preferred_common_name}
-        &nbsp;
-        <LinkIcon url={`https://www.inaturalist.org/observations/${observation.id}`} />
-      </>}
+      title={
+        <>
+          {observation.taxon.preferred_common_name}
+          &nbsp;
+          <LinkIcon
+            url={`https://www.inaturalist.org/observations/${observation.id}`}
+          />
+        </>
+      }
       subtitle={<em>{observation.taxon?.name}</em>}
-      body={<>
-        <PlaceName placeId={placeId} />
-        <br />
-        <small>{observation.observed_on}</small>
-      </>}
-    >
-    </GenericCardSection>
+      body={
+        <>
+          <PlaceName placeId={placeId} />
+          <br />
+          <small>{observation.observed_on}</small>
+        </>
+      }
+    ></GenericCardSection>
   );
 };
 
@@ -460,11 +514,29 @@ const convertPhotoUrlToOriginal = (photoUrl: string) => {
 };
 
 function App() {
+  const [selectedPlace, setSelectedPlace] =
+    useState<SelectedPlace>(defaultPlace);
   return (
     <HashRouter>
       <Routes>
-        <Route path="/" element={<Explore />} />
-        <Route path="/learn" element={<Learn />} />
+        <Route
+          path="/"
+          element={
+            <Explore
+              selectedPlace={selectedPlace}
+              setSelectedPlace={setSelectedPlace}
+            />
+          }
+        />
+        <Route
+          path="/learn"
+          element={
+            <Learn
+              selectedPlace={selectedPlace}
+              setSelectedPlace={setSelectedPlace}
+            />
+          }
+        />
       </Routes>
     </HashRouter>
   );

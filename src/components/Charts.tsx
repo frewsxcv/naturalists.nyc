@@ -36,6 +36,8 @@ const BarChart = ({
   const [data, setData] = useState<HistogramData | null>(null);
 
   useEffect(() => {
+    setData(null);
+    setIsFetching(true);
     fetchINaturalistApi("/observations/histogram", {
       taxonId,
       placeId,
@@ -156,7 +158,9 @@ export const ChartTaxaSection = ({
             {taxon.taxon.preferred_common_name}
           </span>
           &nbsp;
-          <LinkIcon url={`https://www.inaturalist.org/taxa/${taxon.taxon.id}`} />
+          <LinkIcon
+            url={`https://www.inaturalist.org/taxa/${taxon.taxon.id}`}
+          />
         </>
       }
       subtitle={<em>{taxon.taxon.name}</em>}
@@ -196,7 +200,9 @@ const Charts = ({ filter, placeId }: ChartFilterProp & { placeId: number }) => {
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
   const taxaSections = currentTaxa.map((taxon, i) => {
-    return <ChartTaxaSection taxon={taxon} key={taxon.taxon.id} placeId={placeId} />;
+    return (
+      <ChartTaxaSection taxon={taxon} key={taxon.taxon.id} placeId={placeId} />
+    );
   });
 
   if (isLoading) {
