@@ -1,6 +1,4 @@
 import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
-import Card from "react-bootstrap/Card";
 import * as d3 from "d3";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -12,9 +10,9 @@ import {
 import { Placeholder, Spinner } from "react-bootstrap";
 import { unwrap } from "../utils";
 import { getCurrentWeekOfYear, getCurrentMonthOfYear } from "../dates";
-import { MdOpenInNew } from "react-icons/md";
-import CardTitle from "./CardTitle";
-import Pagination from "react-bootstrap/Pagination";
+import { GenericCardSection } from "./GenericCardSection";
+import { LinkIcon } from "./LinkIcon";
+import Pagination from "./Pagination";
 
 export type ChartFilterProp = {
   filter: IconicTaxon | undefined;
@@ -144,67 +142,42 @@ type HistogramData = { month: string; count: number }[];
 
 const histogramHeight = 40;
 
-const TaxonImage = ({ taxon }: { taxon: TaxonCount }) => {
-  return (
-    <img
-      style={{ objectFit: "cover", height: "100%", width: "100%" }}
-      className="img-fluid rounded-start"
-      src={taxon.taxon.default_photo.medium_url}
-      alt={taxon.taxon.name}
-    />
-  );
-};
-
 export const ChartTaxaSection = ({
   taxon,
   placeId,
 }: TaxonProp & { placeId: number }) => {
   return (
-    <Col xs={12}>
-      <Card className="bg-body-tertiary">
-        <Row className="g-0">
-          {/* TODO: Remove the 128px magic number below */}
-          <Col sm={3} xs={4} style={{ height: "128px" }}>
-            <TaxonImage taxon={taxon} />
-          </Col>
-          <Col sm={9} xs={8}>
-            <Card.Body>
-              <CardTitle>
-                <span style={{ flexGrow: 1 }}>
-                  {taxon.taxon.preferred_common_name}
-                </span>
-                &nbsp;
-                <a
-                  href={`https://www.inaturalist.org/taxa/${taxon.taxon.id}`}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <MdOpenInNew />
-                </a>
-              </CardTitle>
-              <Card.Subtitle>
-                <em>{taxon.taxon.name}</em>
-              </Card.Subtitle>
-              <div className="mt-2" style={{ height: histogramHeight + "px" }}>
-                <BarChart taxonId={taxon.taxon.id} placeId={placeId} />
-              </div>
-            </Card.Body>
-          </Col>
-        </Row>
-      </Card>
-    </Col>
+    <GenericCardSection
+      imageUrl={taxon.taxon.default_photo.medium_url}
+      bodyHeight={histogramHeight}
+      title={
+        <>
+          <span style={{ flexGrow: 1 }}>
+            {taxon.taxon.preferred_common_name}
+          </span>
+          &nbsp;
+          <LinkIcon url={`https://www.inaturalist.org/taxa/${taxon.taxon.id}`} />
+        </>
+      }
+      subtitle={<em>{taxon.taxon.name}</em>}
+      body={
+        <div className="mt-2" style={{ height: histogramHeight + "px" }}>
+          <BarChart taxonId={taxon.taxon.id} placeId={placeId} />
+        </div>
+      }
+    />
   );
 };
 
 const Charts = ({ filter, placeId }: ChartFilterProp & { placeId: number }) => {
   const [taxa, setTaxa] = useState<TaxonCount[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [isLoading, setIsLoading] = useState(true); // Add loading state
+  const [isLoading, setIsLoading] = useState(true);
   const taxaPerPage = 5;
 
   useEffect(() => {
     setTaxa([]);
-    setIsLoading(true); // Set loading to true when fetching starts
+    setIsLoading(true);
     fetchINaturalistApi("/observations/species_counts", {
       month: getCurrentMonthOfYear(),
       placeId,
@@ -212,7 +185,7 @@ const Charts = ({ filter, placeId }: ChartFilterProp & { placeId: number }) => {
       iconic_taxa: filter,
     }).then((response) => {
       setTaxa(response.results);
-      setIsLoading(false); // Set loading to false when fetching ends
+      setIsLoading(false);
     });
   }, [placeId, filter]);
 
@@ -237,27 +210,12 @@ const Charts = ({ filter, placeId }: ChartFilterProp & { placeId: number }) => {
   return (
     <>
       <Row className="row-gap-3">{taxaSections}</Row>
-      <div className="d-flex justify-content-center">
-        <Pagination className="m-0">
-          <Pagination.Prev
-            disabled={currentPage === 1}
-            onClick={() => paginate(currentPage - 1)}
-          />
-          {[...Array(Math.ceil(taxa.length / taxaPerPage)).keys()].map((number) => (
-            <Pagination.Item
-              key={number + 1}
-              active={number + 1 === currentPage}
-              onClick={() => paginate(number + 1)}
-            >
-              {number + 1}
-            </Pagination.Item>
-          ))}
-          <Pagination.Next
-            disabled={currentPage === Math.ceil(taxa.length / taxaPerPage)}
-            onClick={() => paginate(currentPage + 1)}
-          />
-        </Pagination>
-      </div>
+      <Pagination
+        currentPage={currentPage}
+        totalItems={taxa.length}
+        itemsPerPage={taxaPerPage}
+        onPageChange={paginate}
+      />
     </>
   );
 };
