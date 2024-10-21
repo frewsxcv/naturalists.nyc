@@ -8,6 +8,7 @@ import { ListGroup } from "react-bootstrap";
 import { InputGroup, Form } from "react-bootstrap";
 import { BsSearch } from "react-icons/bs";
 import { Spinner } from "react-bootstrap"; // Add this import
+import { Modal } from "react-bootstrap"; // Add this import
 
 export type SelectedPlace = {
   id: number;
@@ -149,7 +150,7 @@ const Navbar = ({
   selectedPlace,
   setSelectedPlace,
 }: NavbarProps) => {
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false); // Change state name
 
   const handleSelectPlace = (placeId: number) => {
     const place = places.find((p) => p.id === placeId);
@@ -181,25 +182,27 @@ const Navbar = ({
             </NavDropdown>
           </Nav>
           <Nav>
-            <NavDropdown
-              title={
-                <>
-                  <MdLocationOn /> {selectedPlace.name}
-                </>
-              }
-              show={isDropdownOpen}
-              onToggle={(isOpen) => setIsDropdownOpen(isOpen)}
-              onSelect={(eventKey) => handleSelectPlace(Number(eventKey))}
-            >
-              <div className="px-3 py-2 w-100 w-md-75 w-lg-50">
-                <PlaceSearch
-                  setSelectedPlace={setSelectedPlace}
-                  closeDropdown={() => setIsDropdownOpen(false)}
-                />
-              </div>
-            </NavDropdown>
+            <Nav.Link onClick={() => setIsModalOpen(true)}>
+              <MdLocationOn /> {selectedPlace.name}
+            </Nav.Link>
           </Nav>
         </BootstrapNavbar.Collapse>
+
+        <Modal
+          show={isModalOpen}
+          onHide={() => setIsModalOpen(false)}
+          fullscreen
+        >
+          <Modal.Header closeButton>
+            <Modal.Title>Select a Place</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <PlaceSearch
+              setSelectedPlace={setSelectedPlace}
+              closeDropdown={() => setIsModalOpen(false)}
+            />
+          </Modal.Body>
+        </Modal>
       </BootstrapContainer>
     </BootstrapNavbar>
   );
