@@ -9,6 +9,7 @@ import { InputGroup, Form } from "react-bootstrap";
 import { BsSearch } from "react-icons/bs";
 import { Spinner } from "react-bootstrap"; // Add this import
 import { Modal } from "react-bootstrap"; // Add this import
+import { Link, useLocation } from "react-router-dom";
 
 export type SelectedPlace = {
   id: number;
@@ -141,7 +142,7 @@ const PlaceSearch = ({
 
 type NavbarProps = {
   selectedTab: "explore" | "learn";
-  selectedPlace: SelectedPlace;
+  selectedPlace: SelectedPlace | null;
   setSelectedPlace: (place: SelectedPlace) => void;
 };
 
@@ -151,13 +152,11 @@ const Navbar = ({
   setSelectedPlace,
 }: NavbarProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false); // Change state name
+  const location = useLocation();
 
-  const handleSelectPlace = (placeId: number) => {
-    const place = places.find((p) => p.id === placeId);
-    if (place) {
-      setSelectedPlace(place);
-    }
-  };
+  if (!selectedPlace) {
+    return null;
+  }
 
   return (
     <BootstrapNavbar expand="lg" className="bg-body-secondary">
@@ -169,10 +168,18 @@ const Navbar = ({
         <BootstrapNavbar.Toggle aria-controls="basic-navbar-nav" />
         <BootstrapNavbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
-            <Nav.Link href="/#/" active={selectedTab === "explore"}>
+            <Nav.Link
+              as={Link}
+              to={{ pathname: "/", search: location.search }}
+              active={selectedTab === "explore"}
+            >
               Explore
             </Nav.Link>
-            <Nav.Link href="/#/learn" active={selectedTab === "learn"}>
+            <Nav.Link
+              as={Link}
+              to={{ pathname: "/learn", search: location.search }}
+              active={selectedTab === "learn"}
+            >
               Learn
             </Nav.Link>
             <NavDropdown title="About" id="basic-nav-dropdown">

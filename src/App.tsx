@@ -27,7 +27,14 @@ import {
 } from "./inaturalist";
 import { Dropdown, Spinner } from "react-bootstrap";
 import Charts, { type ChartFilterProp } from "./components/Charts";
-import { Route, Routes, HashRouter } from "react-router-dom";
+import {
+  Route,
+  Routes,
+  HashRouter,
+  useSearchParams,
+  Outlet,
+  useMatch,
+} from "react-router-dom";
 import { getIsoDateOneMonthAgo } from "./dates";
 import { assertUnreachable } from "./utils";
 import LandAcknowlegement from "./components/LandAcknowledgement";
@@ -47,37 +54,31 @@ type OrderByProp = {
 
 const Explore = ({
   selectedPlace,
-  setSelectedPlace,
 }: {
-  selectedPlace: SelectedPlace;
-  setSelectedPlace: (place: SelectedPlace) => void;
+  selectedPlace: SelectedPlace | null;
 }) => {
+  if (!selectedPlace) {
+    return <Spinner animation="border" />;
+  }
   return (
-    <>
-      <Navbar
-        selectedTab="explore"
-        selectedPlace={selectedPlace}
-        setSelectedPlace={setSelectedPlace}
-      />
-      <Container>
-        <Row>
-          <Col>
-            <LandAcknowlegement />
-          </Col>
-        </Row>
-        <Row className="gx-3 row-gap-3">
-          <Col xs={12} md={6}>
-            <TopObserversCard selectedPlace={selectedPlace} />
-          </Col>
-          <Col xs={12} md={6}>
-            <div className="d-flex flex-column gap-3">
-              <ActiveSpeciesCard selectedPlace={selectedPlace} />
-              <UnexpectedObservationsCard selectedPlace={selectedPlace} />
-            </div>
-          </Col>
-        </Row>
-      </Container>
-    </>
+    <Container>
+      <Row>
+        <Col>
+          <LandAcknowlegement />
+        </Col>
+      </Row>
+      <Row className="gx-3 row-gap-3">
+        <Col xs={12} md={6}>
+          <TopObserversCard selectedPlace={selectedPlace} />
+        </Col>
+        <Col xs={12} md={6}>
+          <div className="d-flex flex-column gap-3">
+            <ActiveSpeciesCard selectedPlace={selectedPlace} />
+            <UnexpectedObservationsCard selectedPlace={selectedPlace} />
+          </div>
+        </Col>
+      </Row>
+    </Container>
   );
 };
 
@@ -114,37 +115,24 @@ const ActiveSpeciesCard = ({
   );
 };
 
-const Learn = ({
-  selectedPlace,
-  setSelectedPlace,
-}: {
-  selectedPlace: SelectedPlace;
-  setSelectedPlace: (place: SelectedPlace) => void;
-}) => {
+const Learn = () => {
   return (
-    <>
-      <Navbar
-        selectedTab="learn"
-        selectedPlace={selectedPlace}
-        setSelectedPlace={setSelectedPlace}
-      />
-      <Container>
-        <Row className="gx-3 row-gap-3">
-          <Col xs={12} md={6}>
-            <div className="d-flex flex-column gap-3">
-              <ConnectCard />
-              <PapersCard />
-            </div>
-          </Col>
-          <Col xs={12} md={6}>
-            <div className="d-flex flex-column gap-3">
-              <GuidesCard />
-              <Watch />
-            </div>
-          </Col>
-        </Row>
-      </Container>
-    </>
+    <Container>
+      <Row className="gx-3 row-gap-3">
+        <Col xs={12} md={6}>
+          <div className="d-flex flex-column gap-3">
+            <ConnectCard />
+            <PapersCard />
+          </div>
+        </Col>
+        <Col xs={12} md={6}>
+          <div className="d-flex flex-column gap-3">
+            <GuidesCard />
+            <Watch />
+          </div>
+        </Col>
+      </Row>
+    </Container>
   );
 };
 
@@ -513,30 +501,105 @@ const convertPhotoUrlToOriginal = (photoUrl: string) => {
   return photoUrl.replace(/\/square\.(\w+)$/, "/medium.$1");
 };
 
+const PageLayout = ({
+  selectedPlace,
+  setSelectedPlace,
+}: {
+  selectedPlace: SelectedPlace | null;
+  setSelectedPlace: (place: SelectedPlace) => void;
+}) => {
+  // TODO: how do i make this not hardcoded below, such that we can reuse the <Route> object?
+  const isLearnRoute = useMatch("/learn");
+  const selectedTab = isLearnRoute ? "learn" : "explore";
+
+  return (
+    <>
+      <Navbar
+        selectedTab={selectedTab}
+        selectedPlace={selectedPlace}
+        setSelectedPlace={setSelectedPlace}
+      />
+      <Outlet />
+    </>
+  );
+};
+
+const SelectedPlaceManager = ({
+  selectedPlace,
+  setSelectedPlace,
+}: {
+  selectedPlace: SelectedPlace | null;
+  setSelectedPlace: (place: SelectedPlace) => void;
+}) => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const placeIdFromQuery = searchParams.get("p"); // Get the 'p' parameter
+
+  useEffect(() => {
+    const fetchPlace = async (placeId: number) => {
+      try {
+        const response = await fetchINaturalistApi("/places", { id: placeId });
+        if (response.results.length > 0) {
+          const place = response.results[0];
+          if (!place) {
+            throw new Error("No place found");
+          }
+          setSelectedPlace({
+            id: place.id,
+            name: place.name,
+            display_name: place.display_name,
+          });
+        } else {
+          setSelectedPlace(defaultPlace);
+        }
+      } catch (error) {
+        console.error("Error fetching place:", error);
+        setSelectedPlace(defaultPlace);
+      }
+    };
+
+    if (placeIdFromQuery && !isNaN(Number(placeIdFromQuery))) {
+      fetchPlace(Number(placeIdFromQuery));
+    } else {
+      setSelectedPlace(defaultPlace);
+    }
+  }, [placeIdFromQuery]);
+
+  useEffect(() => {
+    if (selectedPlace && selectedPlace.id !== defaultPlace.id) {
+      setSearchParams({ p: selectedPlace.id.toString() });
+    }
+  }, [selectedPlace]);
+
+  return null;
+};
+
 function App() {
-  const [selectedPlace, setSelectedPlace] =
-    useState<SelectedPlace>(defaultPlace);
+  const [selectedPlace, setSelectedPlace] = useState<SelectedPlace | null>(
+    null
+  );
+
   return (
     <HashRouter>
+      <SelectedPlaceManager
+        selectedPlace={selectedPlace}
+        setSelectedPlace={setSelectedPlace}
+      />
       <Routes>
         <Route
-          path="/"
           element={
-            <Explore
+            <PageLayout
               selectedPlace={selectedPlace}
               setSelectedPlace={setSelectedPlace}
             />
           }
-        />
-        <Route
-          path="/learn"
-          element={
-            <Learn
-              selectedPlace={selectedPlace}
-              setSelectedPlace={setSelectedPlace}
-            />
-          }
-        />
+        >
+          <Route
+            index
+            path="/"
+            element={<Explore selectedPlace={selectedPlace} />}
+          />
+          <Route path="/learn" element={<Learn />} />
+        </Route>
       </Routes>
     </HashRouter>
   );
