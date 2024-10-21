@@ -65,6 +65,14 @@ export type Place = {
 };
 
 export type TypicalEndpoints = {
+  /** Autocomplete */
+  "/places/autocomplete": {
+    response: INaturalistResponse<Place>;
+    result: Place;
+    params: {
+      q: string;
+    };
+  };
   /** Top observers */
   "/observations/observers": {
     response: INaturalistResponse<Observer>;
@@ -140,6 +148,7 @@ const cacheTtl: Record<keyof AllEndpoints, string> = {
   "/observations/observers": daysToSeconds(1),
   "/observations": hoursToSeconds(1),
   "/places": daysToSeconds(30),
+  "/places/autocomplete": daysToSeconds(30),
 };
 
 type RequestParamsBuilder = {
@@ -205,6 +214,11 @@ const requestParams: RequestParamsBuilder = {
   "/places": (params) => {
     return {
       id: params.id,
+    };
+  },
+  "/places/autocomplete": (params) => {
+    return {
+      q: params.q,
     };
   },
 };
