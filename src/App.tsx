@@ -230,6 +230,21 @@ const Guides = () => {
             A Seasonal Guide to New York City's Invertebrates
           </a>
         </li>
+        <li>
+          <a href="https://dipterists.org/resources.html">
+            Diptera-oriented Resources
+          </a>
+        </li>
+        <li>
+          <a href="https://sites.google.com/view/flyguide/home?authuser=0&pli=1">
+            Field/Photo ID for Flies
+          </a>
+        </li>
+        <li>
+          <a href="https://sites.google.com/view/beeflies/photographic-guides/bombyliids-of-na?authuser=0">
+            Guide to Bombyliidae of the US and Canada
+          </a>
+        </li>
       </ul>
     </>
   );
