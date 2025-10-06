@@ -155,6 +155,26 @@ const Groups = () => {
       name: "Torrey Botanical Society",
       url: "https://www.torreybotanical.org/",
     },
+    {
+      name: "The New York Entomological Society",
+      url: "https://www.nyentsoc.org/",
+    },
+    {
+      name: "New York Mycological Society",
+      url: "https://www.newyorkmyc.org/",
+    },
+    {
+      name: "Gotham Bat Conservancy",
+      url: "https://www.gothambatcon.org/",
+    },
+    {
+      name: "NYC Queer Birders",
+      url: "https://www.instagram.com/queerbirders/",
+    },
+    {
+      name: "Forest for All NYC",
+      url: "https://forestforall.nyc/",
+    },
   ];
 
   return (
