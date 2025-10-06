@@ -175,6 +175,10 @@ const Groups = () => {
       name: "Forest for All NYC",
       url: "https://forestforall.nyc/",
     },
+    {
+      name: "Billion Oyster Project",
+      url: "https://www.billionoysterproject.org/",
+    },
   ];
 
   return (
