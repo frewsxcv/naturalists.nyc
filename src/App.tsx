@@ -15,12 +15,12 @@ import {
   MdWorkspacePremium,
   MdFilterList,
   MdStar,
+  MdGroup,
 } from "react-icons/md";
 import {
   INaturalistResponse,
   Observation,
   Observer,
-  Place,
   fetchINaturalistApi,
   iconicTaxa,
   type IconicTaxon,
@@ -122,6 +122,7 @@ const Learn = () => {
         <Col xs={12} md={6}>
           <div className="d-flex flex-column gap-3">
             <ConnectCard />
+            <Groups />
             <PapersCard />
           </div>
         </Col>
@@ -133,6 +134,52 @@ const Learn = () => {
         </Col>
       </Row>
     </Container>
+  );
+};
+
+const Groups = () => {
+  const groups = [
+    {
+      name: "American Littoral Society",
+      url: "https://www.littoralsociety.org/",
+    },
+    { name: "NYC Plover Project", url: "https://nycploverproject.org/" },
+    {
+      name: "The Linnaean Society of New York",
+      url: "https://www.linnaeannewyork.org/",
+    },
+    { name: "Brooklyn Bird Club", url: "https://brooklynbirdclub.org/" },
+    { name: "NYC Bird Alliance", url: "https://nycbirdalliance.org/" },
+    { name: "Wild Bird Fund", url: "https://www.wildbirdfund.org/" },
+    {
+      name: "Torrey Botanical Society",
+      url: "https://www.torreybotanical.org/",
+    },
+  ];
+
+  return (
+    <Card className="bg-body-secondary">
+      <Card.Body>
+        <CardTitle>
+          <MdGroup />
+          &nbsp;Groups
+        </CardTitle>
+        <Card.Text>
+          Naturalist groups with a presence in New York City.
+        </Card.Text>
+        <ul>
+          {groups
+            .sort((a, b) => a.name.localeCompare(b.name))
+            .map((group) => (
+              <li key={group.name}>
+                <a href={group.url} target="_blank" rel="noopener noreferrer">
+                  {group.name}
+                </a>
+              </li>
+            ))}
+        </ul>
+      </Card.Body>
+    </Card>
   );
 };
 
@@ -227,7 +274,7 @@ const Guides = () => {
       <ul>
         <li>
           <a href="https://www.amnh.org/content/download/35179/518842/file/ASeasonalGuidetoNewYorkCitysInvertebrates.pdf">
-            A Seasonal Guide to New York City's Invertebrates
+            A Seasonal Guide to New York City&apos;s Invertebrates
           </a>
         </li>
         <li>
@@ -298,7 +345,7 @@ const ObserverItem = ({
     date,
     placeId,
     observer.user.login,
-    orderBy
+    orderBy,
   );
   let plural: string;
   switch (orderBy) {
@@ -338,7 +385,7 @@ function buildObservationsLink(
   date: string,
   nycPlaceId: number,
   userLogin: string,
-  orderBy: "observation_count" | "species_count"
+  orderBy: "observation_count" | "species_count",
 ): string {
   switch (orderBy) {
     case "species_count":
@@ -353,7 +400,7 @@ function buildObservationsLink(
 const fetchTopObservers = async (
   orderBy: "observation_count" | "species_count",
   date: string,
-  placeId: number
+  placeId: number,
 ) => {
   return await fetchINaturalistApi("/observations/observers", {
     placeId,
@@ -453,7 +500,7 @@ const UnexpectedObservationsCard = ({
 
 const UnexpectedObservations = ({ placeId }: { placeId: number }) => {
   const [data, setData] = useState<INaturalistResponse<Observation> | null>(
-    null
+    null,
   );
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -590,7 +637,7 @@ const SelectedPlaceManager = ({
 
 function App() {
   const [selectedPlace, setSelectedPlace] = useState<SelectedPlace | null>(
-    null
+    null,
   );
 
   return (
