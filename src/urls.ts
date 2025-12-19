@@ -34,4 +34,6 @@ export const youTubeVideoUrls: [string, ...string[]] = [
   "https://www.youtube.com/watch?v=AVPkBv-QQ6U", // Crime Pays But Botany Doesn't: A Cactus Grows in Brooklyn
   "https://www.youtube.com/watch?v=6wIdCTn2lZY", // Crime Pays But Botany Doesn't: Botany by Boat in New York City
   "https://www.youtube.com/watch?v=GszzRHZck3o", // NYC H2O: Urban Lichens a talk by James Lendemer Ph.D.
+  "https://www.youtube.com/watch?v=Ws0KK0CbitQ", // NYC Bird Alliance: NYC is Bird City by Ryan Goldberg
+
 ];
