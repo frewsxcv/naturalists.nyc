@@ -172,12 +172,12 @@ const Groups = () => {
       url: "https://www.instagram.com/queerbirders/",
     },
     {
-      name: "Forest for All NYC",
-      url: "https://forestforall.nyc/",
-    },
-    {
       name: "Billion Oyster Project",
       url: "https://www.billionoysterproject.org/",
+    },
+    {
+      name: "NYC Wildflower Week",
+      url: "https://www.nycwildflowerweek.org/",
     },
   ];
 
